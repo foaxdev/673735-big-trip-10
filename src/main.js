@@ -326,13 +326,6 @@ const createCardTemplate = () => {
   `);
 };
 
-//TODO: update Load More button markup
-const createLoadMoreButton = () => {
-  return (`
-    <a href="#">Load more</a>
-  `);
-};
-
 const render = (container, template, place = `beforeend`) => {
   container.insertAdjacentHTML(place, template);
 };
@@ -359,4 +352,3 @@ new Array(TASK_COUNT)
 const firstEvent = eventsList.querySelector('li');
 
 render(firstEvent, createEditCardTemplate(), `beforebegin`);
-render(tripEvents, createLoadMoreButton());
