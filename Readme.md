@@ -1,7 +1,7 @@
 # Личный проект «Большое путешествие» [![Build status][travis-image]][travis-url]
 
 * Студент: [Ирина Ковальчук](https://up.htmlacademy.ru/ecmascript/10/user/673735).
-* Наставник: `Неизвестно`.
+* Наставник: [Артём Приходько](https://htmlacademy.ru/profile/id1012525).
 
 ---
 
