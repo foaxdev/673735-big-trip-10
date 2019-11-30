@@ -36,8 +36,8 @@ export const createEditCardTemplate = (cardData) => {
   const startDate = start.toLocaleDateString("en-GB", {day: "2-digit", month: "2-digit", year: "2-digit"});
   const endDate = end.toLocaleDateString("en-GB", {day: "2-digit", month: "2-digit", year: "2-digit"});
 
-  const startTime = `${start.getHours()}:${start.getMinutes()}`;
-  const endTime = `${end.getHours()}:${end.getMinutes()}`;
+  const startTime = `${start.getHours()}:${(`0` + start.getMinutes()).slice(-2)}`;
+  const endTime = `${end.getHours()}:${(`0` + end.getMinutes()).slice(-2)}`;
 
   return (`
     <form class="event  event--edit" action="#" method="post">
@@ -228,8 +228,8 @@ export const createCardTemplate = (cardData) => {
   const startDate = start.toLocaleDateString("fr-CA");
   const endDate = end.toLocaleDateString("fr-CA");
 
-  const startTime = `${start.getHours()}:${start.getMinutes()}`;
-  const endTime = `${end.getHours()}:${end.getMinutes()}`;
+  const startTime = `${start.getHours()}:${(`0` + start.getMinutes()).slice(-2)}`;
+  const endTime = `${end.getHours()}:${(`0` + end.getMinutes()).slice(-2)}`;
 
   return (`
     <li class="trip-events__item">
