@@ -5,6 +5,7 @@ import {createSortTemplate} from "./components/sort";
 import {createEditCardTemplate, createCardTemplate} from "./components/card";
 import {createAddEventTemplate} from "./components/event";
 import {createTasksTemplate, TASK_COUNT} from "./components/task";
+import {generateCards} from "./mock/card";
 
 const render = (container, template, place = `beforeend`) => {
   container.insertAdjacentHTML(place, template);
@@ -25,9 +26,11 @@ render(tripEvents, createTasksTemplate());
 
 const eventsList = document.querySelector(`.trip-events__list`);
 
-for (let i = 0; i < TASK_COUNT; i++) {
-  render(eventsList, createCardTemplate());
-}
+const cards = generateCards(TASK_COUNT);
+
+cards.forEach((card) => {
+  render(eventsList, createCardTemplate(card));
+});
 
 const firstEvent = eventsList.querySelector(`li`);
-render(firstEvent, createEditCardTemplate(), `beforebegin`);
+render(firstEvent, createEditCardTemplate(cards[0]), `beforebegin`);
