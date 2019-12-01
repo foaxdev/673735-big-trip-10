@@ -1,7 +1,3 @@
-export const route = [
-
-];
-
 const amenities = [
   {
     type: `luggage`,

@@ -31,7 +31,7 @@ const createImagesHtml = (images) => {
 };
 
 export const createEditCardTemplate = (cardData) => {
-  const {type, city, photos, description, amenities, start, end, price} = cardData;
+  const {type, city, photos, description, start, end, price} = cardData;
 
   const startDate = start.toLocaleDateString("en-GB", {day: "2-digit", month: "2-digit", year: "2-digit"});
   const endDate = end.toLocaleDateString("en-GB", {day: "2-digit", month: "2-digit", year: "2-digit"});
@@ -223,7 +223,7 @@ export const createEditCardTemplate = (cardData) => {
 };
 
 export const createCardTemplate = (cardData) => {
-  const {type, city, photos, description, amenities, start, end, price} = cardData;
+  const {type, amenities, start, end, price} = cardData;
 
   const startDate = start.toLocaleDateString("fr-CA");
   const endDate = end.toLocaleDateString("fr-CA");
