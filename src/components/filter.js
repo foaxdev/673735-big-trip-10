@@ -1,22 +1,30 @@
-export const createFilterTemplate = () => {
+const getFilterHtml = (filter) => {
+  const filterName = filter.charAt(0).toUpperCase() + filter.slice(1);
+
+  return(`
+    <div class="trip-filters__filter">
+      <input id="filter-${filter}" class="trip-filters__filter-input  visually-hidden" type="radio" name="trip-filter" value="${filter}" checked>
+      <label class="trip-filters__filter-label" for="filter-${filter}">${filterName}</label>
+    </div>
+  `);
+};
+
+const createFilterItems = (filters) => {
+  const filtersContainer = document.createDocumentFragment();
+  filtersContainer.innerHTML = ``;
+
+  for (const filter of filters) {
+    filtersContainer.innerHTML += getFilterHtml(filter);
+  }
+
+  return filtersContainer.innerHTML;
+};
+
+export const createFilterTemplate = (filters) => {
   return (`
     <h2 class="visually-hidden">Filter events</h2>
     <form class="trip-filters  trip-filters--hidden" action="#" method="get">
-      <div class="trip-filters__filter">
-        <input id="filter-everything" class="trip-filters__filter-input  visually-hidden" type="radio" name="trip-filter" value="everything" checked>
-        <label class="trip-filters__filter-label" for="filter-everything">Everything</label>
-      </div>
-
-      <div class="trip-filters__filter">
-        <input id="filter-future" class="trip-filters__filter-input  visually-hidden" type="radio" name="trip-filter" value="future">
-        <label class="trip-filters__filter-label" for="filter-future">Future</label>
-      </div>
-
-      <div class="trip-filters__filter">
-        <input id="filter-past" class="trip-filters__filter-input  visually-hidden" type="radio" name="trip-filter" value="past">
-        <label class="trip-filters__filter-label" for="filter-past">Past</label>
-      </div>
-
+      ${createFilterItems(filters)}
       <button class="visually-hidden" type="submit">Accept filter</button>
     </form>
   `);

@@ -7,6 +7,7 @@ import {createAddEventTemplate} from "./components/event";
 import {createTasksTemplate, TASK_COUNT} from "./components/task";
 import {generateCards} from "./mock/card";
 import {menuNames} from "./mock/menu";
+import {filters} from "./mock/filter";
 
 const render = (container, template, place = `beforeend`) => {
   container.insertAdjacentHTML(place, template);
@@ -26,7 +27,7 @@ const tripEvents = document.querySelector(`.trip-events`);
 render(menuHeader, createMenuTemplate(menuNames), `afterend`);
 setStatsMenuActive();
 
-render(filterHeader, createFilterTemplate(), `afterend`);
+render(filterHeader, createFilterTemplate(filters), `afterend`);
 render(tripRoute, createRouteTemplate(), `afterbegin`);
 render(tripEvents, createSortTemplate());
 render(tripEvents, createAddEventTemplate());
