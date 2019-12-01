@@ -1,13 +1,14 @@
 import {createMenuTemplate, setMenuItemActive} from "./components/menu";
 import {createFilterTemplate} from "./components/filter";
 import {createRouteTemplate} from "./components/route";
-import {createSortTemplate} from "./components/sort";
+import {createSortTemplate, setSortItemChecked} from "./components/sort";
 import {createEditCardTemplate, createCardTemplate} from "./components/card";
 import {createAddEventTemplate} from "./components/event";
 import {createTasksTemplate, TASK_COUNT} from "./components/task";
 import {generateCards} from "./mock/card";
 import {menuNames} from "./mock/menu";
 import {filters} from "./mock/filter";
+import {sortOptions} from "./mock/sort";
 
 const render = (container, template, place = `beforeend`) => {
   container.insertAdjacentHTML(place, template);
@@ -16,6 +17,11 @@ const render = (container, template, place = `beforeend`) => {
 const setStatsMenuActive = () => {
   const menuItems = document.querySelectorAll(`.trip-tabs__btn`);
   setMenuItemActive(menuItems[1]);
+};
+
+const setEventSortActive = () => {
+  const sortItems = document.querySelectorAll(`.trip-sort__input`);
+  setSortItemChecked(sortItems[0]);
 };
 
 const tripControls = document.querySelector(`.trip-main__trip-controls`);
@@ -29,7 +35,9 @@ setStatsMenuActive();
 
 render(filterHeader, createFilterTemplate(filters), `afterend`);
 render(tripRoute, createRouteTemplate(), `afterbegin`);
-render(tripEvents, createSortTemplate());
+render(tripEvents, createSortTemplate(sortOptions));
+setEventSortActive();
+
 render(tripEvents, createAddEventTemplate());
 render(tripEvents, createTasksTemplate());
 

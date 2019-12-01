@@ -1,5 +1,7 @@
+import {capitalizeFirstLetter} from "../utils";
+
 const getFilterHtml = (filter) => {
-  const filterName = filter.charAt(0).toUpperCase() + filter.slice(1);
+  const filterName = capitalizeFirstLetter(filter);
 
   return(`
     <div class="trip-filters__filter">
