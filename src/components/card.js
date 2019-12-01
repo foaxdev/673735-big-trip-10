@@ -1,3 +1,5 @@
+import {createItems} from "../utils";
+
 const getOfferHtml = (offer) => {
   return (`
     <li class="event__offer">
@@ -8,26 +10,10 @@ const getOfferHtml = (offer) => {
   `);
 };
 
-const createOffersHtml = (offers) => {
-  const offersContainer = document.createDocumentFragment();
-  offersContainer.innerHTML = ``;
-
-  for (const offer of offers) {
-    offersContainer.innerHTML += getOfferHtml(offer);
-  }
-
-  return offersContainer.innerHTML;
-};
-
-const createImagesHtml = (images) => {
-  const imagesContainer = document.createDocumentFragment();
-  imagesContainer.innerHTML = ``;
-
-  for (const image of images) {
-    imagesContainer.innerHTML += `<img class="event__photo" src="${image}" alt="Event photo">`;
-  }
-
-  return imagesContainer.innerHTML;
+const getImageHtml = (imageSrc) => {
+  return(`
+    <img class="event__photo" src="${imageSrc}" alt="Event photo">
+  `);
 };
 
 export const createEditCardTemplate = (cardData) => {
@@ -213,7 +199,7 @@ export const createEditCardTemplate = (cardData) => {
           <p class="event__destination-description">${description}</p>
           <div class="event__photos-container">
             <div class="event__photos-tape">
-              ${createImagesHtml(photos)}
+              ${createItems(photos, getImageHtml)}
             </div>
           </div>
         </section>
@@ -254,7 +240,7 @@ export const createCardTemplate = (cardData) => {
 
         <h4 class="visually-hidden">Offers:</h4>
         <ul class="event__selected-offers">
-           ${amenities.length > 0 ? createOffersHtml(amenities) : ``}
+           ${amenities.length > 0 ? createItems(amenities, getOfferHtml) : ``}
         </ul>
 
         <button class="event__rollup-btn" type="button">

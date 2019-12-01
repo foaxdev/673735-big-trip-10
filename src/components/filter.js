@@ -1,4 +1,4 @@
-import {capitalizeFirstLetter} from "../utils";
+import {capitalizeFirstLetter, createItems} from "../utils";
 
 const getFilterHtml = (filter) => {
   const filterName = capitalizeFirstLetter(filter);
@@ -11,22 +11,11 @@ const getFilterHtml = (filter) => {
   `);
 };
 
-const createFilterItems = (filters) => {
-  const filtersContainer = document.createDocumentFragment();
-  filtersContainer.innerHTML = ``;
-
-  for (const filter of filters) {
-    filtersContainer.innerHTML += getFilterHtml(filter);
-  }
-
-  return filtersContainer.innerHTML;
-};
-
 export const createFilterTemplate = (filters) => {
   return (`
     <h2 class="visually-hidden">Filter events</h2>
     <form class="trip-filters  trip-filters--hidden" action="#" method="get">
-      ${createFilterItems(filters)}
+      ${createItems(filters, getFilterHtml)}
       <button class="visually-hidden" type="submit">Accept filter</button>
     </form>
   `);

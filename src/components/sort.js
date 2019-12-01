@@ -1,4 +1,4 @@
-import {capitalizeFirstLetter} from "../utils";
+import {capitalizeFirstLetter, createItems} from "../utils";
 
 const getSortHtml = (sortName) => {
   const sortTitle = capitalizeFirstLetter(sortName);
@@ -16,22 +16,11 @@ const getSortHtml = (sortName) => {
   `);
 };
 
-const createSortItems = (sortNames) => {
-  const sortContainer = document.createDocumentFragment();
-  sortContainer.innerHTML = ``;
-
-  for (const menuName of sortNames) {
-    sortContainer.innerHTML += getSortHtml(menuName);
-  }
-
-  return sortContainer.innerHTML;
-};
-
 export const createSortTemplate = (sortItems) => {
   return (`
     <form class="trip-events__trip-sort  trip-sort" action="#" method="get">
       <span class="trip-sort__item  trip-sort__item--day">Day</span>
-      ${createSortItems(sortItems)}
+      ${createItems(sortItems, getSortHtml)}
       <span class="trip-sort__item  trip-sort__item--offers">Offers</span>
     </form>
   `);

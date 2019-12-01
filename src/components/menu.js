@@ -1,24 +1,15 @@
+import {createItems} from "../utils";
+
 const getMenuHtml = (menuName) => {
   return (`
     <a class="trip-tabs__btn" href="#">${menuName}</a>
   `);
 };
 
-const createMenuItems = (menuNames) => {
-  const menuContainer = document.createDocumentFragment();
-  menuContainer.innerHTML = ``;
-
-  for (const menuName of menuNames) {
-    menuContainer.innerHTML += getMenuHtml(menuName);
-  }
-
-  return menuContainer.innerHTML;
-};
-
 export const createMenuTemplate = (menuNames) => {
   return (`
     <nav class="trip-controls__trip-tabs  trip-tabs">
-      ${createMenuItems(menuNames)}
+      ${createItems(menuNames, getMenuHtml)}
     </nav>
   `);
 };
