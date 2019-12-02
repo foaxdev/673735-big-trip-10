@@ -41,7 +41,6 @@ render(menuHeader, createMenuTemplate(menuNames), `afterend`);
 setStatsMenuActive();
 
 render(filterHeader, createFilterTemplate(filters), `afterend`);
-render(tripRoute, createRouteTemplate(), `afterbegin`);
 render(tripEvents, createSortTemplate(sortOptions));
 setEventSortActive();
 
@@ -50,11 +49,12 @@ render(tripEvents, createTasksTemplate());
 
 const eventsList = document.querySelector(`.trip-events__list`);
 
-const cards = generateCards(TASK_COUNT);
+const cards = generateCards(TASK_COUNT).sort((a, b) => a.start > b.start);
 
 cards.forEach((card) => {
   render(eventsList, createCardTemplate(card));
 });
+render(tripRoute, createRouteTemplate(cards), `afterbegin`);
 totalPrice.textContent = getTotalSum(cards);
 
 const firstEvent = eventsList.querySelector(`li`);
