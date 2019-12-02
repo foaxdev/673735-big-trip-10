@@ -1,3 +1,5 @@
+let dateDifference = 1;
+
 const amenities = [
   {
     type: `luggage`,
@@ -110,10 +112,11 @@ const getRandomAmenities = () => {
 
 const getRandomDate = () => {
   const targetDate = new Date();
-  const sign = Math.random() > 0.5 ? 1 : -1;
-  const diffValue = sign * getRandomIntegerNumber(0, 7);
+  dateDifference *= 1.5;
 
-  targetDate.setDate(targetDate.getDate() + diffValue);
+  targetDate.setDate(targetDate.getDate() + dateDifference);
+
+  console.log(targetDate);
 
   return targetDate;
 };

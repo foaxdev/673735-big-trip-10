@@ -12,3 +12,10 @@ export const createItems = (elementsData, getHtml) => {
 
   return container.innerHTML;
 };
+
+export const millisecondsToHm = (timeInMs) => {
+  const hours = Math.floor(timeInMs / 3600000);
+  const minutes = Math.floor(timeInMs % 3600000 / 60);
+
+  return `${hours}H ${minutes}M`;
+};

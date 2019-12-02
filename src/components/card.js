@@ -1,4 +1,4 @@
-import {createItems} from "../utils";
+import {createItems, millisecondsToHm} from "../utils";
 
 const getOfferHtml = (offer) => {
   return (`
@@ -217,6 +217,8 @@ export const createCardTemplate = (cardData) => {
   const startTime = `${start.getHours()}:${(`0` + start.getMinutes()).slice(-2)}`;
   const endTime = `${end.getHours()}:${(`0` + end.getMinutes()).slice(-2)}`;
 
+  const duration = millisecondsToHm(end.getTime() - start.getTime());
+
   return (`
     <li class="trip-events__item">
       <div class="event">
@@ -231,7 +233,7 @@ export const createCardTemplate = (cardData) => {
             &mdash;
             <time class="event__end-time" datetime="${endDate}T${endTime}">${endTime}</time>
           </p>
-          <p class="event__duration">1H 30M</p>
+          <p class="event__duration">${duration}</p>
         </div>
 
         <p class="event__price">
