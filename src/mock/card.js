@@ -113,10 +113,7 @@ const getRandomAmenities = () => {
 const getRandomDate = () => {
   const targetDate = new Date();
   dateDifference *= 1.5;
-
   targetDate.setDate(targetDate.getDate() + dateDifference);
-
-  console.log(targetDate);
 
   return targetDate;
 };
