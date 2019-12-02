@@ -24,11 +24,18 @@ const setEventSortActive = () => {
   setSortItemChecked(sortItems[0]);
 };
 
+const getTotalSum = (tripPoints) => {
+  return tripPoints
+    .map((tripPoint) => tripPoint.price)
+    .reduce((a, b) => a + b, 0);
+};
+
 const tripControls = document.querySelector(`.trip-main__trip-controls`);
 const menuHeader = tripControls.querySelectorAll(`h2`)[0];
 const filterHeader = tripControls.querySelectorAll(`h2`)[1];
 const tripRoute = document.querySelector(`.trip-main__trip-info`);
 const tripEvents = document.querySelector(`.trip-events`);
+const totalPrice = document.querySelector(`.trip-info__cost-value`);
 
 render(menuHeader, createMenuTemplate(menuNames), `afterend`);
 setStatsMenuActive();
@@ -48,6 +55,7 @@ const cards = generateCards(TASK_COUNT);
 cards.forEach((card) => {
   render(eventsList, createCardTemplate(card));
 });
+totalPrice.textContent = getTotalSum(cards);
 
 const firstEvent = eventsList.querySelector(`li`);
 render(firstEvent, createEditCardTemplate(cards[0]), `beforebegin`);

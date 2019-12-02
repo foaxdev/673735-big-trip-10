@@ -103,7 +103,7 @@ const generateRandomDescription = () => {
 const getRandomAmenities = () => {
   const availableAmenities = [];
 
-  for (let i = 0; i < getRandomIntegerNumber(0, 3); i++) {
+  for (let i = 0; i < getRandomIntegerNumber(0, 4); i++) {
     availableAmenities.push(amenities[i]);
   }
 
