@@ -1,6 +1,6 @@
 import Menu from "./components/menu";
 import Route from "./components/route";
-import {createSortTemplate} from "./components/sort";
+import Sort from "./components/sort";
 import {createEditCardTemplate, createCardTemplate} from "./components/card";
 import {createAddEventTemplate} from "./components/event";
 import {createTasksTemplate, TASK_COUNT} from "./components/task";
@@ -68,7 +68,7 @@ render(menuHeader, new Menu(menuNames).getElement(), RenderPosition.AFTEREND);
 setStatsMenuActive();
 
 render(filterHeader, new Filter(filters).getElement(), RenderPosition.AFTEREND);
-renderOld(tripEvents, createSortTemplate(sortOptions));
+render(tripEvents, new Sort(sortOptions).getElement(), RenderPosition.BEFOREEND);
 setEventSortActive();
 
 renderOld(tripEvents, createAddEventTemplate());

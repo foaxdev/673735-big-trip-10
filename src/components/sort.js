@@ -1,4 +1,4 @@
-import {capitalizeFirstLetter, createItems} from "../utils";
+import {capitalizeFirstLetter, createElement, createItems} from "../utils";
 
 const getSortHtml = (sortName) => {
   const sortTitle = capitalizeFirstLetter(sortName);
@@ -16,7 +16,7 @@ const getSortHtml = (sortName) => {
   `);
 };
 
-export const createSortTemplate = (sortItems) => {
+const createSortTemplate = (sortItems) => {
   return (`
     <form class="trip-events__trip-sort  trip-sort" action="#" method="get">
       <span class="trip-sort__item  trip-sort__item--day">Day</span>
@@ -25,3 +25,26 @@ export const createSortTemplate = (sortItems) => {
     </form>
   `);
 };
+
+export default class Sort {
+  constructor(sortItems) {
+    this._sortItems = sortItems;
+    this._element = null;
+  }
+
+  getTemplate() {
+    return createSortTemplate(this._sortItems);
+  }
+
+  getElement() {
+    if (!this._element) {
+      this._element = createElement(this.getTemplate());
+    }
+
+    return this._element;
+  }
+
+  removeElement() {
+    this._element = null;
+  }
+}
