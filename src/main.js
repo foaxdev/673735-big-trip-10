@@ -1,5 +1,4 @@
 import {createMenuTemplate} from "./components/menu";
-import {createFilterTemplate} from "./components/filter";
 import {createRouteTemplate} from "./components/route";
 import {createSortTemplate} from "./components/sort";
 import {createEditCardTemplate, createCardTemplate} from "./components/card";
@@ -9,6 +8,8 @@ import {generateCards} from "./mock/card";
 import {menuNames} from "./mock/menu";
 import {filters} from "./mock/filter";
 import {sortOptions} from "./mock/sort";
+import FilterComponent from "./components/filter";
+import {render, RenderPosition} from "./utils";
 
 const setMenuItemActive = (menuElement) => {
   const menuItems = document.querySelectorAll(`.trip-tabs__btn`);
@@ -36,7 +37,7 @@ const setSortItemChecked = (sortItem) => {
   sortItem.setAttribute(`checked`, `checked`);
 };
 
-const render = (container, template, place = `beforeend`) => {
+const renderOld = (container, template, place = `beforeend`) => {
   container.insertAdjacentHTML(place, template);
 };
 
@@ -63,25 +64,25 @@ const tripRoute = document.querySelector(`.trip-main__trip-info`);
 const tripEvents = document.querySelector(`.trip-events`);
 const totalPrice = document.querySelector(`.trip-info__cost-value`);
 
-render(menuHeader, createMenuTemplate(menuNames), `afterend`);
+renderOld(menuHeader, createMenuTemplate(menuNames), `afterend`);
 setStatsMenuActive();
 
-render(filterHeader, createFilterTemplate(filters), `afterend`);
-render(tripEvents, createSortTemplate(sortOptions));
+render(filterHeader, new FilterComponent(filters).getElement(), RenderPosition.AFTEREND);
+renderOld(tripEvents, createSortTemplate(sortOptions));
 setEventSortActive();
 
-render(tripEvents, createAddEventTemplate());
-render(tripEvents, createTasksTemplate());
+renderOld(tripEvents, createAddEventTemplate());
+renderOld(tripEvents, createTasksTemplate());
 
 const eventsList = document.querySelector(`.trip-events__list`);
 
 const cards = generateCards(TASK_COUNT).sort((a, b) => a.start > b.start);
 
 cards.forEach((card) => {
-  render(eventsList, createCardTemplate(card));
+  renderOld(eventsList, createCardTemplate(card));
 });
-render(tripRoute, createRouteTemplate(cards), `afterbegin`);
+renderOld(tripRoute, createRouteTemplate(cards), `afterbegin`);
 totalPrice.textContent = getTotalSum(cards);
 
 const firstEvent = eventsList.querySelector(`li`);
-render(firstEvent, createEditCardTemplate(cards[0]), `beforebegin`);
+renderOld(firstEvent, createEditCardTemplate(cards[0]), `beforebegin`);
