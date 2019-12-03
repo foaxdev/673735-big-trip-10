@@ -1,5 +1,17 @@
 import {createItems, millisecondsToHm} from "../utils";
 
+const formatDate = (date, isLong) => {
+  const dateYear = date.getFullYear();
+  const dateMonth = (`0` + date.getMonth()).slice(-2);
+  const dateDay = (`0` + date.getDate()).slice(-2);
+
+  return isLong ? `${dateYear}-${dateMonth}-${dateDay}` : `${dateDay}/${dateMonth}/${dateYear.toString().slice(-2)}`
+};
+
+const formatTime = (hours, minutes) => {
+  return `${hours}:${(`0` + minutes).slice(-2)}`
+};
+
 const getOfferHtml = (offer) => {
   return (`
     <li class="event__offer">
@@ -19,11 +31,11 @@ const getImageHtml = (imageSrc) => {
 export const createEditCardTemplate = (cardData) => {
   const {type, city, photos, description, start, end, price} = cardData;
 
-  const startDate = start.toLocaleDateString("en-GB", {day: "2-digit", month: "2-digit", year: "2-digit"});
-  const endDate = end.toLocaleDateString("en-GB", {day: "2-digit", month: "2-digit", year: "2-digit"});
+  const startDate = formatDate(start, false);
+  const endDate = formatDate(end, false);
 
-  const startTime = `${start.getHours()}:${(`0` + start.getMinutes()).slice(-2)}`;
-  const endTime = `${end.getHours()}:${(`0` + end.getMinutes()).slice(-2)}`;
+  const startTime = formatTime(start.getHours(), start.getMinutes());
+  const endTime = formatTime(end.getHours(), end.getMinutes());
 
   return (`
     <form class="event  event--edit" action="#" method="post">
@@ -211,11 +223,11 @@ export const createEditCardTemplate = (cardData) => {
 export const createCardTemplate = (cardData) => {
   const {type, amenities, start, end, price} = cardData;
 
-  const startDate = start.toLocaleDateString("fr-CA");
-  const endDate = end.toLocaleDateString("fr-CA");
+  const startDate = formatDate(start, true);
+  const endDate = formatDate(end, true);
 
-  const startTime = `${start.getHours()}:${(`0` + start.getMinutes()).slice(-2)}`;
-  const endTime = `${end.getHours()}:${(`0` + end.getMinutes()).slice(-2)}`;
+  const startTime = formatTime(start.getHours(), start.getMinutes());
+  const endTime = formatTime(end.getHours(), end.getMinutes());
 
   const duration = millisecondsToHm(end.getTime() - start.getTime());
 
