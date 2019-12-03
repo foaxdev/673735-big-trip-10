@@ -3,7 +3,7 @@ import Route from "./components/route";
 import Sort from "./components/sort";
 import {createEditCardTemplate, createCardTemplate} from "./components/card";
 import {createAddEventTemplate} from "./components/event";
-import {createTasksTemplate, TASK_COUNT} from "./components/task";
+import Task, {TASK_COUNT} from "./components/task";
 import {generateCards} from "./mock/card";
 import {menuNames} from "./mock/menu";
 import {filters} from "./mock/filter";
@@ -72,7 +72,7 @@ render(tripEvents, new Sort(sortOptions).getElement(), RenderPosition.BEFOREEND)
 setEventSortActive();
 
 renderOld(tripEvents, createAddEventTemplate());
-renderOld(tripEvents, createTasksTemplate());
+render(tripEvents, new Task().getElement(), RenderPosition.BEFOREEND);
 
 const eventsList = document.querySelector(`.trip-events__list`);
 
