@@ -1,4 +1,4 @@
-import {createMenuTemplate} from "./components/menu";
+import MenuComponent from "./components/menu";
 import {createRouteTemplate} from "./components/route";
 import {createSortTemplate} from "./components/sort";
 import {createEditCardTemplate, createCardTemplate} from "./components/card";
@@ -64,7 +64,7 @@ const tripRoute = document.querySelector(`.trip-main__trip-info`);
 const tripEvents = document.querySelector(`.trip-events`);
 const totalPrice = document.querySelector(`.trip-info__cost-value`);
 
-renderOld(menuHeader, createMenuTemplate(menuNames), `afterend`);
+render(menuHeader, new MenuComponent(menuNames).getElement(), RenderPosition.AFTEREND);
 setStatsMenuActive();
 
 render(filterHeader, new FilterComponent(filters).getElement(), RenderPosition.AFTEREND);

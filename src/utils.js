@@ -49,7 +49,7 @@ export const createElement = (template) => {
   const newElement = document.createElement(`div`);
   newElement.innerHTML = template;
 
-  return newElement.firstChild;
+  return newElement.firstChild.nextSibling;
 };
 
 export const render = (container, element, place) => {
@@ -60,5 +60,7 @@ export const render = (container, element, place) => {
     case RenderPosition.BEFOREEND:
       container.append(element);
       break;
+    case RenderPosition.AFTEREND:
+      container.parentNode.insertBefore(element, container.nextSibling);
   }
 };
