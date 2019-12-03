@@ -1,7 +1,7 @@
-import {createMenuTemplate, setMenuItemActive} from "./components/menu";
+import {createMenuTemplate} from "./components/menu";
 import {createFilterTemplate} from "./components/filter";
 import {createRouteTemplate} from "./components/route";
-import {createSortTemplate, setSortItemChecked} from "./components/sort";
+import {createSortTemplate} from "./components/sort";
 import {createEditCardTemplate, createCardTemplate} from "./components/card";
 import {createAddEventTemplate} from "./components/event";
 import {createTasksTemplate, TASK_COUNT} from "./components/task";
@@ -9,6 +9,32 @@ import {generateCards} from "./mock/card";
 import {menuNames} from "./mock/menu";
 import {filters} from "./mock/filter";
 import {sortOptions} from "./mock/sort";
+
+const setMenuItemActive = (menuElement) => {
+  const menuItems = document.querySelectorAll(`.trip-tabs__btn`);
+
+  for (const menuItem of menuItems) {
+    if (menuItem.classList.contains(`trip-tabs__btn--active`)) {
+      menuItem.classList.remove(`trip-tabs__btn--active`);
+      break;
+    }
+  }
+
+  menuElement.classList.add(`trip-tabs__btn--active`);
+};
+
+const setSortItemChecked = (sortItem) => {
+  const sortItems = document.querySelectorAll(`.trip-sort__input`);
+
+  for (const sortItem of sortItems) {
+    if (sortItem.hasAttribute(`checked`)) {
+      sortItem.removeAttribute(`checked`);
+      break;
+    }
+  }
+
+  sortItem.setAttribute(`checked`, `checked`);
+};
 
 const render = (container, template, place = `beforeend`) => {
   container.insertAdjacentHTML(place, template);

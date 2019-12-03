@@ -25,16 +25,3 @@ export const createSortTemplate = (sortItems) => {
     </form>
   `);
 };
-
-export const setSortItemChecked = (sortItem) => {
-  const sortItems = document.querySelectorAll(`.trip-sort__input`);
-
-  for (const sortItem of sortItems) {
-    if (sortItem.hasAttribute(`checked`)) {
-      sortItem.removeAttribute(`checked`);
-      break;
-    }
-  }
-
-  sortItem.setAttribute(`checked`, `checked`);
-};
