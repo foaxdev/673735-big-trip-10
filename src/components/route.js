@@ -1,4 +1,4 @@
-import {MONTHS} from "../utils";
+import {createElement, MONTHS} from "../utils";
 
 
 const getRouteHtml = (routeInfo) => {
@@ -25,7 +25,7 @@ const getDatesHtml = (routeInfo) => {
   return (startYear === endYear) ? `${startYear} ${MONTHS[startMonth]} ${startDay}&nbsp;&mdash;&nbsp;${MONTHS[endMonth]} ${endDay}` : `${startYear} ${MONTHS[startMonth]} ${startDay}&nbsp;&mdash;&nbsp;${startYear} ${MONTHS[endMonth]} ${endDay}`;
 };
 
-export const createRouteTemplate = (routeInfo) => {
+const createRouteTemplate = (routeInfo) => {
   return (`
     <div class="trip-info__main">
       <h1 class="trip-info__title">${getRouteHtml(routeInfo)}</h1>
@@ -34,3 +34,26 @@ export const createRouteTemplate = (routeInfo) => {
     </div>
   `);
 };
+
+export default class Route {
+  constructor(routeInfo) {
+    this._routeInfo = routeInfo;
+    this._element = null;
+  }
+
+  getTemplate() {
+    return createRouteTemplate(this._routeInfo);
+  }
+
+  getElement() {
+    if (!this._element) {
+      this._element = createElement(this.getTemplate());
+    }
+
+    return this._element;
+  }
+
+  removeElement() {
+    this._element = null;
+  }
+}

@@ -1,5 +1,5 @@
-import MenuComponent from "./components/menu";
-import {createRouteTemplate} from "./components/route";
+import Menu from "./components/menu";
+import Route from "./components/route";
 import {createSortTemplate} from "./components/sort";
 import {createEditCardTemplate, createCardTemplate} from "./components/card";
 import {createAddEventTemplate} from "./components/event";
@@ -8,7 +8,7 @@ import {generateCards} from "./mock/card";
 import {menuNames} from "./mock/menu";
 import {filters} from "./mock/filter";
 import {sortOptions} from "./mock/sort";
-import FilterComponent from "./components/filter";
+import Filter from "./components/filter";
 import {render, RenderPosition} from "./utils";
 
 const setMenuItemActive = (menuElement) => {
@@ -64,10 +64,10 @@ const tripRoute = document.querySelector(`.trip-main__trip-info`);
 const tripEvents = document.querySelector(`.trip-events`);
 const totalPrice = document.querySelector(`.trip-info__cost-value`);
 
-render(menuHeader, new MenuComponent(menuNames).getElement(), RenderPosition.AFTEREND);
+render(menuHeader, new Menu(menuNames).getElement(), RenderPosition.AFTEREND);
 setStatsMenuActive();
 
-render(filterHeader, new FilterComponent(filters).getElement(), RenderPosition.AFTEREND);
+render(filterHeader, new Filter(filters).getElement(), RenderPosition.AFTEREND);
 renderOld(tripEvents, createSortTemplate(sortOptions));
 setEventSortActive();
 
@@ -81,7 +81,7 @@ const cards = generateCards(TASK_COUNT).sort((a, b) => a.start > b.start);
 cards.forEach((card) => {
   renderOld(eventsList, createCardTemplate(card));
 });
-renderOld(tripRoute, createRouteTemplate(cards), `afterbegin`);
+render(tripRoute, new Route(cards).getElement(), RenderPosition.AFTERBEGIN);
 totalPrice.textContent = getTotalSum(cards);
 
 const firstEvent = eventsList.querySelector(`li`);
