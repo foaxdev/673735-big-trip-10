@@ -1,4 +1,4 @@
-import {createItems, formatDate, formatTime, millisecondsToHm} from "../utils";
+import {createElement, createItems, formatDate, formatTime, millisecondsToHm} from "../utils";
 
 const getOfferHtml = (offer) => {
   return (`
@@ -16,7 +16,7 @@ const getImageHtml = (imageSrc) => {
   `);
 };
 
-export const createEditCardTemplate = (cardData) => {
+const createEditCardTemplate = (cardData) => {
   const {type, city, photos, description, start, end, price} = cardData;
 
   const startDate = formatDate(start, false);
@@ -208,7 +208,7 @@ export const createEditCardTemplate = (cardData) => {
   `);
 };
 
-export const createCardTemplate = (cardData) => {
+const createCardTemplate = (cardData) => {
   const {type, amenities, start, end, price} = cardData;
 
   const startDate = formatDate(start, true);
@@ -252,3 +252,30 @@ export const createCardTemplate = (cardData) => {
     </li>
   `);
 };
+
+export default class Card {
+  constructor(cardData) {
+    this._cardData = cardData;
+    this._element = null;
+  }
+
+  getTemplate() {
+    return createCardTemplate(this._cardData);
+  }
+
+  getEditTemplate() {
+    return createEditCardTemplate(this._cardData);
+  }
+
+  getElement() {
+    if (!this._element) {
+      this._element = createElement(this.getTemplate());
+    }
+
+    return this._element;
+  }
+
+  removeElement() {
+    this._element = null;
+  }
+}

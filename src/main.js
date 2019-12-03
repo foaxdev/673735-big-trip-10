@@ -1,7 +1,7 @@
 import Menu from "./components/menu";
 import Route from "./components/route";
 import Sort from "./components/sort";
-import {createEditCardTemplate, createCardTemplate} from "./components/card";
+import Card from "./components/card";
 import {createAddEventTemplate} from "./components/event";
 import Task, {TASK_COUNT} from "./components/task";
 import {generateCards} from "./mock/card";
@@ -79,10 +79,7 @@ const eventsList = document.querySelector(`.trip-events__list`);
 const cards = generateCards(TASK_COUNT).sort((a, b) => a.start > b.start);
 
 cards.forEach((card) => {
-  renderOld(eventsList, createCardTemplate(card));
+  render(eventsList, new Card(card).getElement(), RenderPosition.BEFOREEND);
 });
 render(tripRoute, new Route(cards).getElement(), RenderPosition.AFTERBEGIN);
 totalPrice.textContent = getTotalSum(cards);
-
-const firstEvent = eventsList.querySelector(`li`);
-renderOld(firstEvent, createEditCardTemplate(cards[0]), `beforebegin`);
