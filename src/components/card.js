@@ -1,11 +1,49 @@
-export const createEditCardTemplate = () => {
+import {createItems, millisecondsToHm} from "../utils";
+
+const formatDate = (date, isLong) => {
+  const dateYear = date.getFullYear();
+  const dateMonth = (`0` + date.getMonth()).slice(-2);
+  const dateDay = (`0` + date.getDate()).slice(-2);
+
+  return isLong ? `${dateYear}-${dateMonth}-${dateDay}` : `${dateDay}/${dateMonth}/${dateYear.toString().slice(-2)}`
+};
+
+const formatTime = (hours, minutes) => {
+  return `${hours}:${(`0` + minutes).slice(-2)}`
+};
+
+const getOfferHtml = (offer) => {
+  return (`
+    <li class="event__offer">
+      <span class="event__offer-title">${offer.title}</span>
+      &plus;
+      &euro;&nbsp;<span class="event__offer-price">${offer.price}</span>
+     </li>
+  `);
+};
+
+const getImageHtml = (imageSrc) => {
+  return(`
+    <img class="event__photo" src="${imageSrc}" alt="Event photo">
+  `);
+};
+
+export const createEditCardTemplate = (cardData) => {
+  const {type, city, photos, description, start, end, price} = cardData;
+
+  const startDate = formatDate(start, false);
+  const endDate = formatDate(end, false);
+
+  const startTime = formatTime(start.getHours(), start.getMinutes());
+  const endTime = formatTime(end.getHours(), end.getMinutes());
+
   return (`
     <form class="event  event--edit" action="#" method="post">
       <header class="event__header">
         <div class="event__type-wrapper">
           <label class="event__type  event__type-btn" for="event-type-toggle-1">
             <span class="visually-hidden">Choose event type</span>
-            <img class="event__type-icon" width="17" height="17" src="img/icons/flight.png" alt="Event type icon">
+            <img class="event__type-icon" width="17" height="17" src="img/icons/${type}.png" alt="Event type icon">
           </label>
           <input class="event__type-toggle  visually-hidden" id="event-type-toggle-1" type="checkbox">
 
@@ -74,7 +112,7 @@ export const createEditCardTemplate = () => {
           <label class="event__label  event__type-output" for="event-destination-1">
             Sightseeing at
           </label>
-          <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="Saint Petersburg" list="destination-list-1">
+          <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${city}" list="destination-list-1">
           <datalist id="destination-list-1">
             <option value="Amsterdam"></option>
             <option value="Geneva"></option>
@@ -86,12 +124,12 @@ export const createEditCardTemplate = () => {
           <label class="visually-hidden" for="event-start-time-1">
             From
           </label>
-          <input class="event__input  event__input--time" id="event-start-time-1" type="text" name="event-start-time" value="18/03/19 12:25">
+          <input class="event__input  event__input--time" id="event-start-time-1" type="text" name="event-start-time" value="${startDate} ${startTime}">
           &mdash;
           <label class="visually-hidden" for="event-end-time-1">
             To
           </label>
-          <input class="event__input  event__input--time" id="event-end-time-1" type="text" name="event-end-time" value="18/03/19 13:35">
+          <input class="event__input  event__input--time" id="event-end-time-1" type="text" name="event-end-time" value="${endDate} ${endTime}">
         </div>
 
         <div class="event__field-group  event__field-group--price">
@@ -99,7 +137,7 @@ export const createEditCardTemplate = () => {
             <span class="visually-hidden">Price</span>
             &euro;
           </label>
-          <input class="event__input  event__input--price" id="event-price-1" type="text" name="event-price" value="160">
+          <input class="event__input  event__input--price" id="event-price-1" type="text" name="event-price" value="${price}">
         </div>
 
         <button class="event__save-btn  btn  btn--blue" type="submit">Save</button>
@@ -119,69 +157,61 @@ export const createEditCardTemplate = () => {
       </header>
 
       <section class="event__details">
-
         <section class="event__section  event__section--offers">
           <h3 class="event__section-title  event__section-title--offers">Offers</h3>
-
           <div class="event__available-offers">
             <div class="event__offer-selector">
-              <input class="event__offer-checkbox  visually-hidden" id="event-offer-luggage-1" type="checkbox" name="event-offer-luggage" checked>
-              <label class="event__offer-label" for="event-offer-luggage-1">
-                <span class="event__offer-title">Add luggage</span>
-                &plus;
-                &euro;&nbsp;<span class="event__offer-price">30</span>
-              </label>
-            </div>
+                <input class="event__offer-checkbox  visually-hidden" id="event-offer-luggage-1" type="checkbox" name="event-offer-luggage" checked>
+                <label class="event__offer-label" for="event-offer-luggage-1">
+                  <span class="event__offer-title">Add luggage</span>
+                  &plus;
+                  &euro;&nbsp;<span class="event__offer-price">30</span>
+                </label>
+              </div>
 
-            <div class="event__offer-selector">
-              <input class="event__offer-checkbox  visually-hidden" id="event-offer-comfort-1" type="checkbox" name="event-offer-comfort" checked>
-              <label class="event__offer-label" for="event-offer-comfort-1">
-                <span class="event__offer-title">Switch to comfort class</span>
-                &plus;
-                &euro;&nbsp;<span class="event__offer-price">100</span>
-              </label>
-            </div>
+              <div class="event__offer-selector">
+                <input class="event__offer-checkbox  visually-hidden" id="event-offer-comfort-1" type="checkbox" name="event-offer-comfort" checked>
+                <label class="event__offer-label" for="event-offer-comfort-1">
+                  <span class="event__offer-title">Switch to comfort class</span>
+                  &plus;
+                  &euro;&nbsp;<span class="event__offer-price">100</span>
+                </label>
+              </div>
 
-            <div class="event__offer-selector">
-              <input class="event__offer-checkbox  visually-hidden" id="event-offer-meal-1" type="checkbox" name="event-offer-meal">
-              <label class="event__offer-label" for="event-offer-meal-1">
-                <span class="event__offer-title">Add meal</span>
-                &plus;
-                &euro;&nbsp;<span class="event__offer-price">15</span>
-              </label>
-            </div>
+              <div class="event__offer-selector">
+                <input class="event__offer-checkbox  visually-hidden" id="event-offer-meal-1" type="checkbox" name="event-offer-meal">
+                <label class="event__offer-label" for="event-offer-meal-1">
+                  <span class="event__offer-title">Add meal</span>
+                  &plus;
+                  &euro;&nbsp;<span class="event__offer-price">15</span>
+                </label>
+              </div>
 
-            <div class="event__offer-selector">
-              <input class="event__offer-checkbox  visually-hidden" id="event-offer-seats-1" type="checkbox" name="event-offer-seats">
-              <label class="event__offer-label" for="event-offer-seats-1">
-                <span class="event__offer-title">Choose seats</span>
-                &plus;
-                &euro;&nbsp;<span class="event__offer-price">5</span>
-              </label>
-            </div>
+              <div class="event__offer-selector">
+                <input class="event__offer-checkbox  visually-hidden" id="event-offer-seats-1" type="checkbox" name="event-offer-seats">
+                <label class="event__offer-label" for="event-offer-seats-1">
+                  <span class="event__offer-title">Choose seats</span>
+                  &plus;
+                  &euro;&nbsp;<span class="event__offer-price">5</span>
+                </label>
+              </div>
 
-            <div class="event__offer-selector">
-              <input class="event__offer-checkbox  visually-hidden" id="event-offer-train-1" type="checkbox" name="event-offer-train">
-              <label class="event__offer-label" for="event-offer-train-1">
-                <span class="event__offer-title">Travel by train</span>
-                &plus;
-                &euro;&nbsp;<span class="event__offer-price">40</span>
-              </label>
-            </div>
+              <div class="event__offer-selector">
+                <input class="event__offer-checkbox  visually-hidden" id="event-offer-train-1" type="checkbox" name="event-offer-train">
+                <label class="event__offer-label" for="event-offer-train-1">
+                  <span class="event__offer-title">Travel by train</span>
+                  &plus;
+                  &euro;&nbsp;<span class="event__offer-price">40</span>
+                </label>
+              </div>
           </div>
         </section>
-
         <section class="event__section  event__section--destination">
           <h3 class="event__section-title  event__section-title--destination">Destination</h3>
-          <p class="event__destination-description">Geneva is a city in Switzerland that lies at the southern tip of expansive Lac Léman (Lake Geneva). Surrounded by the Alps and Jura mountains, the city has views of dramatic Mont Blanc.</p>
-
+          <p class="event__destination-description">${description}</p>
           <div class="event__photos-container">
             <div class="event__photos-tape">
-              <img class="event__photo" src="img/photos/1.jpg" alt="Event photo">
-              <img class="event__photo" src="img/photos/2.jpg" alt="Event photo">
-              <img class="event__photo" src="img/photos/3.jpg" alt="Event photo">
-              <img class="event__photo" src="img/photos/4.jpg" alt="Event photo">
-              <img class="event__photo" src="img/photos/5.jpg" alt="Event photo">
+              ${createItems(photos, getImageHtml)}
             </div>
           </div>
         </section>
@@ -190,35 +220,41 @@ export const createEditCardTemplate = () => {
   `);
 };
 
-export const createCardTemplate = () => {
+export const createCardTemplate = (cardData) => {
+  const {type, amenities, start, end, price} = cardData;
+
+  const startDate = formatDate(start, true);
+  const endDate = formatDate(end, true);
+
+  const startTime = formatTime(start.getHours(), start.getMinutes());
+  const endTime = formatTime(end.getHours(), end.getMinutes());
+
+  const duration = millisecondsToHm(end.getTime() - start.getTime());
+
   return (`
     <li class="trip-events__item">
       <div class="event">
         <div class="event__type">
-          <img class="event__type-icon" width="42" height="42" src="img/icons/taxi.png" alt="Event type icon">
+          <img class="event__type-icon" width="42" height="42" src="img/icons/${type}.png" alt="Event type icon">
         </div>
         <h3 class="event__title">Taxi to airport</h3>
 
         <div class="event__schedule">
           <p class="event__time">
-            <time class="event__start-time" datetime="2019-03-18T10:30">10:30</time>
+            <time class="event__start-time" datetime="${startDate}T${startTime}">${startTime}</time>
             &mdash;
-            <time class="event__end-time" datetime="2019-03-18T11:00">11:00</time>
+            <time class="event__end-time" datetime="${endDate}T${endTime}">${endTime}</time>
           </p>
-          <p class="event__duration">1H 30M</p>
+          <p class="event__duration">${duration}</p>
         </div>
 
         <p class="event__price">
-          &euro;&nbsp;<span class="event__price-value">20</span>
+          &euro;&nbsp;<span class="event__price-value">${price}</span>
         </p>
 
         <h4 class="visually-hidden">Offers:</h4>
         <ul class="event__selected-offers">
-          <li class="event__offer">
-            <span class="event__offer-title">Order Uber</span>
-            &plus;
-            &euro;&nbsp;<span class="event__offer-price">20</span>
-           </li>
+           ${amenities.length > 0 ? createItems(amenities, getOfferHtml) : ``}
         </ul>
 
         <button class="event__rollup-btn" type="button">
