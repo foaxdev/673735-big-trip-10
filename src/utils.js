@@ -25,3 +25,15 @@ export const millisecondsToHm = (timeInMs) => {
 
   return `${hours}H ${minutes}M`;
 };
+
+export const formatDate = (date, isLong) => {
+  const dateYear = date.getFullYear();
+  const dateMonth = leftPad(date.getMonth(), `0`, 2);
+  const dateDay = leftPad(date.getDate(), `0`, 2);
+
+  return isLong ? `${dateYear}-${dateMonth}-${dateDay}` : `${dateDay}/${dateMonth}/${leftPad(dateYear.toString(), ``, 2)}`
+};
+
+export const formatTime = (hours, minutes) => {
+  return `${hours}:${leftPad(minutes, `0`, 2)}`
+};
