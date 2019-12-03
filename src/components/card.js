@@ -1,15 +1,15 @@
-import {createItems, millisecondsToHm} from "../utils";
+import {createItems, millisecondsToHm, leftPad} from "../utils";
 
 const formatDate = (date, isLong) => {
   const dateYear = date.getFullYear();
-  const dateMonth = (`0` + date.getMonth()).slice(-2);
-  const dateDay = (`0` + date.getDate()).slice(-2);
+  const dateMonth = leftPad(date.getMonth(), `0`, 2);
+  const dateDay = leftPad(date.getDate(), `0`, 2);
 
-  return isLong ? `${dateYear}-${dateMonth}-${dateDay}` : `${dateDay}/${dateMonth}/${dateYear.toString().slice(-2)}`
+  return isLong ? `${dateYear}-${dateMonth}-${dateDay}` : `${dateDay}/${dateMonth}/${leftPad(dateYear.toString(), ``, 2)}`
 };
 
 const formatTime = (hours, minutes) => {
-  return `${hours}:${(`0` + minutes).slice(-2)}`
+  return `${hours}:${leftPad(minutes, `0`, 2)}`
 };
 
 const getOfferHtml = (offer) => {

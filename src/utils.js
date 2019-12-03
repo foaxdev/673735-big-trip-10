@@ -4,6 +4,10 @@ export const capitalizeFirstLetter = (word) => {
   return word.charAt(0).toUpperCase() + word.slice(1);
 };
 
+export const leftPad = (str, symbol, charsReturnQuantity) => {
+  return (symbol + str).slice(-charsReturnQuantity);
+};
+
 export const createItems = (elementsData, getHtml) => {
   const container = document.createDocumentFragment();
   container.innerHTML = ``;
