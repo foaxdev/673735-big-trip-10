@@ -9,8 +9,9 @@ import {menuNames} from "./mock/menu";
 import {filters} from "./mock/filter";
 import {sortOptions} from "./mock/sort";
 import Filter from "./components/filter";
-import {render, RenderPosition} from "./utils";
+import {render} from "./utils";
 import CardEdit from "./components/card-edit";
+import {Keys, RenderPosition} from "./const";
 
 const setMenuItemActive = (menuElement) => {
   const menuItems = document.querySelectorAll(`.trip-tabs__btn`);
@@ -77,11 +78,39 @@ render(tripEvents, new Task().getElement(), RenderPosition.BEFOREEND);
 
 const eventsList = document.querySelector(`.trip-events__list`);
 
+const replaceCardToEdit = (card, editCard) => {
+  eventsList.replaceChild(editCard, card);
+};
+
+const replaceEditToCard = (card, editCard) => {
+  eventsList.replaceChild(card, editCard);
+};
+
 const cards = generateCards(TASK_COUNT).sort((a, b) => a.start > b.start);
 
+const closeAllEditCards = () => {
+
+};
+
 cards.forEach((card) => {
-  render(eventsList, new Card(card).getElement(), RenderPosition.BEFOREEND);
-  const editCard = new CardEdit(card);
+  const cardElement = new Card(card).getElement();
+  const editButton = cardElement.querySelector(`.event__rollup-btn`);
+
+  const editCard = new CardEdit(card).getElement();
+
+  const onEscKeyDown = (evt) => {
+    if (evt.key === Keys.ESCAPE) {
+      replaceEditToCard(cardElement, editCard);
+      document.removeEventListener(`keydown`, onEscKeyDown);
+    }
+  };
+
+  editButton.addEventListener(`click`, () => {
+    replaceCardToEdit(cardElement, editCard);
+    document.addEventListener(`keydown`, onEscKeyDown);
+  });
+
+  render(eventsList, cardElement, RenderPosition.BEFOREEND);
 });
 render(tripRoute, new Route(cards).getElement(), RenderPosition.AFTERBEGIN);
 totalPrice.textContent = getTotalSum(cards);

@@ -1,4 +1,5 @@
-import {createElement, MONTHS} from "../utils";
+import {createElement} from "../utils";
+import {MONTHS} from "../const";
 
 
 const getRouteHtml = (routeInfo) => {
