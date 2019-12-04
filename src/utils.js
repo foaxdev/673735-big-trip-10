@@ -5,7 +5,7 @@ export const capitalizeFirstLetter = (word) => {
 };
 
 export const leftPad = (str, padString, targetLength) => {
-  return str.padStart(targetLength, padString);
+  return str.toString().padStart(targetLength, padString);
 };
 
 export const createItems = (elementsData, getHtml) => {
