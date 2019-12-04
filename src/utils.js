@@ -28,14 +28,14 @@ export const millisecondsToHm = (timeInMs) => {
 
 export const formatDate = (date, isLong) => {
   const dateYear = date.getFullYear();
-  const dateMonth = leftPad(date.getMonth() + 1, `0`, 2).slice(-2);
-  const dateDay = leftPad(date.getDate(), `0`, 2).slice(-2);
+  const dateMonth = leftPad(date.getMonth() + 1, `0`, 2);
+  const dateDay = leftPad(date.getDate(), `0`, 2);
 
   return isLong ? `${dateYear}-${dateMonth}-${dateDay}` : `${dateDay}/${dateMonth}/${dateYear.toString().slice(-2)}`
 };
 
 export const formatTime = (hours, minutes) => {
-  return `${hours}:${leftPad(minutes, `0`, 2).slice(-2)}`
+  return `${hours}:${leftPad(minutes, `0`, 2)}`
 };
 
 export const createElement = (template) => {
