@@ -78,25 +78,21 @@ render(tripEvents, new Task().getElement(), RenderPosition.BEFOREEND);
 
 const eventsList = document.querySelector(`.trip-events__list`);
 
-const replaceCardToEdit = (card, editCard) => {
-  eventsList.replaceChild(editCard, card);
-};
-
-const replaceEditToCard = (card, editCard) => {
-  eventsList.replaceChild(card, editCard);
-};
-
 const cards = generateCards(TASK_COUNT).sort((a, b) => a.start > b.start);
-
-const closeAllEditCards = () => {
-
-};
 
 cards.forEach((card) => {
   const cardElement = new Card(card).getElement();
   const editButton = cardElement.querySelector(`.event__rollup-btn`);
 
   const editCard = new CardEdit(card).getElement();
+
+  const replaceCardToEdit = (card, editCard) => {
+    eventsList.replaceChild(editCard, card);
+  };
+
+  const replaceEditToCard = (card, editCard) => {
+    eventsList.replaceChild(card, editCard);
+  };
 
   const onEscKeyDown = (evt) => {
     if (evt.key === Keys.ESCAPE) {
@@ -105,9 +101,18 @@ cards.forEach((card) => {
     }
   };
 
+  const onSubmitForm = (evt) => {
+    evt.preventDefault();
+    replaceEditToCard(cardElement, editCard);
+    editCard.removeEventListener(`submit`, onSubmitForm);
+    // TODO: send form
+  };
+
   editButton.addEventListener(`click`, () => {
     replaceCardToEdit(cardElement, editCard);
     document.addEventListener(`keydown`, onEscKeyDown);
+    console.log(editCard);
+    editCard.addEventListener(`submit`, onSubmitForm);
   });
 
   render(eventsList, cardElement, RenderPosition.BEFOREEND);
