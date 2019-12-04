@@ -35,7 +35,7 @@ export const millisecondsToHm = (timeInMs) => {
 
 export const formatDate = (date, isLong) => {
   const dateYear = date.getFullYear();
-  const dateMonth = leftPad(date.getMonth(), `0`, 2);
+  const dateMonth = leftPad(date.getMonth() + 1, `0`, 2);
   const dateDay = leftPad(date.getDate(), `0`, 2);
 
   return isLong ? `${dateYear}-${dateMonth}-${dateDay}` : `${dateDay}/${dateMonth}/${leftPad(dateYear.toString(), ``, 2)}`

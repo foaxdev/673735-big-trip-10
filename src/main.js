@@ -10,6 +10,7 @@ import {filters} from "./mock/filter";
 import {sortOptions} from "./mock/sort";
 import Filter from "./components/filter";
 import {render, RenderPosition} from "./utils";
+import CardEdit from "./components/card-edit";
 
 const setMenuItemActive = (menuElement) => {
   const menuItems = document.querySelectorAll(`.trip-tabs__btn`);
@@ -80,6 +81,7 @@ const cards = generateCards(TASK_COUNT).sort((a, b) => a.start > b.start);
 
 cards.forEach((card) => {
   render(eventsList, new Card(card).getElement(), RenderPosition.BEFOREEND);
+  const editCard = new CardEdit(card);
 });
 render(tripRoute, new Route(cards).getElement(), RenderPosition.AFTERBEGIN);
 totalPrice.textContent = getTotalSum(cards);
