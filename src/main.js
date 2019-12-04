@@ -83,7 +83,6 @@ const cards = generateCards(TASK_COUNT).sort((a, b) => a.start > b.start);
 cards.forEach((card) => {
   const cardElement = new Card(card).getElement();
   const editButton = cardElement.querySelector(`.event__rollup-btn`);
-
   const editCard = new CardEdit(card).getElement();
 
   const replaceCardToEdit = (card, editCard) => {
@@ -111,7 +110,6 @@ cards.forEach((card) => {
   editButton.addEventListener(`click`, () => {
     replaceCardToEdit(cardElement, editCard);
     document.addEventListener(`keydown`, onEscKeyDown);
-    console.log(editCard);
     editCard.addEventListener(`submit`, onSubmitForm);
   });
 
