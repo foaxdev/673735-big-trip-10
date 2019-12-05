@@ -1,4 +1,4 @@
-import {capitalizeFirstLetter, createItems} from "../utils";
+import {capitalizeFirstLetter, createElement, createItems} from "../utils";
 
 const getFilterHtml = (filter) => {
   const filterName = capitalizeFirstLetter(filter);
@@ -11,7 +11,7 @@ const getFilterHtml = (filter) => {
   `);
 };
 
-export const createFilterTemplate = (filters) => {
+const createFilterTemplate = (filters) => {
   return (`
     <h2 class="visually-hidden">Filter events</h2>
     <form class="trip-filters  trip-filters--hidden" action="#" method="get">
@@ -20,3 +20,26 @@ export const createFilterTemplate = (filters) => {
     </form>
   `);
 };
+
+export default class Filter {
+  constructor(filters) {
+    this._filters = filters;
+    this._element = null;
+  }
+
+  getTemplate() {
+    return createFilterTemplate(this._filters);
+  }
+
+  getElement() {
+    if (!this._element) {
+      this._element = createElement(this.getTemplate());
+    }
+
+    return this._element;
+  }
+
+  removeElement() {
+    this._element = null;
+  }
+}

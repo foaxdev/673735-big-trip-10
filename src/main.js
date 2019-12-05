@@ -1,14 +1,17 @@
-import {createMenuTemplate} from "./components/menu";
-import {createFilterTemplate} from "./components/filter";
-import {createRouteTemplate} from "./components/route";
-import {createSortTemplate} from "./components/sort";
-import {createEditCardTemplate, createCardTemplate} from "./components/card";
+import Menu from "./components/menu";
+import Route from "./components/route";
+import Sort from "./components/sort";
+import Card from "./components/card";
 import {createAddEventTemplate} from "./components/event";
-import {createTasksTemplate, TASK_COUNT} from "./components/task";
+import Task, {TASK_COUNT} from "./components/task";
 import {generateCards} from "./mock/card";
 import {menuNames} from "./mock/menu";
 import {filters} from "./mock/filter";
 import {sortOptions} from "./mock/sort";
+import Filter from "./components/filter";
+import {render} from "./utils";
+import CardEdit from "./components/card-edit";
+import {Keys, RenderPosition} from "./const";
 
 const setMenuItemActive = (menuElement) => {
   const menuItems = document.querySelectorAll(`.trip-tabs__btn`);
@@ -36,7 +39,7 @@ const setSortItemChecked = (sortItem) => {
   sortItem.setAttribute(`checked`, `checked`);
 };
 
-const render = (container, template, place = `beforeend`) => {
+const renderOld = (container, template, place = `beforeend`) => {
   container.insertAdjacentHTML(place, template);
 };
 
@@ -63,25 +66,54 @@ const tripRoute = document.querySelector(`.trip-main__trip-info`);
 const tripEvents = document.querySelector(`.trip-events`);
 const totalPrice = document.querySelector(`.trip-info__cost-value`);
 
-render(menuHeader, createMenuTemplate(menuNames), `afterend`);
+render(menuHeader, new Menu(menuNames).getElement(), RenderPosition.AFTEREND);
 setStatsMenuActive();
 
-render(filterHeader, createFilterTemplate(filters), `afterend`);
-render(tripEvents, createSortTemplate(sortOptions));
+render(filterHeader, new Filter(filters).getElement(), RenderPosition.AFTEREND);
+render(tripEvents, new Sort(sortOptions).getElement(), RenderPosition.BEFOREEND);
 setEventSortActive();
 
-render(tripEvents, createAddEventTemplate());
-render(tripEvents, createTasksTemplate());
+renderOld(tripEvents, createAddEventTemplate());
+render(tripEvents, new Task().getElement(), RenderPosition.BEFOREEND);
 
 const eventsList = document.querySelector(`.trip-events__list`);
 
 const cards = generateCards(TASK_COUNT).sort((a, b) => a.start > b.start);
 
 cards.forEach((card) => {
-  render(eventsList, createCardTemplate(card));
-});
-render(tripRoute, createRouteTemplate(cards), `afterbegin`);
-totalPrice.textContent = getTotalSum(cards);
+  const cardElement = new Card(card).getElement();
+  const editButton = cardElement.querySelector(`.event__rollup-btn`);
+  const editCard = new CardEdit(card).getElement();
 
-const firstEvent = eventsList.querySelector(`li`);
-render(firstEvent, createEditCardTemplate(cards[0]), `beforebegin`);
+  const replaceCardToEdit = (card, editCard) => {
+    eventsList.replaceChild(editCard, card);
+  };
+
+  const replaceEditToCard = (card, editCard) => {
+    eventsList.replaceChild(card, editCard);
+  };
+
+  const onEscKeyDown = (evt) => {
+    if (evt.key === Keys.ESCAPE) {
+      replaceEditToCard(cardElement, editCard);
+      document.removeEventListener(`keydown`, onEscKeyDown);
+    }
+  };
+
+  const onSubmitForm = (evt) => {
+    evt.preventDefault();
+    replaceEditToCard(cardElement, editCard);
+    editCard.removeEventListener(`submit`, onSubmitForm);
+    // TODO: send form
+  };
+
+  editButton.addEventListener(`click`, () => {
+    replaceCardToEdit(cardElement, editCard);
+    document.addEventListener(`keydown`, onEscKeyDown);
+    editCard.addEventListener(`submit`, onSubmitForm);
+  });
+
+  render(eventsList, cardElement, RenderPosition.BEFOREEND);
+});
+render(tripRoute, new Route(cards).getElement(), RenderPosition.AFTERBEGIN);
+totalPrice.textContent = getTotalSum(cards);

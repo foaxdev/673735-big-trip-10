@@ -1,6 +1,8 @@
+import {createElement} from "../utils";
+
 export const TASK_COUNT = 3;
 
-export const createTasksTemplate = () => {
+const createTasksTemplate = () => {
   return (`
     <ul class="trip-days">
       <li class="trip-days__item  day">
@@ -14,3 +16,25 @@ export const createTasksTemplate = () => {
     </ul>
   `);
 };
+
+export default class Task {
+  constructor() {
+    this._element = null;
+  }
+
+  getTemplate() {
+    return createTasksTemplate();
+  }
+
+  getElement() {
+    if (!this._element) {
+      this._element = createElement(this.getTemplate());
+    }
+
+    return this._element;
+  }
+
+  removeElement() {
+    this._element = null;
+  }
+}
