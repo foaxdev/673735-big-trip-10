@@ -1,5 +1,5 @@
-import {createElement} from "../utils";
 import AbstractComponent from "./abstract-component";
+import {createElement} from "../utils/render";
 
 const createTipTemplate = (message) => {
   return(`

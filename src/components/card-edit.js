@@ -1,5 +1,6 @@
-import {createElement, createItems, formatDate, formatTime} from "../utils";
+import {createItems, formatDate, formatTime} from "../utils";
 import AbstractComponent from "./abstract-component";
+import {createElement} from "../utils/render";
 
 const getImageHtml = (imageSrc) => {
   return(`
@@ -208,5 +209,13 @@ export default class CardEdit extends AbstractComponent {
 
   getTemplate() {
     return createEditCardTemplate(this._cardData);
+  }
+
+  setSubmitHandler(handler) {
+    this.getElement().addEventListener(`submit`, handler);
+  }
+
+  removeSubmitHandler(handler) {
+    this.getElement().removeEventListener(`submit`, handler);
   }
 }

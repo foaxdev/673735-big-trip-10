@@ -9,10 +9,10 @@ import {menuNames} from "./mock/menu";
 import {filters} from "./mock/filter";
 import {sortOptions} from "./mock/sort";
 import Filter from "./components/filter";
-import {render} from "./utils";
 import CardEdit from "./components/card-edit";
-import {Keys, RenderPosition, TIP_MESSAGE} from "./const";
+import {Keys, TIP_MESSAGE} from "./const";
 import Tip from "./components/tip";
+import {render, RenderPosition, replace} from "./utils/render";
 
 const setMenuItemActive = (menuElement) => {
   const menuItems = document.querySelectorAll(`.trip-tabs__btn`);
@@ -57,27 +57,27 @@ const getTotalSum = (tripPoints) => {
 };
 
 const addCards = () => {
-  render(tripEvents, new Sort(sortOptions).getElement(), RenderPosition.BEFOREEND);
+  render(tripEvents, new Sort(sortOptions), RenderPosition.BEFOREEND);
   setEventSortActive();
 
-  render(tripEvents, new Event().getElement(), RenderPosition.BEFOREEND);
-  render(tripEvents, new Task().getElement(), RenderPosition.BEFOREEND);
+  render(tripEvents, new Event(), RenderPosition.BEFOREEND);
+  render(tripEvents, new Task(), RenderPosition.BEFOREEND);
 
   const eventsList = document.querySelector(`.trip-events__list`);
 
   const cards = generateCards(TASK_COUNT).sort((a, b) => a.start > b.start);
 
   cards.forEach((card) => {
-    const cardElement = new Card(card).getElement();
-    const editButton = cardElement.querySelector(`.event__rollup-btn`);
-    const editCard = new CardEdit(card).getElement();
+    const cardElement = new Card(card);
+    const editButton = cardElement.getElement().querySelector(`.event__rollup-btn`);
+    const editCard = new CardEdit(card);
 
-    const replaceCardToEdit = (card, editCard) => {
-      eventsList.replaceChild(editCard, card);
+    const replaceCardToEdit = (cardComponent, editCardComponent) => {
+      replace(editCardComponent, cardComponent);
     };
 
-    const replaceEditToCard = (card, editCard) => {
-      eventsList.replaceChild(card, editCard);
+    const replaceEditToCard = (cardComponent, editCardComponent) => {
+      replace(cardComponent, editCardComponent);
     };
 
     const onEscKeyDown = (evt) => {
@@ -90,19 +90,19 @@ const addCards = () => {
     const onSubmitForm = (evt) => {
       evt.preventDefault();
       replaceEditToCard(cardElement, editCard);
-      editCard.removeEventListener(`submit`, onSubmitForm);
+      editCard.removeSubmitHandler(onSubmitForm);
       // TODO: send form
     };
 
     editButton.addEventListener(`click`, () => {
       replaceCardToEdit(cardElement, editCard);
       document.addEventListener(`keydown`, onEscKeyDown);
-      editCard.addEventListener(`submit`, onSubmitForm);
+      editCard.setSubmitHandler(onSubmitForm);
     });
 
     render(eventsList, cardElement, RenderPosition.BEFOREEND);
   });
-  render(tripRoute, new Route(cards).getElement(), RenderPosition.AFTERBEGIN);
+  render(tripRoute, new Route(cards), RenderPosition.AFTERBEGIN);
   totalPrice.textContent = getTotalSum(cards);
 };
 
@@ -117,10 +117,10 @@ const tripRoute = document.querySelector(`.trip-main__trip-info`);
 const tripEvents = document.querySelector(`.trip-events`);
 const totalPrice = document.querySelector(`.trip-info__cost-value`);
 
-render(menuHeader, new Menu(menuNames).getElement(), RenderPosition.AFTEREND);
+render(menuHeader, new Menu(menuNames), RenderPosition.AFTEREND);
 setStatsMenuActive();
 
-render(filterHeader, new Filter(filters).getElement(), RenderPosition.AFTEREND);
+render(filterHeader, new Filter(filters), RenderPosition.AFTEREND);
 
 if (TASK_COUNT > 0) {
   addCards();

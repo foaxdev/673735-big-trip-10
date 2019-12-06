@@ -1,6 +1,6 @@
-import {createElement} from "../utils";
 import {MONTHS} from "../const";
 import AbstractComponent from "./abstract-component";
+import {createElement} from "../utils/render";
 
 
 const getRouteHtml = (routeInfo) => {
