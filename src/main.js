@@ -11,7 +11,8 @@ import {sortOptions} from "./mock/sort";
 import Filter from "./components/filter";
 import {render} from "./utils";
 import CardEdit from "./components/card-edit";
-import {Keys, RenderPosition} from "./const";
+import {Keys, RenderPosition, TIP_MESSAGE} from "./const";
+import Tip from "./components/tip";
 
 const setMenuItemActive = (menuElement) => {
   const menuItems = document.querySelectorAll(`.trip-tabs__btn`);
@@ -59,6 +60,60 @@ const getTotalSum = (tripPoints) => {
     .reduce((a, b) => a + b, 0);
 };
 
+const addCards = () => {
+  render(tripEvents, new Sort(sortOptions).getElement(), RenderPosition.BEFOREEND);
+  setEventSortActive();
+
+  renderOld(tripEvents, createAddEventTemplate());
+  render(tripEvents, new Task().getElement(), RenderPosition.BEFOREEND);
+
+  const eventsList = document.querySelector(`.trip-events__list`);
+
+  const cards = generateCards(TASK_COUNT).sort((a, b) => a.start > b.start);
+
+  cards.forEach((card) => {
+    const cardElement = new Card(card).getElement();
+    const editButton = cardElement.querySelector(`.event__rollup-btn`);
+    const editCard = new CardEdit(card).getElement();
+
+    const replaceCardToEdit = (card, editCard) => {
+      eventsList.replaceChild(editCard, card);
+    };
+
+    const replaceEditToCard = (card, editCard) => {
+      eventsList.replaceChild(card, editCard);
+    };
+
+    const onEscKeyDown = (evt) => {
+      if (evt.key === Keys.ESCAPE) {
+        replaceEditToCard(cardElement, editCard);
+        document.removeEventListener(`keydown`, onEscKeyDown);
+      }
+    };
+
+    const onSubmitForm = (evt) => {
+      evt.preventDefault();
+      replaceEditToCard(cardElement, editCard);
+      editCard.removeEventListener(`submit`, onSubmitForm);
+      // TODO: send form
+    };
+
+    editButton.addEventListener(`click`, () => {
+      replaceCardToEdit(cardElement, editCard);
+      document.addEventListener(`keydown`, onEscKeyDown);
+      editCard.addEventListener(`submit`, onSubmitForm);
+    });
+
+    render(eventsList, cardElement, RenderPosition.BEFOREEND);
+  });
+  render(tripRoute, new Route(cards).getElement(), RenderPosition.AFTERBEGIN);
+  totalPrice.textContent = getTotalSum(cards);
+};
+
+const addMessageToEmptyRoute = () => {
+  render(tripEvents, new Tip(TIP_MESSAGE).getElement(), RenderPosition.BEFOREEND);
+};
+
 const tripControls = document.querySelector(`.trip-main__trip-controls`);
 const menuHeader = tripControls.querySelectorAll(`h2`)[0];
 const filterHeader = tripControls.querySelectorAll(`h2`)[1];
@@ -70,50 +125,9 @@ render(menuHeader, new Menu(menuNames).getElement(), RenderPosition.AFTEREND);
 setStatsMenuActive();
 
 render(filterHeader, new Filter(filters).getElement(), RenderPosition.AFTEREND);
-render(tripEvents, new Sort(sortOptions).getElement(), RenderPosition.BEFOREEND);
-setEventSortActive();
 
-renderOld(tripEvents, createAddEventTemplate());
-render(tripEvents, new Task().getElement(), RenderPosition.BEFOREEND);
-
-const eventsList = document.querySelector(`.trip-events__list`);
-
-const cards = generateCards(TASK_COUNT).sort((a, b) => a.start > b.start);
-
-cards.forEach((card) => {
-  const cardElement = new Card(card).getElement();
-  const editButton = cardElement.querySelector(`.event__rollup-btn`);
-  const editCard = new CardEdit(card).getElement();
-
-  const replaceCardToEdit = (card, editCard) => {
-    eventsList.replaceChild(editCard, card);
-  };
-
-  const replaceEditToCard = (card, editCard) => {
-    eventsList.replaceChild(card, editCard);
-  };
-
-  const onEscKeyDown = (evt) => {
-    if (evt.key === Keys.ESCAPE) {
-      replaceEditToCard(cardElement, editCard);
-      document.removeEventListener(`keydown`, onEscKeyDown);
-    }
-  };
-
-  const onSubmitForm = (evt) => {
-    evt.preventDefault();
-    replaceEditToCard(cardElement, editCard);
-    editCard.removeEventListener(`submit`, onSubmitForm);
-    // TODO: send form
-  };
-
-  editButton.addEventListener(`click`, () => {
-    replaceCardToEdit(cardElement, editCard);
-    document.addEventListener(`keydown`, onEscKeyDown);
-    editCard.addEventListener(`submit`, onSubmitForm);
-  });
-
-  render(eventsList, cardElement, RenderPosition.BEFOREEND);
-});
-render(tripRoute, new Route(cards).getElement(), RenderPosition.AFTERBEGIN);
-totalPrice.textContent = getTotalSum(cards);
+if (TASK_COUNT > 0) {
+  addCards();
+} else {
+  addMessageToEmptyRoute();
+}
