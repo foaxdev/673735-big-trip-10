@@ -2,7 +2,7 @@ import Menu from "./components/menu";
 import Route from "./components/route";
 import Sort from "./components/sort";
 import Card from "./components/card";
-import {createAddEventTemplate} from "./components/event";
+import Event from "./components/event";
 import Task, {TASK_COUNT} from "./components/task";
 import {generateCards} from "./mock/card";
 import {menuNames} from "./mock/menu";
@@ -40,10 +40,6 @@ const setSortItemChecked = (sortItem) => {
   sortItem.setAttribute(`checked`, `checked`);
 };
 
-const renderOld = (container, template, place = `beforeend`) => {
-  container.insertAdjacentHTML(place, template);
-};
-
 const setStatsMenuActive = () => {
   const menuItems = document.querySelectorAll(`.trip-tabs__btn`);
   setMenuItemActive(menuItems[1]);
@@ -64,7 +60,7 @@ const addCards = () => {
   render(tripEvents, new Sort(sortOptions).getElement(), RenderPosition.BEFOREEND);
   setEventSortActive();
 
-  renderOld(tripEvents, createAddEventTemplate());
+  render(tripEvents, new Event().getElement(), RenderPosition.BEFOREEND);
   render(tripEvents, new Task().getElement(), RenderPosition.BEFOREEND);
 
   const eventsList = document.querySelector(`.trip-events__list`);

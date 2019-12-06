@@ -1,5 +1,6 @@
 import {createElement} from "../utils";
 import {MONTHS} from "../const";
+import AbstractComponent from "./abstract-component";
 
 
 const getRouteHtml = (routeInfo) => {
@@ -36,25 +37,14 @@ const createRouteTemplate = (routeInfo) => {
   `);
 };
 
-export default class Route {
+export default class Route extends AbstractComponent {
+
   constructor(routeInfo) {
+    super();
     this._routeInfo = routeInfo;
-    this._element = null;
   }
 
   getTemplate() {
     return createRouteTemplate(this._routeInfo);
-  }
-
-  getElement() {
-    if (!this._element) {
-      this._element = createElement(this.getTemplate());
-    }
-
-    return this._element;
-  }
-
-  removeElement() {
-    this._element = null;
   }
 }

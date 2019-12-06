@@ -1,4 +1,6 @@
-export const createAddEventTemplate = () => {
+import AbstractComponent from "./abstract-component";
+
+const createAddEventTemplate = () => {
   return (`
     <form class="trip-events__item  event  event--edit" action="#" method="post">
       <header class="event__header">
@@ -109,3 +111,10 @@ export const createAddEventTemplate = () => {
     </form>
   `);
 };
+
+export default class Event extends AbstractComponent {
+
+  getTemplate() {
+    return createAddEventTemplate(this._cardData);
+  }
+}

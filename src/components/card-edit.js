@@ -1,4 +1,5 @@
 import {createElement, createItems, formatDate, formatTime} from "../utils";
+import AbstractComponent from "./abstract-component";
 
 const getImageHtml = (imageSrc) => {
   return(`
@@ -198,25 +199,14 @@ const createEditCardTemplate = (cardData) => {
   `);
 };
 
-export default class CardEdit {
+export default class CardEdit extends AbstractComponent {
+
   constructor(cardData) {
+    super();
     this._cardData = cardData;
-    this._element = null;
   }
 
   getTemplate() {
     return createEditCardTemplate(this._cardData);
-  }
-
-  getElement() {
-    if (!this._element) {
-      this._element = createElement(this.getTemplate());
-    }
-
-    return this._element;
-  }
-
-  removeElement() {
-    this._element = null;
   }
 }

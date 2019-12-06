@@ -1,4 +1,5 @@
 import {createElement, createItems, formatDate, formatTime, millisecondsToHm} from "../utils";
+import AbstractComponent from "./abstract-component";
 
 const getOfferHtml = (offer) => {
   return (`
@@ -55,25 +56,14 @@ const createCardTemplate = (cardData) => {
   `);
 };
 
-export default class Card {
+export default class Card extends AbstractComponent {
+
   constructor(cardData) {
+    super();
     this._cardData = cardData;
-    this._element = null;
   }
 
   getTemplate() {
     return createCardTemplate(this._cardData);
-  }
-
-  getElement() {
-    if (!this._element) {
-      this._element = createElement(this.getTemplate());
-    }
-
-    return this._element;
-  }
-
-  removeElement() {
-    this._element = null;
   }
 }
