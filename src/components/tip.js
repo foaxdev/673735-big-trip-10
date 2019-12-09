@@ -1,4 +1,5 @@
-import {createElement} from "../utils";
+import AbstractComponent from "./abstract-component";
+import {createElement} from "../utils/render";
 
 const createTipTemplate = (message) => {
   return(`
@@ -6,25 +7,14 @@ const createTipTemplate = (message) => {
   `);
 };
 
-export default class Tip {
+export default class Tip extends AbstractComponent {
+
   constructor(message) {
+    super();
     this._message = message;
-    this._element = null;
   }
 
   getTemplate() {
     return createTipTemplate(this._message);
-  }
-
-  getElement() {
-    if (!this._element) {
-      this._element = createElement(this.getTemplate());
-    }
-
-    return this._element;
-  }
-
-  removeElement() {
-    this._element = null;
   }
 }

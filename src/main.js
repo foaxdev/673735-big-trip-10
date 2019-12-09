@@ -1,18 +1,13 @@
 import Menu from "./components/menu";
-import Route from "./components/route";
-import Sort from "./components/sort";
-import Card from "./components/card";
-import {createAddEventTemplate} from "./components/event";
-import Task, {TASK_COUNT} from "./components/task";
-import {generateCards} from "./mock/card";
+import {TASK_COUNT} from "./components/task";
 import {menuNames} from "./mock/menu";
 import {filters} from "./mock/filter";
-import {sortOptions} from "./mock/sort";
 import Filter from "./components/filter";
-import {render} from "./utils";
-import CardEdit from "./components/card-edit";
-import {Keys, RenderPosition, TIP_MESSAGE} from "./const";
+import {TIP_MESSAGE} from "./const";
 import Tip from "./components/tip";
+import {render, RenderPosition} from "./utils/render";
+import TripController from "./controllers/trip-controller";
+import {generateCards} from "./mock/card";
 
 const setMenuItemActive = (menuElement) => {
   const menuItems = document.querySelectorAll(`.trip-tabs__btn`);
@@ -27,107 +22,30 @@ const setMenuItemActive = (menuElement) => {
   menuElement.classList.add(`trip-tabs__btn--active`);
 };
 
-const setSortItemChecked = (sortItem) => {
-  const sortItems = document.querySelectorAll(`.trip-sort__input`);
-
-  for (const sortItem of sortItems) {
-    if (sortItem.hasAttribute(`checked`)) {
-      sortItem.removeAttribute(`checked`);
-      break;
-    }
-  }
-
-  sortItem.setAttribute(`checked`, `checked`);
-};
-
-const renderOld = (container, template, place = `beforeend`) => {
-  container.insertAdjacentHTML(place, template);
-};
-
 const setStatsMenuActive = () => {
   const menuItems = document.querySelectorAll(`.trip-tabs__btn`);
   setMenuItemActive(menuItems[1]);
 };
 
-const setEventSortActive = () => {
-  const sortItems = document.querySelectorAll(`.trip-sort__input`);
-  setSortItemChecked(sortItems[0]);
-};
-
-const getTotalSum = (tripPoints) => {
-  return tripPoints
-    .map((tripPoint) => tripPoint.price)
-    .reduce((a, b) => a + b, 0);
-};
-
-const addCards = () => {
-  render(tripEvents, new Sort(sortOptions).getElement(), RenderPosition.BEFOREEND);
-  setEventSortActive();
-
-  renderOld(tripEvents, createAddEventTemplate());
-  render(tripEvents, new Task().getElement(), RenderPosition.BEFOREEND);
-
-  const eventsList = document.querySelector(`.trip-events__list`);
-
-  const cards = generateCards(TASK_COUNT).sort((a, b) => a.start > b.start);
-
-  cards.forEach((card) => {
-    const cardElement = new Card(card).getElement();
-    const editButton = cardElement.querySelector(`.event__rollup-btn`);
-    const editCard = new CardEdit(card).getElement();
-
-    const replaceCardToEdit = (card, editCard) => {
-      eventsList.replaceChild(editCard, card);
-    };
-
-    const replaceEditToCard = (card, editCard) => {
-      eventsList.replaceChild(card, editCard);
-    };
-
-    const onEscKeyDown = (evt) => {
-      if (evt.key === Keys.ESCAPE) {
-        replaceEditToCard(cardElement, editCard);
-        document.removeEventListener(`keydown`, onEscKeyDown);
-      }
-    };
-
-    const onSubmitForm = (evt) => {
-      evt.preventDefault();
-      replaceEditToCard(cardElement, editCard);
-      editCard.removeEventListener(`submit`, onSubmitForm);
-      // TODO: send form
-    };
-
-    editButton.addEventListener(`click`, () => {
-      replaceCardToEdit(cardElement, editCard);
-      document.addEventListener(`keydown`, onEscKeyDown);
-      editCard.addEventListener(`submit`, onSubmitForm);
-    });
-
-    render(eventsList, cardElement, RenderPosition.BEFOREEND);
-  });
-  render(tripRoute, new Route(cards).getElement(), RenderPosition.AFTERBEGIN);
-  totalPrice.textContent = getTotalSum(cards);
-};
-
 const addMessageToEmptyRoute = () => {
-  render(tripEvents, new Tip(TIP_MESSAGE).getElement(), RenderPosition.BEFOREEND);
+  render(tripEvents, new Tip(TIP_MESSAGE).getElement());
 };
 
-const tripControls = document.querySelector(`.trip-main__trip-controls`);
-const menuHeader = tripControls.querySelectorAll(`h2`)[0];
-const filterHeader = tripControls.querySelectorAll(`h2`)[1];
-const tripRoute = document.querySelector(`.trip-main__trip-info`);
+const tripControl = document.querySelector(`.trip-main`);
+const tripView = document.querySelector(`.trip-main__trip-controls`);
+const menuHeader = tripView.querySelectorAll(`h2`)[0];
+const filterHeader = tripView.querySelectorAll(`h2`)[1];
 const tripEvents = document.querySelector(`.trip-events`);
-const totalPrice = document.querySelector(`.trip-info__cost-value`);
 
-render(menuHeader, new Menu(menuNames).getElement(), RenderPosition.AFTEREND);
+render(menuHeader, new Menu(menuNames), RenderPosition.AFTEREND);
 setStatsMenuActive();
 
-render(filterHeader, new Filter(filters).getElement(), RenderPosition.AFTEREND);
+render(filterHeader, new Filter(filters), RenderPosition.AFTEREND);
 
 if (TASK_COUNT > 0) {
-  addCards();
+  const tripController = new TripController(tripEvents, tripControl);
+  const cards = generateCards(TASK_COUNT).sort((a, b) => a.start > b.start);
+  tripController.render(cards);
 } else {
   addMessageToEmptyRoute();
 }

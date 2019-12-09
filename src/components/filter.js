@@ -1,4 +1,6 @@
-import {capitalizeFirstLetter, createElement, createItems} from "../utils";
+import {capitalizeFirstLetter, createItems} from "../utils";
+import AbstractComponent from "./abstract-component";
+import {createElement} from "../utils/render";
 
 const getFilterHtml = (filter) => {
   const filterName = capitalizeFirstLetter(filter);
@@ -21,25 +23,14 @@ const createFilterTemplate = (filters) => {
   `);
 };
 
-export default class Filter {
+export default class Filter extends AbstractComponent {
+
   constructor(filters) {
+    super();
     this._filters = filters;
-    this._element = null;
   }
 
   getTemplate() {
     return createFilterTemplate(this._filters);
-  }
-
-  getElement() {
-    if (!this._element) {
-      this._element = createElement(this.getTemplate());
-    }
-
-    return this._element;
-  }
-
-  removeElement() {
-    this._element = null;
   }
 }
