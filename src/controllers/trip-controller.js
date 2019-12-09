@@ -8,46 +8,23 @@ import CardEdit from "../components/card-edit";
 import {Keys} from "../const";
 import Route from "../components/route";
 
-const setSortItemChecked = (sortItem) => {
-  const sortItems = document.querySelectorAll(`.trip-sort__input`);
-
-  for (const sortItem of sortItems) {
-    if (sortItem.hasAttribute(`checked`)) {
-      sortItem.removeAttribute(`checked`);
-      break;
-    }
-  }
-
-  sortItem.setAttribute(`checked`, `checked`);
-};
-
-const setEventSortActive = () => {
-  const sortItems = document.querySelectorAll(`.trip-sort__input`);
-  setSortItemChecked(sortItems[0]);
-};
-
-const getTotalSum = (tripPoints) => {
-  return tripPoints
-    .map((tripPoint) => tripPoint.price)
-    .reduce((a, b) => a + b, 0);
-};
-
 export default class TripController {
-  constructor(container) {
+  constructor(container, header) {
     this._container = container;
+    this._header = header;
   }
 
   render(cards) {
-    const tripRoute = document.querySelector(`.trip-main__trip-info`);
-    const totalPrice = document.querySelector(`.trip-info__cost-value`);
+    const tripRoute = this._header.querySelector(`.trip-main__trip-info`);
+    const totalPrice = this._header.querySelector(`.trip-info__cost-value`);
 
-    render(this._container, new Sort(sortOptions), RenderPosition.BEFOREEND);
-    setEventSortActive();
+    render(this._container, new Sort(sortOptions));
+    this.setEventSortActive();
 
-    render(this._container, new Event(), RenderPosition.BEFOREEND);
-    render(this._container, new Task(), RenderPosition.BEFOREEND);
+    render(this._container, new Event());
+    render(this._container, new Task());
 
-    const eventsList = document.querySelector(`.trip-events__list`);
+    const eventsList = this._container.querySelector(`.trip-events__list`);
 
     cards.forEach((card) => {
       const cardComponent = new Card(card);
@@ -84,9 +61,33 @@ export default class TripController {
 
       editButton.addEventListener(`click`, onEditButtonClick);
 
-      render(eventsList, cardComponent, RenderPosition.BEFOREEND);
+      render(eventsList, cardComponent);
     });
     render(tripRoute, new Route(cards), RenderPosition.AFTERBEGIN);
-    totalPrice.textContent = getTotalSum(cards);
+    totalPrice.textContent = this.getTotalSum(cards);
+  }
+
+  setSortItemChecked(sortItem) {
+    const sortItems = this._container.querySelectorAll(`.trip-sort__input`);
+
+    for (const sortItem of sortItems) {
+      if (sortItem.hasAttribute(`checked`)) {
+        sortItem.removeAttribute(`checked`);
+        break;
+      }
+    }
+
+    sortItem.setAttribute(`checked`, `checked`);
+  }
+
+  setEventSortActive() {
+    const sortItems = this._container.querySelectorAll(`.trip-sort__input`);
+    this.setSortItemChecked(sortItems[0]);
+  }
+
+  getTotalSum(tripPoints) {
+    return tripPoints
+      .map((tripPoint) => tripPoint.price)
+      .reduce((a, b) => a + b, 0);
   }
 }

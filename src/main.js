@@ -28,12 +28,13 @@ const setStatsMenuActive = () => {
 };
 
 const addMessageToEmptyRoute = () => {
-  render(tripEvents, new Tip(TIP_MESSAGE).getElement(), RenderPosition.BEFOREEND);
+  render(tripEvents, new Tip(TIP_MESSAGE).getElement());
 };
 
-const tripControls = document.querySelector(`.trip-main__trip-controls`);
-const menuHeader = tripControls.querySelectorAll(`h2`)[0];
-const filterHeader = tripControls.querySelectorAll(`h2`)[1];
+const tripControl = document.querySelector(`.trip-main`);
+const tripView = document.querySelector(`.trip-main__trip-controls`);
+const menuHeader = tripView.querySelectorAll(`h2`)[0];
+const filterHeader = tripView.querySelectorAll(`h2`)[1];
 const tripEvents = document.querySelector(`.trip-events`);
 
 render(menuHeader, new Menu(menuNames), RenderPosition.AFTEREND);
@@ -42,7 +43,7 @@ setStatsMenuActive();
 render(filterHeader, new Filter(filters), RenderPosition.AFTEREND);
 
 if (TASK_COUNT > 0) {
-  const tripController = new TripController(tripEvents);
+  const tripController = new TripController(tripEvents, tripControl);
   const cards = generateCards(TASK_COUNT).sort((a, b) => a.start > b.start);
   tripController.render(cards);
 } else {
