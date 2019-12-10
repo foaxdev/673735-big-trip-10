@@ -1,5 +1,4 @@
 import AbstractComponent from "./abstract-component";
-import {createElement} from "../utils/render";
 
 export const TASK_COUNT = 3;
 

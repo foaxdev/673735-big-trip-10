@@ -1,6 +1,5 @@
 import {capitalizeFirstLetter, createItems} from "../utils";
 import AbstractComponent from "./abstract-component";
-import {createElement} from "../utils/render";
 
 const getFilterHtml = (filter) => {
   const filterName = capitalizeFirstLetter(filter);

@@ -1,7 +1,5 @@
 import {capitalizeFirstLetter, createItems} from "../utils";
 import AbstractComponent from "./abstract-component";
-import {createElement} from "../utils/render";
-import {sortOptions} from "../mock/sort";
 
 export const SortType = {
   DEFAULT: `event`,
