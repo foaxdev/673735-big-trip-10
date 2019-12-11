@@ -31,11 +31,13 @@ export default class TripController {
     render(tripRoute, new Route(cards), RenderPosition.AFTERBEGIN);
     totalPrice.textContent = this._getTotalSum(cards);
 
-    this._setSortChangeListener(eventsList, cards);
+    this._sortComponent.setSortTypeChangeHandler((sortType) => {
+      eventsList.innerHTML = ``;
+      this._renderCards(eventsList, this._getSortedCards(sortType, cards));
+    });
   }
 
-  _setSortChangeListener(eventsList, cards) {
-    this._sortComponent.setSortTypeChangeHandler((sortType) => {
+  _getSortedCards(sortType, cards) {
       let sortedTasks = [];
 
       switch (sortType) {
@@ -50,10 +52,7 @@ export default class TripController {
           break;
       }
 
-      eventsList.innerHTML = ``;
-
-      this._renderCards(eventsList, sortedTasks);
-    });
+      return sortedTasks;
   }
 
   _renderCards(container, cards) {
