@@ -1,12 +1,10 @@
-import {render, RenderPosition, replace} from "../utils/render";
+import {render, RenderPosition} from "../utils/render";
 import Sort, {SortType} from "../components/sort";
 import {sortOptions} from "../mock/sort";
 import Event from "../components/event";
 import Task from "../components/task";
-import Card from "../components/card";
-import CardEdit from "../components/card-edit";
-import {Keys} from "../const";
 import Route from "../components/route";
+import PointController from "./point-controller";
 
 export default class TripController {
 
@@ -27,13 +25,18 @@ export default class TripController {
     render(this._container, new Task());
 
     const eventsList = this._container.querySelector(`.trip-events__list`);
-    this._renderCards(eventsList, cards);
+    this._pointController = new PointController(eventsList);
+    cards.forEach((card) => {
+      this._pointController.render(card);
+    });
     render(tripRoute, new Route(cards), RenderPosition.AFTERBEGIN);
     totalPrice.textContent = this._getTotalSum(cards);
 
     this._sortComponent.setSortTypeChangeHandler((sortType) => {
       eventsList.innerHTML = ``;
-      this._renderCards(eventsList, this._getSortedCards(sortType, cards));
+      this._getSortedCards(sortType, cards).forEach((card) => {
+        this._pointController.render(card);
+      });
     });
   }
 
@@ -53,46 +56,6 @@ export default class TripController {
       }
 
       return sortedTasks;
-  }
-
-  _renderCards(container, cards) {
-    cards.forEach((card) => {
-      const cardComponent = new Card(card);
-      const editButton = cardComponent.getElement().querySelector(`.event__rollup-btn`);
-      const editCardComponent = new CardEdit(card);
-
-      const replaceCardToEdit = (cardComponent, editCardComponent) => {
-        replace(editCardComponent, cardComponent);
-      };
-
-      const replaceEditToCard = (cardComponent, editCardComponent) => {
-        replace(cardComponent, editCardComponent);
-      };
-
-      const onEscKeyDown = (evt) => {
-        if (evt.key === Keys.ESCAPE) {
-          replaceEditToCard(cardComponent, editCardComponent);
-          document.removeEventListener(`keydown`, onEscKeyDown);
-        }
-      };
-
-      const onSubmitForm = (evt) => {
-        evt.preventDefault();
-        replaceEditToCard(cardComponent, editCardComponent);
-        editCardComponent.removeSubmitHandler(onSubmitForm);
-        // TODO: send form
-      };
-
-      const onEditButtonClick = () => {
-        replaceCardToEdit(cardComponent, editCardComponent);
-        document.addEventListener(`keydown`, onEscKeyDown);
-        editCardComponent.setSubmitHandler(onSubmitForm);
-      };
-
-      editButton.addEventListener(`click`, onEditButtonClick);
-
-      render(container, cardComponent);
-    });
   }
 
   _getTotalSum(tripPoints) {
