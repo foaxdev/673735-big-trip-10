@@ -127,7 +127,8 @@ const generateCard = () => {
     amenities: getRandomAmenities(),
     start: getRandomDate(),
     end: getRandomDate(),
-    price: getRandomIntegerNumber(10, 1000)
+    price: getRandomIntegerNumber(10, 1000),
+    isFavorite: false
   };
 };
 

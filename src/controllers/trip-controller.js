@@ -12,9 +12,11 @@ export default class TripController {
     this._container = container;
     this._header = header;
     this._sortComponent = new Sort(sortOptions);
+    this._cards = [];
   }
 
   render(cards) {
+    this._cards = cards;
     const tripRoute = this._header.querySelector(`.trip-main__trip-info`);
     const totalPrice = this._header.querySelector(`.trip-info__cost-value`);
 
@@ -25,16 +27,16 @@ export default class TripController {
     render(this._container, new Task());
 
     const eventsList = this._container.querySelector(`.trip-events__list`);
-    this._pointController = new PointController(eventsList);
-    cards.forEach((card) => {
+    this._pointController = new PointController(eventsList, this._dataChangeHandler.bind(this));
+    this._cards.forEach((card) => {
       this._pointController.render(card);
     });
-    render(tripRoute, new Route(cards), RenderPosition.AFTERBEGIN);
-    totalPrice.textContent = this._getTotalSum(cards);
+    render(tripRoute, new Route(this._cards), RenderPosition.AFTERBEGIN);
+    totalPrice.textContent = this._getTotalSum(this._cards);
 
     this._sortComponent.setSortTypeChangeHandler((sortType) => {
       eventsList.innerHTML = ``;
-      this._getSortedCards(sortType, cards).forEach((card) => {
+      this._getSortedCards(sortType, this._cards).forEach((card) => {
         this._pointController.render(card);
       });
     });
@@ -62,5 +64,17 @@ export default class TripController {
     return tripPoints
       .map((tripPoint) => tripPoint.price)
       .reduce((a, b) => a + b, 0);
+  }
+
+  _dataChangeHandler(cardComponent, newCardData, oldCardData) {
+    const index = this._cards.findIndex((it) => it === oldCardData);
+
+    if (index === -1) {
+      return;
+    }
+
+    this._cards = [].concat(this._cards.slice(0, index), newCardData, this._cards.slice(index + 1));
+
+    cardComponent.render(this._cards[index]);
   }
 }

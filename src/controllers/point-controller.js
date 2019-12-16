@@ -5,14 +5,16 @@ import {Keys} from "../const";
 
 export default class PointController {
 
-  constructor(container) {
+  constructor(container, dataChangeHandler) {
     this._container = container;
+    this._dataChangeHandler = dataChangeHandler;
   }
 
   render(pointData) {
     const cardComponent = new Card(pointData);
     const editButton = cardComponent.getElement().querySelector(`.event__rollup-btn`);
     const editCardComponent = new CardEdit(pointData);
+    const favButton = editCardComponent.getElement().querySelector(`.event__favorite-btn`);
 
     const replaceCardToEdit = (cardComponent, editCardComponent) => {
       replace(editCardComponent, cardComponent);
@@ -43,6 +45,11 @@ export default class PointController {
     };
 
     editButton.addEventListener(`click`, onEditButtonClick);
+    favButton.addEventListener(`click`, () => {
+      this._dataChangeHandler(this, pointData, Object.assign({}, pointData, {
+        isFavorite: !pointData.isFavorite
+      }));
+    });
 
     render(this._container, cardComponent);
   }
