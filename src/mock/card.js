@@ -24,16 +24,16 @@ const amenities = [
 ];
 
 const Types = [
-  `Bus`,
-  `Check-in`,
-  `Drive`,
-  `Flight`,
-  `Restaurant`,
-  `Ship`,
-  `Sightseeing`,
-  `Taxi`,
-  `Train`,
-  `Transport`
+  `bus`,
+  `check-in`,
+  `drive`,
+  `flight`,
+  `restaurant`,
+  `ship`,
+  `sightseeing`,
+  `taxi`,
+  `train`,
+  `transport`
 ];
 
 const Cities = [

@@ -1,20 +1,7 @@
 import Card from "../components/card";
 import CardEdit from "../components/card-edit";
 import {render, replace} from "../utils/render";
-import {Keys} from "../const";
-
-const actionByType = new Map([
-  [`taxi`, `Taxi to`],
-  [`bus`, `Bus to`],
-  [`train`, `Train to`],
-  [`ship`, `Ship to`],
-  [`transport`, `Transport to`],
-  [`drive`, `Drive to`],
-  [`flight`, `Flight to`],
-  [`check-in`, `Check-in in`],
-  [`sightseeing`, `Sightseeing in`],
-  [`restaurant`, `Restaurant in`]
-]);
+import {actionByType, Keys} from "../const";
 
 export default class PointController {
 
@@ -51,9 +38,13 @@ export default class PointController {
       // TODO: send form
     };
 
-    const onActionTypeChange = (evt) => {
+    const changeEventPlaceholder = (type) => {
       const eventLabel = editCardComponent.getElement().querySelector(`.event__label`);
-      eventLabel.textContent = actionByType.get(evt.target.value);
+      eventLabel.textContent = actionByType.get(type);
+    };
+
+    const onActionTypeChange = (evt) => {
+      changeEventPlaceholder(evt.target.value);
       actionTypes.forEach((actionType) => {
         actionType.removeEventListener(`click`, onActionTypeChange);
       });
