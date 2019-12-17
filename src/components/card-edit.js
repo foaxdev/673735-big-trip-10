@@ -1,5 +1,5 @@
 import {createItems, formatDate, formatTime} from "../utils";
-import AbstractComponent from "./abstract-component";
+import AbstractSmartComponent from "./abstract-smart-component";
 
 const getImageHtml = (imageSrc) => {
   return(`
@@ -201,7 +201,7 @@ const createEditCardTemplate = (cardData) => {
   `);
 };
 
-export default class CardEdit extends AbstractComponent {
+export default class CardEdit extends AbstractSmartComponent {
 
   constructor(cardData) {
     super();
@@ -220,7 +220,7 @@ export default class CardEdit extends AbstractComponent {
     this.getElement().removeEventListener(`submit`, handler);
   }
 
-  setFavouriteListenerHandler() {
+  recoveryListeners() {
 
   }
 }
