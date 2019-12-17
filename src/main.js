@@ -1,13 +1,10 @@
 import Menu from "./components/menu";
-import {TASK_COUNT} from "./components/task";
 import {menuNames} from "./mock/menu";
 import {filters} from "./mock/filter";
 import Filter from "./components/filter";
-import {TIP_MESSAGE} from "./const";
-import Tip from "./components/tip";
 import {render, RenderPosition} from "./utils/render";
 import TripController from "./controllers/trip-controller";
-import {generateCards} from "./mock/card";
+import {data} from "./mock/card";
 
 const setMenuItemActive = (menuElement) => {
   const menuItems = document.querySelectorAll(`.trip-tabs__btn`);
@@ -27,10 +24,6 @@ const setStatsMenuActive = () => {
   setMenuItemActive(menuItems[1]);
 };
 
-const addMessageToEmptyRoute = () => {
-  render(tripEvents, new Tip(TIP_MESSAGE).getElement());
-};
-
 const tripControl = document.querySelector(`.trip-main`);
 const tripView = document.querySelector(`.trip-main__trip-controls`);
 const menuHeader = tripView.querySelectorAll(`h2`)[0];
@@ -42,10 +35,5 @@ setStatsMenuActive();
 
 render(filterHeader, new Filter(filters), RenderPosition.AFTEREND);
 
-if (TASK_COUNT > 0) {
-  const tripController = new TripController(tripEvents, tripControl);
-  const cards = generateCards(TASK_COUNT).sort((a, b) => a.start > b.start);
-  tripController.render(cards);
-} else {
-  addMessageToEmptyRoute();
-}
+const tripController = new TripController(tripEvents, tripControl, data);
+tripController.render(data);

@@ -5,6 +5,8 @@ import Event from "../components/event";
 import Task from "../components/task";
 import Route from "../components/route";
 import PointController from "./point-controller";
+import Tip from "../components/tip";
+import {TIP_MESSAGE} from "../const";
 
 export default class TripController {
 
@@ -15,31 +17,39 @@ export default class TripController {
     this._cards = [];
   }
 
-  render(cards) {
-    this._cards = cards;
-    const tripRoute = this._header.querySelector(`.trip-main__trip-info`);
-    const totalPrice = this._header.querySelector(`.trip-info__cost-value`);
+  render(cardsData) {
+    if (cardsData.length > 0) {
+      this._cards = this._getSortedCards(null, cardsData);
+      const tripRoute = this._header.querySelector(`.trip-main__trip-info`);
+      const totalPrice = this._header.querySelector(`.trip-info__cost-value`);
 
-    render(this._container, this._sortComponent);
-    this._sortComponent.setEventSortActive();
+      render(this._container, this._sortComponent);
+      this._sortComponent.setEventSortActive();
 
-    render(this._container, new Event());
-    render(this._container, new Task());
+      render(this._container, new Event());
+      render(this._container, new Task());
 
-    const eventsList = this._container.querySelector(`.trip-events__list`);
-    this._pointController = new PointController(eventsList, this._dataChangeHandler.bind(this));
-    this._cards.forEach((card) => {
-      this._pointController.render(card);
-    });
-    render(tripRoute, new Route(this._cards), RenderPosition.AFTERBEGIN);
-    totalPrice.textContent = this._getTotalSum(this._cards);
-
-    this._sortComponent.setSortTypeChangeHandler((sortType) => {
-      eventsList.innerHTML = ``;
-      this._getSortedCards(sortType, this._cards).forEach((card) => {
+      const eventsList = this._container.querySelector(`.trip-events__list`);
+      this._pointController = new PointController(eventsList, this._dataChangeHandler.bind(this));
+      this._cards.forEach((card) => {
         this._pointController.render(card);
       });
-    });
+      render(tripRoute, new Route(this._cards), RenderPosition.AFTERBEGIN);
+      totalPrice.textContent = this._getTotalSum(this._cards);
+
+      this._sortComponent.setSortTypeChangeHandler((sortType) => {
+        eventsList.innerHTML = ``;
+        this._getSortedCards(sortType, this._cards).forEach((card) => {
+          this._pointController.render(card);
+        });
+      });
+    } else {
+      this._addMessageToEmptyRoute();
+    }
+  }
+
+  _addMessageToEmptyRoute() {
+    render(this._container, new Tip(TIP_MESSAGE).getElement());
   }
 
   _getSortedCards(sortType, cards) {

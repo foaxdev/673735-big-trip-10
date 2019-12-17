@@ -1,5 +1,6 @@
-import {createItems, formatDate, formatTime} from "../utils";
+import {formatDate, formatTime} from "../utils/format";
 import AbstractSmartComponent from "./abstract-smart-component";
+import {createItems} from "../utils/render";
 
 const getImageHtml = (imageSrc) => {
   return(`

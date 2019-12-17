@@ -1,7 +1,5 @@
 import AbstractComponent from "./abstract-component";
 
-export const TASK_COUNT = 3;
-
 const createTasksTemplate = () => {
   return (`
     <ul class="trip-days">

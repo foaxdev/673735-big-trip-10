@@ -1,6 +1,7 @@
-import {createItems, formatDate, formatTime, millisecondsToHm} from "../utils";
+import {formatDate, formatTime, millisecondsToHm} from "../utils/format";
 import AbstractComponent from "./abstract-component";
 import {actionByType} from "../const";
+import {createItems} from "../utils/render";
 
 const getOfferHtml = (offer) => {
   return (`

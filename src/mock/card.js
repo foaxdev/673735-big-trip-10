@@ -132,8 +132,10 @@ const generateCard = () => {
   };
 };
 
-export const generateCards = (count) => {
-  return new Array(count)
+const generateCards = () => {
+  return new Array(10)
     .fill(``)
     .map(generateCard);
 };
+
+export const data = generateCards();
