@@ -52,6 +52,7 @@ export default class PointController {
 
     const onEditButtonClick = () => {
       replaceCardToEdit(cardComponent, editCardComponent);
+      editCardComponent.setAddedAmenities(editCardComponent.getElement());
       document.addEventListener(`keydown`, onEscKeyDown);
       editCardComponent.setSubmitHandler(onSubmitForm);
 

@@ -1,10 +1,24 @@
 import {formatDate, formatTime} from "../utils/format";
 import AbstractSmartComponent from "./abstract-smart-component";
 import {createItems} from "../utils/render";
+import {actionByType, amenities} from "../const";
 
 const getImageHtml = (imageSrc) => {
   return(`
     <img class="event__photo" src="${imageSrc}" alt="Event photo">
+  `);
+};
+
+const getAmenityHtml = (amenityInfo) => {
+  return(`
+    <div class="event__offer-selector">
+      <input class="event__offer-checkbox  visually-hidden" id="event-offer-${amenityInfo.type}" type="checkbox" name="event-offer-${amenityInfo.type}">
+      <label class="event__offer-label" for="event-offer-${amenityInfo.type}">
+        <span class="event__offer-title">${amenityInfo.title}</span>
+        &plus;
+        &euro;&nbsp;<span class="event__offer-price">${amenityInfo.price}</span>
+      </label>
+    </div>
   `);
 };
 
@@ -18,6 +32,7 @@ const createEditCardTemplate = (cardData) => {
   const endTime = formatTime(end.getHours(), end.getMinutes());
 
   const isFavourite = cardData.isFavorite ? `checked` : ``;
+  const prefixForActivity = actionByType.get(type);
 
   return (`
     <form class="event event--edit" action="#" method="post">
@@ -92,7 +107,7 @@ const createEditCardTemplate = (cardData) => {
 
         <div class="event__field-group  event__field-group--destination">
           <label class="event__label  event__type-output" for="event-destination-1">
-            Sightseeing at
+            ${prefixForActivity}
           </label>
           <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${city}" list="destination-list-1">
           <datalist id="destination-list-1">
@@ -142,50 +157,7 @@ const createEditCardTemplate = (cardData) => {
         <section class="event__section  event__section--offers">
           <h3 class="event__section-title  event__section-title--offers">Offers</h3>
           <div class="event__available-offers">
-            <div class="event__offer-selector">
-                <input class="event__offer-checkbox  visually-hidden" id="event-offer-luggage-1" type="checkbox" name="event-offer-luggage" checked>
-                <label class="event__offer-label" for="event-offer-luggage-1">
-                  <span class="event__offer-title">Add luggage</span>
-                  &plus;
-                  &euro;&nbsp;<span class="event__offer-price">30</span>
-                </label>
-              </div>
-
-              <div class="event__offer-selector">
-                <input class="event__offer-checkbox  visually-hidden" id="event-offer-comfort-1" type="checkbox" name="event-offer-comfort" checked>
-                <label class="event__offer-label" for="event-offer-comfort-1">
-                  <span class="event__offer-title">Switch to comfort class</span>
-                  &plus;
-                  &euro;&nbsp;<span class="event__offer-price">100</span>
-                </label>
-              </div>
-
-              <div class="event__offer-selector">
-                <input class="event__offer-checkbox  visually-hidden" id="event-offer-meal-1" type="checkbox" name="event-offer-meal">
-                <label class="event__offer-label" for="event-offer-meal-1">
-                  <span class="event__offer-title">Add meal</span>
-                  &plus;
-                  &euro;&nbsp;<span class="event__offer-price">15</span>
-                </label>
-              </div>
-
-              <div class="event__offer-selector">
-                <input class="event__offer-checkbox  visually-hidden" id="event-offer-seats-1" type="checkbox" name="event-offer-seats">
-                <label class="event__offer-label" for="event-offer-seats-1">
-                  <span class="event__offer-title">Choose seats</span>
-                  &plus;
-                  &euro;&nbsp;<span class="event__offer-price">5</span>
-                </label>
-              </div>
-
-              <div class="event__offer-selector">
-                <input class="event__offer-checkbox  visually-hidden" id="event-offer-train-1" type="checkbox" name="event-offer-train">
-                <label class="event__offer-label" for="event-offer-train-1">
-                  <span class="event__offer-title">Travel by train</span>
-                  &plus;
-                  &euro;&nbsp;<span class="event__offer-price">40</span>
-                </label>
-              </div>
+            ${createItems(amenities, getAmenityHtml)}
           </div>
         </section>
         <section class="event__section  event__section--destination">
@@ -219,6 +191,18 @@ export default class CardEdit extends AbstractSmartComponent {
 
   removeSubmitHandler(handler) {
     this.getElement().removeEventListener(`submit`, handler);
+  }
+
+  setAddedAmenities(editContainer) {
+    const amenitiesCheckboxes = editContainer.querySelectorAll(`.event__offer-checkbox`);
+    amenitiesCheckboxes.forEach((amenityCheckbox) => {
+      for (let i = 0; i < this._cardData.amenities.length; i++) {
+        if (amenityCheckbox.getAttribute(`id`).endsWith(this._cardData.amenities[i].type)) {
+          amenityCheckbox.setAttribute(`checked`, `checked`);
+          break;
+        }
+      }
+    });
   }
 
   recoveryListeners() {
