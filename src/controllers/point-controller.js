@@ -86,6 +86,7 @@ export default class PointController {
   }
 
   _replaceEditToCard() {
+    this._editCardComponent.getElement().reset();
     replace(this._cardComponent, this._editCardComponent);
     this._mode = Mode.DEFAULT;
   }
