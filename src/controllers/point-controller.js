@@ -3,43 +3,43 @@ import CardEdit from "../components/card-edit";
 import {render, replace} from "../utils/render";
 import {actionByType, Keys} from "../const";
 
+export const Mode = {
+  ADDING: `adding`,
+  DEFAULT: `default`,
+  EDIT: `edit`,
+};
+
 export default class PointController {
 
-  constructor(container, dataChangeHandler) {
+  constructor(container, dataChangeHandler, viewChangeHandler) {
     this._container = container;
-    this._dataChangeHandler = dataChangeHandler;
+    this._onDataChange = dataChangeHandler;
+    this._onViewChange = viewChangeHandler;
+    this._mode = Mode.DEFAULT;
   }
 
   render(pointData) {
-    const cardComponent = new Card(pointData);
-    const editButton = cardComponent.getElement().querySelector(`.event__rollup-btn`);
-    const editCardComponent = new CardEdit(pointData);
+    this._cardComponent = new Card(pointData);
+    const editButton = this._cardComponent.getElement().querySelector(`.event__rollup-btn`);
+    this._editCardComponent = new CardEdit(pointData);
     const actionTypes = document.querySelectorAll(`.event__type-input`);
-
-    const replaceCardToEdit = (cardComponent, editCardComponent) => {
-      replace(editCardComponent, cardComponent);
-    };
-
-    const replaceEditToCard = (cardComponent, editCardComponent) => {
-      replace(cardComponent, editCardComponent);
-    };
 
     const onEscKeyDown = (evt) => {
       if (evt.key === Keys.ESCAPE) {
-        replaceEditToCard(cardComponent, editCardComponent);
+        this._replaceEditToCard();
         document.removeEventListener(`keydown`, onEscKeyDown);
       }
     };
 
     const onSubmitForm = (evt) => {
       evt.preventDefault();
-      replaceEditToCard(cardComponent, editCardComponent);
-      editCardComponent.removeSubmitHandler(onSubmitForm);
+      this._replaceEditToCard();
+      this._editCardComponent.removeSubmitHandler(onSubmitForm);
       // TODO: send form
     };
 
     const changeEventPlaceholder = (type) => {
-      const eventLabel = editCardComponent.getElement().querySelector(`.event__label`);
+      const eventLabel = this._editCardComponent.getElement().querySelector(`.event__label`);
       eventLabel.textContent = actionByType.get(type);
     };
 
@@ -51,18 +51,18 @@ export default class PointController {
     };
 
     const onEditButtonClick = () => {
-      replaceCardToEdit(cardComponent, editCardComponent);
-      editCardComponent.setAddedAmenities(editCardComponent.getElement());
+      this._replaceCardToEdit();
+      this._editCardComponent.setAddedAmenities(this._editCardComponent.getElement());
       document.addEventListener(`keydown`, onEscKeyDown);
-      editCardComponent.setSubmitHandler(onSubmitForm);
+      this._editCardComponent.setSubmitHandler(onSubmitForm);
 
       actionTypes.forEach((actionType) => {
         actionType.addEventListener(`click`, onActionTypeChange);
       });
 
-      const favButton = editCardComponent.getElement().querySelector(`.event__favorite-btn`);
+      const favButton = this._editCardComponent.getElement().querySelector(`.event__favorite-btn`);
       favButton.addEventListener(`click`, () => {
-        this._dataChangeHandler(
+        this._onDataChange(
           this,
           pointData,
           Object.assign(
@@ -76,6 +76,23 @@ export default class PointController {
 
     editButton.addEventListener(`click`, onEditButtonClick);
 
-    render(this._container, cardComponent);
+    render(this._container, this._cardComponent);
+  }
+
+  _replaceCardToEdit() {
+    this._onViewChange();
+    replace(this._editCardComponent, this._cardComponent);
+    this._mode = Mode.EDIT;
+  }
+
+  _replaceEditToCard() {
+    replace(this._cardComponent, this._editCardComponent);
+    this._mode = Mode.DEFAULT;
+  }
+
+  setDefaultView() {
+    if (this._mode !== Mode.DEFAULT) {
+      this._replaceEditToCard();
+    }
   }
 }
