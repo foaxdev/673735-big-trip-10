@@ -20,7 +20,6 @@ export default class PointController {
 
   render(pointData) {
     this._cardComponent = new Card(pointData);
-    const editButton = this._cardComponent.getElement().querySelector(`.event__rollup-btn`);
     this._editCardComponent = new CardEdit(pointData);
     const actionTypes = document.querySelectorAll(`.event__type-input`);
 
@@ -33,9 +32,11 @@ export default class PointController {
 
     const onSubmitForm = (evt) => {
       evt.preventDefault();
+      const data = this._editCardComponent.getData();
       this._replaceEditToCard();
       this._editCardComponent.removeSubmitHandler(onSubmitForm);
-      // TODO: send form
+      console.log(data);
+      this._onDataChange(this, data, pointData);
     };
 
     const changeEventPlaceholder = (type) => {
@@ -43,14 +44,21 @@ export default class PointController {
       eventLabel.textContent = actionByType.get(type);
     };
 
+    const closeActionTypesList = () => {
+      const actionTypesToggle = document.querySelector(`.event__type-toggle`);
+      actionTypesToggle.checked = false;
+    };
+
     const onActionTypeChange = (evt) => {
       changeEventPlaceholder(evt.target.value);
+      closeActionTypesList();
+
       actionTypes.forEach((actionType) => {
         actionType.removeEventListener(`click`, onActionTypeChange);
       });
     };
 
-    const onEditButtonClick = () => {
+    this._cardComponent.setEditButtonClickHandler(() => {
       this._replaceCardToEdit();
       this._editCardComponent.setAddedAmenities(this._editCardComponent.getElement());
       document.addEventListener(`keydown`, onEscKeyDown);
@@ -72,9 +80,7 @@ export default class PointController {
           )
         );
       });
-    };
-
-    editButton.addEventListener(`click`, onEditButtonClick);
+    });
 
     render(this._container, this._cardComponent);
   }
@@ -89,6 +95,7 @@ export default class PointController {
     this._editCardComponent.getElement().reset();
     replace(this._cardComponent, this._editCardComponent);
     this._mode = Mode.DEFAULT;
+    this._cardComponent.recoveryListeners();
   }
 
   setDefaultView() {

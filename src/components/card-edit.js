@@ -174,11 +174,27 @@ const createEditCardTemplate = (cardData) => {
   `);
 };
 
+const parseFormData = (formData) => {
+  console.log(formData.get(`event-type`));
+  return {
+    type: formData.get(`event-type`),
+    city: formData.get(`event-destination`),
+    photos: [],
+    description: ``,
+    amenities: [],
+    start: new Date(formData.get(`event-start-time`)),
+    end: new Date(formData.get(`event-start-time`)),
+    price: formData.get(`event-price`),
+    isFavorite: formData.get(`event-favorite`)
+  };
+};
+
 export default class CardEdit extends AbstractSmartComponent {
 
   constructor(cardData) {
     super();
     this._cardData = cardData;
+    this._submitHandler = null;
   }
 
   getTemplate() {
@@ -187,25 +203,36 @@ export default class CardEdit extends AbstractSmartComponent {
 
   setSubmitHandler(handler) {
     this.getElement().addEventListener(`submit`, handler);
+    this._submitHandler = handler;
   }
 
   removeSubmitHandler(handler) {
     this.getElement().removeEventListener(`submit`, handler);
   }
 
-  setAddedAmenities(editContainer) {
-    const amenitiesCheckboxes = editContainer.querySelectorAll(`.event__offer-checkbox`);
-    amenitiesCheckboxes.forEach((amenityCheckbox) => {
-      for (let i = 0; i < this._cardData.amenities.length; i++) {
-        if (amenityCheckbox.getAttribute(`id`).endsWith(this._cardData.amenities[i].type)) {
-          amenityCheckbox.setAttribute(`checked`, `checked`);
-          break;
-        }
+  _amenityChooseHandler() {
+    for (let i = 0; i < this._cardData.amenities.length; i++) {
+      if (amenityCheckbox.getAttribute(`id`).endsWith(this._cardData.amenities[i].type)) {
+        amenityCheckbox.setAttribute(`checked`, `checked`);
+        break;
       }
+    }
+  }
+
+  setAddedAmenities(editContainer) {
+    const amenitiesCheckboxes = editContainer.querySelectorAll(`.event__type-input`);
+    amenitiesCheckboxes.forEach((amenityCheckbox) => {
+      amenityCheckbox.addEventListener(`click`, this._amenityChooseHandler);
     });
   }
 
-  recoveryListeners() {
+  getData() {
+    const formData = new FormData(this.getElement());
 
+    return parseFormData(formData);
+  }
+
+  recoveryListeners() {
+    this.setSubmitHandler(this._submitHandler);
   }
 }

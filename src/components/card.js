@@ -65,9 +65,20 @@ export default class Card extends AbstractComponent {
   constructor(cardData) {
     super();
     this._cardData = cardData;
+    this._onEditButton = null;
   }
 
   getTemplate() {
     return createCardTemplate(this._cardData);
+  }
+
+  setEditButtonClickHandler(handler) {
+    this.getElement().querySelector(`.event__rollup-btn`)
+      .addEventListener(`click`, handler);
+    this._onEditButton = handler;
+  }
+
+  recoveryListeners() {
+    this.setEditButtonClickHandler(this._onEditButton);
   }
 }
