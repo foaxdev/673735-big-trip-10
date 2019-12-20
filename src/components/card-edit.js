@@ -22,6 +22,7 @@ const getAmenityHtml = (amenityInfo) => {
   `);
 };
 
+
 const createEditCardTemplate = (cardData) => {
   const {type, city, photos, description, start, end, price} = cardData;
 
@@ -79,7 +80,7 @@ const createEditCardTemplate = (cardData) => {
               </div>
 
               <div class="event__type-item">
-                <input id="event-type-flight-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="flight" checked>
+                <input id="event-type-flight-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="flight">
                 <label class="event__type-label  event__type-label--flight" for="event-type-flight-1">Flight</label>
               </div>
             </fieldset>
@@ -174,21 +175,6 @@ const createEditCardTemplate = (cardData) => {
   `);
 };
 
-const parseFormData = (formData) => {
-  console.log(formData.get(`event-type`));
-  return {
-    type: formData.get(`event-type`),
-    city: formData.get(`event-destination`),
-    photos: [],
-    description: ``,
-    amenities: [],
-    start: new Date(formData.get(`event-start-time`)),
-    end: new Date(formData.get(`event-start-time`)),
-    price: formData.get(`event-price`),
-    isFavorite: formData.get(`event-favorite`)
-  };
-};
-
 export default class CardEdit extends AbstractSmartComponent {
 
   constructor(cardData) {
@@ -210,29 +196,35 @@ export default class CardEdit extends AbstractSmartComponent {
     this.getElement().removeEventListener(`submit`, handler);
   }
 
-  _amenityChooseHandler() {
-    for (let i = 0; i < this._cardData.amenities.length; i++) {
-      if (amenityCheckbox.getAttribute(`id`).endsWith(this._cardData.amenities[i].type)) {
-        amenityCheckbox.setAttribute(`checked`, `checked`);
-        break;
+  setSelectedActionType(editContainer) {
+    const actionTypes = editContainer.querySelectorAll(`.event__type-input`);
+    actionTypes.forEach((actionType) => {
+      if (actionType.hasAttribute(`checked`)) {
+        actionType.removeAttribute(`checked`);
       }
-    }
-  }
-
-  setAddedAmenities(editContainer) {
-    const amenitiesCheckboxes = editContainer.querySelectorAll(`.event__type-input`);
-    amenitiesCheckboxes.forEach((amenityCheckbox) => {
-      amenityCheckbox.addEventListener(`click`, this._amenityChooseHandler);
+      if (actionType.getAttribute(`value`) === this._cardData.type) {
+        actionType.setAttribute(`checked`, `checked`);
+      }
     });
   }
 
-  getData() {
-    const formData = new FormData(this.getElement());
-
-    return parseFormData(formData);
+  setAddedAmenities(editContainer) {
+    const amenitiesCheckboxes = editContainer.querySelectorAll(`.event__offer-checkbox`);
+    amenitiesCheckboxes.forEach((amenityCheckbox) => {
+      for (let i = 0; i < this._cardData.amenities.length; i++) {
+        if (amenityCheckbox.getAttribute(`id`).endsWith(this._cardData.amenities[i].type)) {
+          amenityCheckbox.setAttribute(`checked`, `checked`);
+          break;
+        }
+      }
+    });
   }
 
   recoveryListeners() {
     this.setSubmitHandler(this._submitHandler);
+  }
+
+  rerender() {
+    super.rerender();
   }
 }

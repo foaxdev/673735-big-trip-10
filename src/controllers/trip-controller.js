@@ -1,4 +1,4 @@
-import {render, RenderPosition} from "../utils/render";
+import {render, RenderPosition, replace} from "../utils/render";
 import Sort, {SortType} from "../components/sort";
 import {sortOptions} from "../mock/sort";
 import Event from "../components/event";
@@ -7,6 +7,7 @@ import Route from "../components/route";
 import PointController from "./point-controller";
 import Tip from "../components/tip";
 import {TIP_MESSAGE} from "../const";
+import Card from "../components/card";
 
 const renderPointControllers = (cardsContainer, cards, dataChangeHandler, viewChangeHandler) => {
   let pointControllers = [];
@@ -95,8 +96,7 @@ export default class TripController {
     }
 
     this._cards = [].concat(this._cards.slice(0, index), newCardData, this._cards.slice(index + 1));
-
-    cardComponent.render(this._cards[index]);
+    cardComponent.setNewData(newCardData);
   }
 
   _viewChangeHandler() {

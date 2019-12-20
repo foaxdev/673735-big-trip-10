@@ -22,6 +22,7 @@ export default class PointController {
     this._cardComponent = new Card(pointData);
     this._editCardComponent = new CardEdit(pointData);
     const actionTypes = document.querySelectorAll(`.event__type-input`);
+    let currentType = null;
 
     const onEscKeyDown = (evt) => {
       if (evt.key === Keys.ESCAPE) {
@@ -32,11 +33,17 @@ export default class PointController {
 
     const onSubmitForm = (evt) => {
       evt.preventDefault();
-      const data = this._editCardComponent.getData();
-      this._replaceEditToCard();
       this._editCardComponent.removeSubmitHandler(onSubmitForm);
-      console.log(data);
-      this._onDataChange(this, data, pointData);
+      this._replaceEditToCard();
+      this._onDataChange(
+        this._cardComponent,
+        Object.assign(
+          {},
+          pointData,
+          { type: `${currentType !== null ? currentType : pointData.type}` }
+        ),
+        pointData
+      );
     };
 
     const changeEventPlaceholder = (type) => {
@@ -49,13 +56,16 @@ export default class PointController {
       actionTypesToggle.checked = false;
     };
 
+    const changeActionTypeIcon = (type) => {
+      const eventIcon = this._editCardComponent.getElement().querySelector(`.event__type-icon`);
+      eventIcon.src = `img/icons/${type}.png`;
+    };
+
     const onActionTypeChange = (evt) => {
       changeEventPlaceholder(evt.target.value);
+      changeActionTypeIcon(evt.target.value);
+      currentType = evt.target.value;
       closeActionTypesList();
-
-      actionTypes.forEach((actionType) => {
-        actionType.removeEventListener(`click`, onActionTypeChange);
-      });
     };
 
     this._cardComponent.setEditButtonClickHandler(() => {
@@ -63,6 +73,11 @@ export default class PointController {
       this._editCardComponent.setAddedAmenities(this._editCardComponent.getElement());
       document.addEventListener(`keydown`, onEscKeyDown);
       this._editCardComponent.setSubmitHandler(onSubmitForm);
+
+      const eventTypeButton = this._editCardComponent.getElement().querySelector(`.event__type`);
+      eventTypeButton.addEventListener(`click`, () => {
+        this._editCardComponent.setSelectedActionType(this._editCardComponent.getElement());
+      });
 
       actionTypes.forEach((actionType) => {
         actionType.addEventListener(`click`, onActionTypeChange);

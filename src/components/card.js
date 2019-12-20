@@ -2,6 +2,7 @@ import {formatDate, formatTime, millisecondsToHm} from "../utils/format";
 import AbstractComponent from "./abstract-component";
 import {actionByType} from "../const";
 import {createItems} from "../utils/render";
+import AbstractSmartComponent from "./abstract-smart-component";
 
 const getOfferHtml = (offer) => {
   return (`
@@ -60,7 +61,7 @@ const createCardTemplate = (cardData) => {
   `);
 };
 
-export default class Card extends AbstractComponent {
+export default class Card extends AbstractSmartComponent {
 
   constructor(cardData) {
     super();
@@ -70,6 +71,11 @@ export default class Card extends AbstractComponent {
 
   getTemplate() {
     return createCardTemplate(this._cardData);
+  }
+
+  setNewData(newData) {
+    this._cardData = newData;
+    this.rerender();
   }
 
   setEditButtonClickHandler(handler) {
