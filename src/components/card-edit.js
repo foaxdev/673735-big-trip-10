@@ -198,7 +198,6 @@ export default class CardEdit extends AbstractSmartComponent {
   }
 
   setSelectedActionType(editContainer) {
-    console.log(this._cardData.type);
     const actionTypes = editContainer.querySelectorAll(`.event__type-input`);
     actionTypes.forEach((actionType) => {
       if (actionType.hasAttribute(`checked`)) {

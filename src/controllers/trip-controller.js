@@ -96,7 +96,6 @@ export default class TripController {
     }
 
     this._cards = [].concat(this._cards.slice(0, index), newCardData, this._cards.slice(index + 1));
-    cardComponent.setNewData(newCardData);
   }
 
   _viewChangeHandler() {

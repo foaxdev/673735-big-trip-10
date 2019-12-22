@@ -59,6 +59,7 @@ export default class PointController {
         this._pointData
       );
       this._editCardComponent.setNewData(this._newPointData);
+      this._cardComponent.setNewData(this._newPointData);
     };
 
     const removeEventListenersFromEditCard = () => {
