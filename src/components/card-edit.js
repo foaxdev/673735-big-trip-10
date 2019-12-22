@@ -180,7 +180,10 @@ export default class CardEdit extends AbstractSmartComponent {
   constructor(cardData) {
     super();
     this._cardData = cardData;
-    this._submitHandler = null;
+    this._onSubmit = null;
+    this._onChangeActionType = null;
+    this._eventTypeButton = this.getElement().querySelector(`.event__type`);
+    this._actionTypesList = this.getElement().querySelector(`.event__type-list`);
   }
 
   getTemplate() {
@@ -189,7 +192,16 @@ export default class CardEdit extends AbstractSmartComponent {
 
   setSubmitHandler(handler) {
     this.getElement().addEventListener(`submit`, handler);
-    this._submitHandler = handler;
+    this._onSubmit = handler;
+  }
+
+  setChangeActionTypeHandler(handler) {
+    this._eventTypeButton.addEventListener(`click`, handler);
+    this._onChangeActionType = handler;
+  }
+
+  removeChangeActionTypeHandler(handler) {
+    this._eventTypeButton.removeEventListener(`click`, handler);
   }
 
   removeSubmitHandler(handler) {
@@ -197,6 +209,7 @@ export default class CardEdit extends AbstractSmartComponent {
   }
 
   setSelectedActionType(editContainer) {
+    this._showTypesList();
     const actionTypes = editContainer.querySelectorAll(`.event__type-input`);
     actionTypes.forEach((actionType) => {
       if (actionType.hasAttribute(`checked`)) {
@@ -220,11 +233,25 @@ export default class CardEdit extends AbstractSmartComponent {
     });
   }
 
+  reset() {
+    this.getElement().reset();
+    this.rerender();
+  }
+
   recoveryListeners() {
-    this.setSubmitHandler(this._submitHandler);
+    this.setSubmitHandler(this._onSubmit);
+    this.setChangeActionTypeHandler(this._onChangeActionType);
   }
 
   rerender() {
     super.rerender();
+  }
+
+  _showTypesList() {
+    this._actionTypesList.style.display = `block`;
+  }
+
+  hideTypesList() {
+    this._actionTypesList.style.display = `none`;
   }
 }
