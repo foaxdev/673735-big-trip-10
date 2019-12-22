@@ -181,7 +181,9 @@ export default class CardEdit extends AbstractSmartComponent {
     super();
     this._cardData = cardData;
     this._onSubmit = null;
+    this._onActionTypeClick = null;
     this._actionTypesList = this.getElement().querySelector(`.event__type-list`);
+    this._actionTypeButton = this.getElement().querySelector(`.event__type`);
   }
 
   getTemplate() {
@@ -193,8 +195,17 @@ export default class CardEdit extends AbstractSmartComponent {
     this._onSubmit = handler;
   }
 
+  setActionTypeHandler(handler) {
+    this._actionTypeButton.addEventListener(`click`, handler);
+    this._onActionTypeClick = handler;
+  }
+
   removeSubmitHandler(handler) {
     this.getElement().removeEventListener(`submit`, handler);
+  }
+
+  removeActionTypeHandler(handler) {
+    this._actionTypeButton.removeEventListener(`click`, handler);
   }
 
   setSelectedActionType(editContainer) {
@@ -223,11 +234,11 @@ export default class CardEdit extends AbstractSmartComponent {
 
   reset() {
     this.getElement().reset();
-    this.rerender();
   }
 
   recoveryListeners() {
     this.setSubmitHandler(this._onSubmit);
+    this.setActionTypeHandler(this._onActionTypeClick);
   }
 
   rerender() {

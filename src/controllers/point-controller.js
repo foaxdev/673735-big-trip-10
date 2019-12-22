@@ -36,7 +36,7 @@ export default class PointController {
       this._editCardComponent.hideTypesList();
     };
 
-    const onEscKeyDown = (evt) => {
+    const escKeyDownHandler = (evt) => {
       if (evt.key === Keys.ESCAPE) {
         this._editCardComponent.reset();
         removeEventListenersFromEditCard();
@@ -44,7 +44,7 @@ export default class PointController {
       }
     };
 
-    const onSubmitForm = (evt) => {
+    const submitFormHandler = (evt) => {
       evt.preventDefault();
       removeEventListenersFromEditCard();
       this._replaceEditToCard();
@@ -62,14 +62,21 @@ export default class PointController {
       this._cardComponent.setNewData(this._newPointData);
     };
 
+    const actionTypeClickHandler = () => {
+      this._editCardComponent.showTypesList();
+      this._editCardComponent.setSelectedActionType(this._editCardComponent.getElement());
+    };
+
     const removeEventListenersFromEditCard = () => {
-      this._editCardComponent.removeSubmitHandler(onSubmitForm);
-      document.removeEventListener(`keydown`, onEscKeyDown);
+      this._editCardComponent.removeSubmitHandler(submitFormHandler);
+      this._editCardComponent.removeActionTypeHandler(actionTypeClickHandler);
+      document.removeEventListener(`keydown`, escKeyDownHandler);
     };
 
     const setEventListenersToEditCard = () => {
-      document.addEventListener(`keydown`, onEscKeyDown);
-      this._editCardComponent.setSubmitHandler(onSubmitForm);
+      document.addEventListener(`keydown`, escKeyDownHandler);
+      this._editCardComponent.setSubmitHandler(submitFormHandler);
+      this._editCardComponent.setActionTypeHandler(actionTypeClickHandler);
     };
 
     this._cardComponent.setEditButtonClickHandler(() => {
@@ -79,12 +86,6 @@ export default class PointController {
 
       actionTypes.forEach((actionType) => {
         actionType.addEventListener(`click`, onActionTypeChange);
-      });
-
-      const actionTypeButton = this._editCardComponent.getElement().querySelector(`.event__type`);
-      actionTypeButton.addEventListener(`click`, () => {
-        this._editCardComponent.showTypesList();
-        this._editCardComponent.setSelectedActionType(this._editCardComponent.getElement());
       });
 
       const favButton = this._editCardComponent.getElement().querySelector(`.event__favorite-btn`);
