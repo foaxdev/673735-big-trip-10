@@ -18,11 +18,13 @@ export default class PointController {
     this._mode = Mode.DEFAULT;
     this._editCardComponent = null;
     this._pointData = {};
+    this._newPointData = {};
     this._currentType = null;
   }
 
   render(pointData) {
     this._pointData = pointData;
+    this._newPointData = this._pointData;
     this._cardComponent = new Card(this._pointData);
     this._editCardComponent = new CardEdit(this._pointData);
     const actionTypes = document.querySelectorAll(`.event__type-input`);
@@ -32,10 +34,6 @@ export default class PointController {
       this._changeActionTypeIcon(evt.target.value);
       this._currentType = evt.target.value;
       this._editCardComponent.hideTypesList();
-    };
-
-    const actionChangeTypeHandler = () => {
-      this._editCardComponent.setSelectedActionType(this._editCardComponent.getElement());
     };
 
     const onEscKeyDown = (evt) => {
@@ -50,27 +48,27 @@ export default class PointController {
       evt.preventDefault();
       removeEventListenersFromEditCard();
       this._replaceEditToCard();
+      this._updatePointData();
       this._onDataChange(
         this._cardComponent,
         Object.assign(
           {},
           this._pointData,
-          { type: `${this._currentType !== null ? this._currentType : this._pointData.type}` }
+          this._newPointData
         ),
         this._pointData
       );
+      this._editCardComponent.setNewData(this._newPointData);
     };
 
     const removeEventListenersFromEditCard = () => {
       this._editCardComponent.removeSubmitHandler(onSubmitForm);
-      this._editCardComponent.removeChangeActionTypeHandler(actionChangeTypeHandler);
       document.removeEventListener(`keydown`, onEscKeyDown);
     };
 
     const setEventListenersToEditCard = () => {
       document.addEventListener(`keydown`, onEscKeyDown);
       this._editCardComponent.setSubmitHandler(onSubmitForm);
-      this._editCardComponent.setChangeActionTypeHandler(actionChangeTypeHandler);
     };
 
     this._cardComponent.setEditButtonClickHandler(() => {
@@ -80,6 +78,12 @@ export default class PointController {
 
       actionTypes.forEach((actionType) => {
         actionType.addEventListener(`click`, onActionTypeChange);
+      });
+
+      const actionTypeButton = this._editCardComponent.getElement().querySelector(`.event__type`);
+      actionTypeButton.addEventListener(`click`, () => {
+        this._editCardComponent.showTypesList();
+        this._editCardComponent.setSelectedActionType(this._editCardComponent.getElement());
       });
 
       const favButton = this._editCardComponent.getElement().querySelector(`.event__favorite-btn`);
@@ -97,6 +101,10 @@ export default class PointController {
     });
 
     render(this._container, this._cardComponent);
+  }
+
+  _updatePointData() {
+    this._newPointData.type = this._currentType !== null ? this._currentType : this._pointData.type;
   }
 
   _changeEventPlaceholder(type) {
