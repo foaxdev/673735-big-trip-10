@@ -1,5 +1,5 @@
-import {createItems} from "../utils";
 import AbstractComponent from "./abstract-component";
+import {createItems} from "../utils/render";
 
 const getMenuHtml = (menuName) => {
   return (`

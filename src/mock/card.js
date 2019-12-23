@@ -1,39 +1,18 @@
+import {amenities} from "../const";
+
 let dateDifference = 1;
 
-const amenities = [
-  {
-    type: `luggage`,
-    title: `Add luggage`,
-    price: 10
-  },
-  {
-    type: `comfort`,
-    title: `Switch to comfort class`,
-    price: 150
-  },
-  {
-    type: `meal`,
-    title: `Add meal`,
-    price: 2
-  },
-  {
-    type: `seats`,
-    title: `Choose seats`,
-    price: 9
-  }
-];
-
 const Types = [
-  `Bus`,
-  `Check-in`,
-  `Drive`,
-  `Flight`,
-  `Restaurant`,
-  `Ship`,
-  `Sightseeing`,
-  `Taxi`,
-  `Train`,
-  `Transport`
+  `bus`,
+  `check-in`,
+  `drive`,
+  `flight`,
+  `restaurant`,
+  `ship`,
+  `sightseeing`,
+  `taxi`,
+  `train`,
+  `transport`
 ];
 
 const Cities = [
@@ -127,12 +106,15 @@ const generateCard = () => {
     amenities: getRandomAmenities(),
     start: getRandomDate(),
     end: getRandomDate(),
-    price: getRandomIntegerNumber(10, 1000)
+    price: getRandomIntegerNumber(10, 1000),
+    isFavorite: false
   };
 };
 
-export const generateCards = (count) => {
-  return new Array(count)
+const generateCards = () => {
+  return new Array(10)
     .fill(``)
     .map(generateCard);
 };
+
+export const data = generateCards();

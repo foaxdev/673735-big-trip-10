@@ -1,5 +1,6 @@
-import {capitalizeFirstLetter, createItems} from "../utils";
+import {capitalizeFirstLetter} from "../utils/format";
 import AbstractComponent from "./abstract-component";
+import {createItems} from "../utils/render";
 
 export const SortType = {
   DEFAULT: `event`,

@@ -1,5 +1,8 @@
-import {createItems, formatDate, formatTime, millisecondsToHm} from "../utils";
+import {formatDate, formatTime, millisecondsToHm} from "../utils/format";
 import AbstractComponent from "./abstract-component";
+import {actionByType} from "../const";
+import {createItems} from "../utils/render";
+import AbstractSmartComponent from "./abstract-smart-component";
 
 const getOfferHtml = (offer) => {
   return (`
@@ -12,7 +15,9 @@ const getOfferHtml = (offer) => {
 };
 
 const createCardTemplate = (cardData) => {
-  const {type, amenities, start, end, price} = cardData;
+  const {type, amenities, start, end, price, city} = cardData;
+
+  const prefixForActivity = actionByType.get(type);
 
   const startDate = formatDate(start, true);
   const endDate = formatDate(end, true);
@@ -28,7 +33,7 @@ const createCardTemplate = (cardData) => {
         <div class="event__type">
           <img class="event__type-icon" width="42" height="42" src="img/icons/${type}.png" alt="Event type icon">
         </div>
-        <h3 class="event__title">Taxi to airport</h3>
+        <h3 class="event__title">${prefixForActivity} ${city}</h3>
 
         <div class="event__schedule">
           <p class="event__time">
@@ -56,14 +61,30 @@ const createCardTemplate = (cardData) => {
   `);
 };
 
-export default class Card extends AbstractComponent {
+export default class Card extends AbstractSmartComponent {
 
   constructor(cardData) {
     super();
     this._cardData = cardData;
+    this._onEditButton = null;
   }
 
   getTemplate() {
     return createCardTemplate(this._cardData);
+  }
+
+  setNewData(newData) {
+    this._cardData = newData;
+    this.rerender();
+  }
+
+  setEditButtonClickHandler(handler) {
+    this.getElement().querySelector(`.event__rollup-btn`)
+      .addEventListener(`click`, handler);
+    this._onEditButton = handler;
+  }
+
+  recoveryListeners() {
+    this.setEditButtonClickHandler(this._onEditButton);
   }
 }

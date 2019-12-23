@@ -1,11 +1,27 @@
-import {createItems, formatDate, formatTime} from "../utils";
-import AbstractComponent from "./abstract-component";
+import {formatDate, formatTime} from "../utils/format";
+import AbstractSmartComponent from "./abstract-smart-component";
+import {createItems} from "../utils/render";
+import {actionByType, amenities} from "../const";
 
 const getImageHtml = (imageSrc) => {
   return(`
     <img class="event__photo" src="${imageSrc}" alt="Event photo">
   `);
 };
+
+const getAmenityHtml = (amenityInfo) => {
+  return(`
+    <div class="event__offer-selector">
+      <input class="event__offer-checkbox  visually-hidden" id="event-offer-${amenityInfo.type}" type="checkbox" name="event-offer-${amenityInfo.type}">
+      <label class="event__offer-label" for="event-offer-${amenityInfo.type}">
+        <span class="event__offer-title">${amenityInfo.title}</span>
+        &plus;
+        &euro;&nbsp;<span class="event__offer-price">${amenityInfo.price}</span>
+      </label>
+    </div>
+  `);
+};
+
 
 const createEditCardTemplate = (cardData) => {
   const {type, city, photos, description, start, end, price} = cardData;
@@ -15,6 +31,9 @@ const createEditCardTemplate = (cardData) => {
 
   const startTime = formatTime(start.getHours(), start.getMinutes());
   const endTime = formatTime(end.getHours(), end.getMinutes());
+
+  const isFavourite = cardData.isFavorite ? `checked` : ``;
+  const prefixForActivity = actionByType.get(type);
 
   return (`
     <form class="event event--edit" action="#" method="post">
@@ -61,7 +80,7 @@ const createEditCardTemplate = (cardData) => {
               </div>
 
               <div class="event__type-item">
-                <input id="event-type-flight-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="flight" checked>
+                <input id="event-type-flight-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="flight">
                 <label class="event__type-label  event__type-label--flight" for="event-type-flight-1">Flight</label>
               </div>
             </fieldset>
@@ -89,7 +108,7 @@ const createEditCardTemplate = (cardData) => {
 
         <div class="event__field-group  event__field-group--destination">
           <label class="event__label  event__type-output" for="event-destination-1">
-            Sightseeing at
+            ${prefixForActivity}
           </label>
           <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${city}" list="destination-list-1">
           <datalist id="destination-list-1">
@@ -122,7 +141,7 @@ const createEditCardTemplate = (cardData) => {
         <button class="event__save-btn  btn  btn--blue" type="submit">Save</button>
         <button class="event__reset-btn" type="reset">Delete</button>
 
-        <input id="event-favorite-1" class="event__favorite-checkbox  visually-hidden" type="checkbox" name="event-favorite" checked>
+        <input id="event-favorite-1" class="event__favorite-checkbox  visually-hidden" type="checkbox" name="event-favorite" ${isFavourite}>
         <label class="event__favorite-btn" for="event-favorite-1">
           <span class="visually-hidden">Add to favorite</span>
           <svg class="event__favorite-icon" width="28" height="28" viewBox="0 0 28 28">
@@ -139,50 +158,7 @@ const createEditCardTemplate = (cardData) => {
         <section class="event__section  event__section--offers">
           <h3 class="event__section-title  event__section-title--offers">Offers</h3>
           <div class="event__available-offers">
-            <div class="event__offer-selector">
-                <input class="event__offer-checkbox  visually-hidden" id="event-offer-luggage-1" type="checkbox" name="event-offer-luggage" checked>
-                <label class="event__offer-label" for="event-offer-luggage-1">
-                  <span class="event__offer-title">Add luggage</span>
-                  &plus;
-                  &euro;&nbsp;<span class="event__offer-price">30</span>
-                </label>
-              </div>
-
-              <div class="event__offer-selector">
-                <input class="event__offer-checkbox  visually-hidden" id="event-offer-comfort-1" type="checkbox" name="event-offer-comfort" checked>
-                <label class="event__offer-label" for="event-offer-comfort-1">
-                  <span class="event__offer-title">Switch to comfort class</span>
-                  &plus;
-                  &euro;&nbsp;<span class="event__offer-price">100</span>
-                </label>
-              </div>
-
-              <div class="event__offer-selector">
-                <input class="event__offer-checkbox  visually-hidden" id="event-offer-meal-1" type="checkbox" name="event-offer-meal">
-                <label class="event__offer-label" for="event-offer-meal-1">
-                  <span class="event__offer-title">Add meal</span>
-                  &plus;
-                  &euro;&nbsp;<span class="event__offer-price">15</span>
-                </label>
-              </div>
-
-              <div class="event__offer-selector">
-                <input class="event__offer-checkbox  visually-hidden" id="event-offer-seats-1" type="checkbox" name="event-offer-seats">
-                <label class="event__offer-label" for="event-offer-seats-1">
-                  <span class="event__offer-title">Choose seats</span>
-                  &plus;
-                  &euro;&nbsp;<span class="event__offer-price">5</span>
-                </label>
-              </div>
-
-              <div class="event__offer-selector">
-                <input class="event__offer-checkbox  visually-hidden" id="event-offer-train-1" type="checkbox" name="event-offer-train">
-                <label class="event__offer-label" for="event-offer-train-1">
-                  <span class="event__offer-title">Travel by train</span>
-                  &plus;
-                  &euro;&nbsp;<span class="event__offer-price">40</span>
-                </label>
-              </div>
+            ${createItems(amenities, getAmenityHtml)}
           </div>
         </section>
         <section class="event__section  event__section--destination">
@@ -199,11 +175,15 @@ const createEditCardTemplate = (cardData) => {
   `);
 };
 
-export default class CardEdit extends AbstractComponent {
+export default class CardEdit extends AbstractSmartComponent {
 
   constructor(cardData) {
     super();
     this._cardData = cardData;
+    this._onSubmit = null;
+    this._onActionTypeClick = null;
+    this._actionTypesList = this.getElement().querySelector(`.event__type-list`);
+    this._actionTypeButton = this.getElement().querySelector(`.event__type`);
   }
 
   getTemplate() {
@@ -212,9 +192,68 @@ export default class CardEdit extends AbstractComponent {
 
   setSubmitHandler(handler) {
     this.getElement().addEventListener(`submit`, handler);
+    this._onSubmit = handler;
+  }
+
+  setActionTypeHandler(handler) {
+    this._actionTypeButton.addEventListener(`click`, handler);
+    this._onActionTypeClick = handler;
   }
 
   removeSubmitHandler(handler) {
     this.getElement().removeEventListener(`submit`, handler);
+  }
+
+  removeActionTypeHandler(handler) {
+    this._actionTypeButton.removeEventListener(`click`, handler);
+  }
+
+  setSelectedActionType(editContainer) {
+    const actionTypes = editContainer.querySelectorAll(`.event__type-input`);
+    actionTypes.forEach((actionType) => {
+      if (actionType.hasAttribute(`checked`)) {
+        actionType.removeAttribute(`checked`);
+      }
+      if (actionType.getAttribute(`value`) === this._cardData.type) {
+        actionType.setAttribute(`checked`, `checked`);
+      }
+    });
+  }
+
+  setAddedAmenities(editContainer) {
+    const amenitiesCheckboxes = editContainer.querySelectorAll(`.event__offer-checkbox`);
+    amenitiesCheckboxes.forEach((amenityCheckbox) => {
+      for (let i = 0; i < this._cardData.amenities.length; i++) {
+        if (amenityCheckbox.getAttribute(`id`).endsWith(this._cardData.amenities[i].type)) {
+          amenityCheckbox.setAttribute(`checked`, `checked`);
+          break;
+        }
+      }
+    });
+  }
+
+  reset() {
+    this.getElement().reset();
+  }
+
+  recoveryListeners() {
+    this.setSubmitHandler(this._onSubmit);
+    this.setActionTypeHandler(this._onActionTypeClick);
+  }
+
+  rerender() {
+    super.rerender();
+  }
+
+  showTypesList() {
+    this._actionTypesList.style.display = `block`;
+  }
+
+  hideTypesList() {
+    this._actionTypesList.style.display = `none`;
+  }
+
+  setNewData(newData) {
+    this._cardData = newData;
   }
 }
