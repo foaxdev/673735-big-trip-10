@@ -2,6 +2,9 @@ import {formatDate, formatTime} from "../utils/format";
 import AbstractSmartComponent from "./abstract-smart-component";
 import {createItems} from "../utils/render";
 import {actionByType, amenities} from "../const";
+import flatpickr from 'flatpickr';
+import 'flatpickr/dist/flatpickr.min.css';
+import 'flatpickr/dist/themes/light.css';
 
 const getImageHtml = (imageSrc) => {
   return(`
@@ -182,12 +185,24 @@ export default class CardEdit extends AbstractSmartComponent {
     this._cardData = cardData;
     this._onSubmit = null;
     this._onActionTypeClick = null;
+    this._flatpickr = null;
     this._actionTypesList = this.getElement().querySelector(`.event__type-list`);
     this._actionTypeButton = this.getElement().querySelector(`.event__type`);
+
+    this._applyFlatpickr();
   }
 
   getTemplate() {
     return createEditCardTemplate(this._cardData);
+  }
+
+  removeElement() {
+    if (this._flatpickr) {
+      this._flatpickr.destroy();
+      this._flatpickr = null;
+    }
+
+    super.removeElement();
   }
 
   setSubmitHandler(handler) {
@@ -243,6 +258,8 @@ export default class CardEdit extends AbstractSmartComponent {
 
   rerender() {
     super.rerender();
+
+    this._applyFlatpickr();
   }
 
   showTypesList() {
@@ -255,5 +272,21 @@ export default class CardEdit extends AbstractSmartComponent {
 
   setNewData(newData) {
     this._cardData = newData;
+  }
+
+  _applyFlatpickr() {
+    if (this._flatpickr) {
+      this._flatpickr.destroy();
+      this._flatpickr = null;
+    }
+
+    if (this._isDateShowing) {
+      const startDateElement = this.getElement().querySelector(`#event-start-time-1`);
+      this._flatpickr = flatpickr(startDateElement, {
+        altInput: true,
+        allowInput: true,
+        defaultDate: this._task.dueDate,
+      });
+    }
   }
 }
