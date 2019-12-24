@@ -123,8 +123,8 @@ export default class PointController {
 
   _updatePointData() {
     this._newPointData.type = this._newCurrentType !== null ? this._newCurrentType : this._pointData.type;
-    this._newPointData.start = this._newStartDate !== null ? this._newStartDate : this._pointData.start;
-    this._newPointData.end = this._newEndDate !== null ? this._newEndDate : this._pointData.end;
+    this._newPointData.start = this._newStartDate !== null ? new Date(this._newStartDate) : this._pointData.start;
+    this._newPointData.end = this._newEndDate !== null ? new Date(this._newEndDate) : this._pointData.end;
   }
 
   _changeEventPlaceholder(type) {

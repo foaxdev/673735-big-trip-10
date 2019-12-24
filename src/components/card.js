@@ -25,10 +25,7 @@ const createCardTemplate = (cardData) => {
   const startTime = moment(start).format(`HH:mm`);
   const endTime = moment(end).format(`HH:mm`);
 
-  const startDateInMs = start instanceof Date ? start.getTime() : new Date(start).getTime();
-  const endDateInMs = end instanceof Date ? end.getTime() : new Date(end).getTime();
-
-  const duration = formatDuration(endDateInMs - startDateInMs);
+  const duration = formatDuration(end.getTime() - start.getTime());
 
   return (`
     <li class="trip-events__item">
