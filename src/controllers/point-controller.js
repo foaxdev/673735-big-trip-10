@@ -19,7 +19,9 @@ export default class PointController {
     this._editCardComponent = null;
     this._pointData = {};
     this._newPointData = {};
-    this._currentType = null;
+    this._newCurrentType = null;
+    this._newStartDate = null;
+    this._newEndDate = null;
   }
 
   render(pointData) {
@@ -32,7 +34,7 @@ export default class PointController {
     const onActionTypeChange = (evt) => {
       this._changeEventPlaceholder(evt.target.value);
       this._changeActionTypeIcon(evt.target.value);
-      this._currentType = evt.target.value;
+      this._newCurrentType = evt.target.value;
       this._editCardComponent.hideTypesList();
     };
 
@@ -67,9 +69,19 @@ export default class PointController {
       this._editCardComponent.setSelectedActionType(this._editCardComponent.getElement());
     };
 
+    const startDateChangeHandler = (evt) => {
+      this._newStartDate = evt.target.value;
+    };
+
+    const endDateChangeHandler = (evt) => {
+      this._newEndDate = evt.target.value;
+    };
+
     const removeEventListenersFromEditCard = () => {
       this._editCardComponent.removeSubmitHandler(submitFormHandler);
       this._editCardComponent.removeActionTypeHandler(actionTypeClickHandler);
+      this._editCardComponent.removeStartDateChangeHandler(startDateChangeHandler);
+      this._editCardComponent.removeEndDateChangeHandler(endDateChangeHandler);
       document.removeEventListener(`keydown`, escKeyDownHandler);
     };
 
@@ -77,6 +89,8 @@ export default class PointController {
       document.addEventListener(`keydown`, escKeyDownHandler);
       this._editCardComponent.setSubmitHandler(submitFormHandler);
       this._editCardComponent.setActionTypeHandler(actionTypeClickHandler);
+      this._editCardComponent.setStartDateChangeHandler(startDateChangeHandler);
+      this._editCardComponent.setEndDateChangeHandler(endDateChangeHandler);
     };
 
     this._cardComponent.setEditButtonClickHandler(() => {
@@ -106,7 +120,9 @@ export default class PointController {
   }
 
   _updatePointData() {
-    this._newPointData.type = this._currentType !== null ? this._currentType : this._pointData.type;
+    this._newPointData.type = this._newCurrentType !== null ? this._newCurrentType : this._pointData.type;
+    this._newPointData.start = this._newStartDate !== null ? this._newStartDate : this._pointData.start;
+    this._newPointData.end = this._newEndDate !== null ? this._newEndDate : this._pointData.end;
   }
 
   _changeEventPlaceholder(type) {

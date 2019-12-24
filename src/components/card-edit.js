@@ -184,9 +184,13 @@ export default class CardEdit extends AbstractSmartComponent {
     this._cardData = cardData;
     this._onSubmit = null;
     this._onActionTypeClick = null;
+    this._onStartDateChange = null;
+    this._onEndDateChange = null;
     this._flatpickr = null;
     this._actionTypesList = this.getElement().querySelector(`.event__type-list`);
     this._actionTypeButton = this.getElement().querySelector(`.event__type`);
+    this._startDate = this.getElement().querySelector(`#event-start-time-1`);
+    this._endDate = this.getElement().querySelector(`#event-end-time-1`);
 
     this._applyFlatpickr();
   }
@@ -214,12 +218,30 @@ export default class CardEdit extends AbstractSmartComponent {
     this._onActionTypeClick = handler;
   }
 
+  setStartDateChangeHandler(handler) {
+    this._startDate.addEventListener(`change`, handler);
+    this._onStartDateChange = handler;
+  }
+
+  setEndDateChangeHandler(handler) {
+    this._endDate.addEventListener(`change`, handler);
+    this._onEndDateChange = handler;
+  }
+
   removeSubmitHandler(handler) {
     this.getElement().removeEventListener(`submit`, handler);
   }
 
   removeActionTypeHandler(handler) {
     this._actionTypeButton.removeEventListener(`click`, handler);
+  }
+
+  removeStartDateChangeHandler(handler) {
+    this._startDate.removeEventListener(`change`, handler);
+  }
+
+  removeEndDateChangeHandler(handler) {
+    this._endDate.removeEventListener(`change`, handler);
   }
 
   setSelectedActionType(editContainer) {
@@ -248,11 +270,14 @@ export default class CardEdit extends AbstractSmartComponent {
 
   reset() {
     this.getElement().reset();
+    this._applyFlatpickr();
   }
 
   recoveryListeners() {
     this.setSubmitHandler(this._onSubmit);
     this.setActionTypeHandler(this._onActionTypeClick);
+    this.setStartDateChangeHandler(this._onStartDateChange);
+    this.setEndDateChangeHandler(this._onEndDateChange);
   }
 
   rerender() {
@@ -279,17 +304,14 @@ export default class CardEdit extends AbstractSmartComponent {
       this._flatpickr = null;
     }
 
-    const startDateElement = this.getElement().querySelector(`#event-start-time-1`);
-    const endDateElement = this.getElement().querySelector(`#event-end-time-1`);
-
-    this._flatpickr = flatpickr(startDateElement, {
+    this._flatpickr = flatpickr(this._startDate, {
       altInput: true,
       allowInput: true,
       defaultDate: this._cardData.start,
       format: `d/m/Y H:i`,
       altFormat: `d/m/Y H:i`
     });
-    this._flatpickr = flatpickr(endDateElement, {
+    this._flatpickr = flatpickr(this._endDate, {
       altInput: true,
       allowInput: true,
       defaultDate: this._cardData.end,
