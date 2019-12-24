@@ -112,7 +112,7 @@ const generateCard = () => {
 };
 
 const generateCards = () => {
-  return new Array(10)
+  return new Array(20)
     .fill(``)
     .map(generateCard);
 };

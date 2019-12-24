@@ -338,7 +338,7 @@ export default class CardEdit extends AbstractSmartComponent {
       defaultDate: this._cardData.end,
       format: `d/m/Y H:i`,
       altFormat: `d/m/Y H:i`,
-      minDate: this._cardData.start
+      minDate: new Date(this._cardData.start).setDate(this._cardData.start.getDate() + 1)
     });
   }
 }
