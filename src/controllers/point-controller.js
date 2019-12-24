@@ -71,10 +71,12 @@ export default class PointController {
 
     const startDateChangeHandler = (evt) => {
       this._newStartDate = evt.target.value;
+      this._editCardComponent.changeMinEndDate(this._newStartDate);
     };
 
     const endDateChangeHandler = (evt) => {
       this._newEndDate = evt.target.value;
+      this._editCardComponent.changeMaxStartDate(this._newEndDate);
     };
 
     const removeEventListenersFromEditCard = () => {

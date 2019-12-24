@@ -186,7 +186,8 @@ export default class CardEdit extends AbstractSmartComponent {
     this._onActionTypeClick = null;
     this._onStartDateChange = null;
     this._onEndDateChange = null;
-    this._flatpickr = null;
+    this._flatpickrStartDate = null;
+    this._flatpickrEndDate = null;
     this._actionTypesList = this.getElement().querySelector(`.event__type-list`);
     this._actionTypeButton = this.getElement().querySelector(`.event__type`);
     this._startDate = this.getElement().querySelector(`#event-start-time-1`);
@@ -200,9 +201,14 @@ export default class CardEdit extends AbstractSmartComponent {
   }
 
   removeElement() {
-    if (this._flatpickr) {
-      this._flatpickr.destroy();
-      this._flatpickr = null;
+    if (this._flatpickrStartDate) {
+      this._flatpickrStartDate.destroy();
+      this._flatpickrStartDate = null;
+    }
+
+    if (this._flatpickrEndDate) {
+      this._flatpickrEndDate.destroy();
+      this._flatpickrEndDate = null;
     }
 
     super.removeElement();
@@ -298,25 +304,41 @@ export default class CardEdit extends AbstractSmartComponent {
     this._cardData = newData;
   }
 
+  changeMaxStartDate(newDate) {
+    this._flatpickrStartDate.set(`maxDate`, newDate);
+  }
+
+  changeMinEndDate(newDate) {
+    this._flatpickrEndDate.set(`minDate`, newDate);
+  }
+
   _applyFlatpickr() {
-    if (this._flatpickr) {
-      this._flatpickr.destroy();
-      this._flatpickr = null;
+    if (this._flatpickrStartDate) {
+      this._flatpickrStartDate.destroy();
+      this._flatpickrStartDate = null;
     }
 
-    this._flatpickr = flatpickr(this._startDate, {
+    if (this._flatpickrEndDate) {
+      this._flatpickrEndDate.destroy();
+      this._flatpickrEndDate = null;
+    }
+
+    this._flatpickrStartDate = flatpickr(this._startDate, {
       altInput: true,
       allowInput: true,
       defaultDate: this._cardData.start,
       format: `d/m/Y H:i`,
-      altFormat: `d/m/Y H:i`
+      altFormat: `d/m/Y H:i`,
+      maxDate: this._cardData.end,
+      minDate: Date.now()
     });
-    this._flatpickr = flatpickr(this._endDate, {
+    this._flatpickrEndDate = flatpickr(this._endDate, {
       altInput: true,
       allowInput: true,
       defaultDate: this._cardData.end,
       format: `d/m/Y H:i`,
-      altFormat: `d/m/Y H:i`
+      altFormat: `d/m/Y H:i`,
+      minDate: this._cardData.start
     });
   }
 }
