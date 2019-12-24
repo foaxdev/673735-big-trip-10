@@ -1,8 +1,10 @@
-import {formatDate, formatTime} from "../utils/format";
 import AbstractSmartComponent from "./abstract-smart-component";
 import {createItems} from "../utils/render";
 import {actionByType, amenities} from "../const";
-import flatpickr from 'flatpickr';
+import flatpickr from "flatpickr";
+import moment from "moment";
+
+
 import 'flatpickr/dist/flatpickr.min.css';
 import 'flatpickr/dist/themes/light.css';
 
@@ -29,11 +31,8 @@ const getAmenityHtml = (amenityInfo) => {
 const createEditCardTemplate = (cardData) => {
   const {type, city, photos, description, start, end, price} = cardData;
 
-  const startDate = formatDate(start, false);
-  const endDate = formatDate(end, false);
-
-  const startTime = formatTime(start.getHours(), start.getMinutes());
-  const endTime = formatTime(end.getHours(), end.getMinutes());
+  const startDate = moment(start).format(`DD/MM/YYYY HH:mm`);
+  const endDate = moment(end).format(`DD/MM/YYYY HH:mm`);
 
   const isFavourite = cardData.isFavorite ? `checked` : ``;
   const prefixForActivity = actionByType.get(type);
@@ -125,12 +124,12 @@ const createEditCardTemplate = (cardData) => {
           <label class="visually-hidden" for="event-start-time-1">
             From
           </label>
-          <input class="event__input  event__input--time" id="event-start-time-1" type="text" name="event-start-time" value="${startDate} ${startTime}">
+          <input class="event__input  event__input--time" id="event-start-time-1" type="text" name="event-start-time" value="${startDate}">
           &mdash;
           <label class="visually-hidden" for="event-end-time-1">
             To
           </label>
-          <input class="event__input  event__input--time" id="event-end-time-1" type="text" name="event-end-time" value="${endDate} ${endTime}">
+          <input class="event__input  event__input--time" id="event-end-time-1" type="text" name="event-end-time" value="${endDate}">
         </div>
 
         <div class="event__field-group  event__field-group--price">
@@ -280,13 +279,22 @@ export default class CardEdit extends AbstractSmartComponent {
       this._flatpickr = null;
     }
 
-    if (this._isDateShowing) {
-      const startDateElement = this.getElement().querySelector(`#event-start-time-1`);
-      this._flatpickr = flatpickr(startDateElement, {
-        altInput: true,
-        allowInput: true,
-        defaultDate: this._task.dueDate,
-      });
-    }
+    const startDateElement = this.getElement().querySelector(`#event-start-time-1`);
+    const endDateElement = this.getElement().querySelector(`#event-end-time-1`);
+
+    this._flatpickr = flatpickr(startDateElement, {
+      altInput: true,
+      allowInput: true,
+      defaultDate: this._cardData.start,
+      format: `d/m/Y H:i`,
+      altFormat: `d/m/Y H:i`
+    });
+    this._flatpickr = flatpickr(endDateElement, {
+      altInput: true,
+      allowInput: true,
+      defaultDate: this._cardData.end,
+      format: `d/m/Y H:i`,
+      altFormat: `d/m/Y H:i`
+    });
   }
 }
