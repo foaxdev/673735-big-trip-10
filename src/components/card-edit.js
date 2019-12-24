@@ -330,7 +330,8 @@ export default class CardEdit extends AbstractSmartComponent {
       format: `d/m/Y H:i`,
       altFormat: `d/m/Y H:i`,
       maxDate: this._cardData.end,
-      minDate: Date.now()
+      minDate: Date.now(),
+      enableTime: true
     });
     this._flatpickrEndDate = flatpickr(this._endDate, {
       altInput: true,
@@ -338,7 +339,8 @@ export default class CardEdit extends AbstractSmartComponent {
       defaultDate: this._cardData.end,
       format: `d/m/Y H:i`,
       altFormat: `d/m/Y H:i`,
-      minDate: new Date(this._cardData.start).setDate(this._cardData.start.getDate() + 1)
+      minDate: new Date(this._cardData.start).setDate(this._cardData.start.getDate() + 1),
+      enableTime: true
     });
   }
 }
