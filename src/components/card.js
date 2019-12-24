@@ -1,8 +1,8 @@
-import {formatDate, formatTime, millisecondsToHm} from "../utils/format";
-import AbstractComponent from "./abstract-component";
+import moment from "moment";
 import {actionByType} from "../const";
 import {createItems} from "../utils/render";
 import AbstractSmartComponent from "./abstract-smart-component";
+import {formatDuration} from "../utils/format";
 
 const getOfferHtml = (offer) => {
   return (`
@@ -19,13 +19,13 @@ const createCardTemplate = (cardData) => {
 
   const prefixForActivity = actionByType.get(type);
 
-  const startDate = formatDate(start, true);
-  const endDate = formatDate(end, true);
+  const startDatetime = moment(start).format(`YYYY-MM-DDThh:mm:ss`);
+  const endDatetime = moment(end).format(`YYYY-MM-DDThh:mm:ss`);
 
-  const startTime = formatTime(start.getHours(), start.getMinutes());
-  const endTime = formatTime(end.getHours(), end.getMinutes());
+  const startTime = moment(start).format(`HH:mm`);
+  const endTime = moment(end).format(`HH:mm`);
 
-  const duration = millisecondsToHm(end.getTime() - start.getTime());
+  const duration = formatDuration(end.getTime() - start.getTime());
 
   return (`
     <li class="trip-events__item">
@@ -37,9 +37,9 @@ const createCardTemplate = (cardData) => {
 
         <div class="event__schedule">
           <p class="event__time">
-            <time class="event__start-time" datetime="${startDate}T${startTime}">${startTime}</time>
+            <time class="event__start-time" datetime="${startDatetime}">${startTime}</time>
             &mdash;
-            <time class="event__end-time" datetime="${endDate}T${endTime}">${endTime}</time>
+            <time class="event__end-time" datetime="${endDatetime}">${endTime}</time>
           </p>
           <p class="event__duration">${duration}</p>
         </div>

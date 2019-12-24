@@ -2,26 +2,18 @@ export const capitalizeFirstLetter = (word) => {
   return word.charAt(0).toUpperCase() + word.slice(1);
 };
 
-export const leftPad = (str, padString, targetLength) => {
-  return str.toString().padStart(targetLength, padString);
-};
+export const formatDuration = (timeInMs) => {
+  const days = Math.floor(timeInMs / (1000 * 60 * 60 * 24)).toString().padStart(2, `0`);
+  const hours = (Math.floor(timeInMs / (1000 * 60 * 60)) % 24).toString().padStart(2, `0`);
+  const minutes = (Math.floor(timeInMs / (1000 * 60)) % 60).toString().padStart(2, `0`);
 
-export const millisecondsToHm = (timeInMs) => {
-  const hours = Math.floor(timeInMs / 3600000);
-  const minutes = Math.floor(timeInMs % 3600000 / 60);
+  const modifiedDays = days > 0 ? `${days}D ` : ``;
+  let modifiedHours = `${hours}H `;
 
-  return `${hours}H ${minutes}M`;
-};
+  if (days <= 0) {
+    modifiedHours = hours > 0 ? `${hours}H ` : ``;
+  }
 
-export const formatDate = (date, isLong) => {
-  const dateYear = date.getFullYear();
-  const dateMonth = leftPad(date.getMonth() + 1, `0`, 2);
-  const dateDay = leftPad(date.getDate(), `0`, 2);
-
-  return isLong ? `${dateYear}-${dateMonth}-${dateDay}` : `${dateDay}/${dateMonth}/${dateYear.toString().slice(-2)}`
-};
-
-export const formatTime = (hours, minutes) => {
-  return `${hours}:${leftPad(minutes, `0`, 2)}`
+  return `${modifiedDays}${modifiedHours}${minutes}M`;
 };
 
