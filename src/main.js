@@ -5,6 +5,7 @@ import Filter from "./components/filter";
 import {render, RenderPosition} from "./utils/render";
 import TripController from "./controllers/trip-controller";
 import {data} from "./mock/card";
+import Points from "./models/points";
 
 const setMenuItemActive = (menuElement) => {
   const menuItems = document.querySelectorAll(`.trip-tabs__btn`);
@@ -35,5 +36,7 @@ setStatsMenuActive();
 
 render(filterHeader, new Filter(filters), RenderPosition.AFTEREND);
 
-const tripController = new TripController(tripEvents, tripControl, data);
-tripController.render(data);
+const pointModel = new Points();
+pointModel.setPoints(data);
+const tripController = new TripController(tripEvents, tripControl, pointModel);
+tripController.render();

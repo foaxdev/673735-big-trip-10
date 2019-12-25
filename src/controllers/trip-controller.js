@@ -23,15 +23,18 @@ const renderPointControllers = (cardsContainer, cards, dataChangeHandler, viewCh
 
 export default class TripController {
 
-  constructor(container, header) {
+  constructor(container, header, pointModel) {
     this._container = container;
     this._header = header;
+    this._pointModel = pointModel;
     this._sortComponent = new Sort(sortOptions);
     this._cards = [];
     this._pointControllers = [];
   }
 
-  render(cardsData) {
+  render() {
+    const cardsData = this._pointModel.getPoints();
+
     if (cardsData.length > 0) {
       this._cards = this._getSortedCards(null, cardsData);
       const tripRoute = this._header.querySelector(`.trip-main__trip-info`);
