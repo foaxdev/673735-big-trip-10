@@ -28,7 +28,7 @@ export default class Filter extends AbstractComponent {
     super();
     this._filters = filters;
 
-    this.setFilterActive(this.getElement().querySelectorAll(`.trip-filters__filter-input`)[2]);
+    this.setFilterActive(this.getElement().querySelectorAll(`.trip-filters__filter-input`)[0]);
   }
 
   getTemplate() {
