@@ -7,7 +7,6 @@ import Route from "../components/route";
 import PointController from "./point-controller";
 import Tip from "../components/tip";
 import {TIP_MESSAGE} from "../const";
-import Card from "../components/card";
 
 const renderPointControllers = (cardsContainer, cards, dataChangeHandler, viewChangeHandler) => {
   let pointControllers = [];
