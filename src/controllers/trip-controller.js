@@ -1,4 +1,4 @@
-import {render, RenderPosition, replace} from "../utils/render";
+import {remove, render, RenderPosition} from "../utils/render";
 import Sort, {SortType} from "../components/sort";
 import {sortOptions} from "../mock/sort";
 import Event from "../components/event";
@@ -25,11 +25,13 @@ export default class TripController {
   constructor(container, header, pointModel) {
     this._container = container;
     this._header = header;
+    this._tripRoute = this._header.querySelector(`.trip-main__trip-info`);
+    this._totalPrice = this._header.querySelector(`.trip-info__cost-value`);
     this._pointModel = pointModel;
+    this._route = null;
     this._sortComponent = new Sort(sortOptions);
     this._cards = [];
     this._pointControllers = [];
-    this._creatingPoint = null;
 
     this._onDataChange = this._onDataChange.bind(this);
     this._onViewChange = this._onViewChange.bind(this);
@@ -43,8 +45,6 @@ export default class TripController {
 
     if (cardsData.length > 0) {
       this._cards = this._getSortedCards(null, cardsData);
-      const tripRoute = this._header.querySelector(`.trip-main__trip-info`);
-      const totalPrice = this._header.querySelector(`.trip-info__cost-value`);
 
       render(this._container, this._sortComponent);
       this._sortComponent.setEventSortActive();
@@ -55,8 +55,9 @@ export default class TripController {
       const eventsList = this._container.querySelector(`.trip-events__list`);
       this._pointController = new PointController(eventsList, this._onDataChange.bind(this), this._onViewChange);
       this._pointControllers = renderPointControllers(eventsList, cardsData, this._onDataChange.bind(this), this._onViewChange.bind(this));
-      render(tripRoute, new Route(this._cards), RenderPosition.AFTERBEGIN);
-      totalPrice.textContent = this._getTotalSum(this._cards);
+      this._route = new Route(this._cards);
+      render(this._tripRoute, this._route, RenderPosition.AFTERBEGIN);
+      this._totalPrice.textContent = this._getTotalSum(this._cards);
 
       this._sortComponent.setSortTypeChangeHandler((sortType) => {
         eventsList.innerHTML = ``;
@@ -101,6 +102,7 @@ export default class TripController {
     if (newCardData === null) {
       this._pointModel.removePoint(oldCardData.id);
       this._updatePoints();
+      this._updateHeaderInfo(this._pointModel.getPoints());
     } else {
       const isSuccess = this._pointModel.updatePoint(oldCardData.id, newCardData);
 
@@ -108,6 +110,12 @@ export default class TripController {
         cardComponent.render(newCardData);
       }
     }
+  }
+
+  _updateHeaderInfo(pointsData) {
+    remove(this._route);
+    render(this._tripRoute, new Route(pointsData), RenderPosition.AFTERBEGIN);
+    this._totalPrice.textContent = this._getTotalSum(pointsData);
   }
 
   _onViewChange() {
