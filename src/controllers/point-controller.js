@@ -1,6 +1,6 @@
 import Card from "../components/card";
 import CardEdit from "../components/card-edit";
-import {render, replace} from "../utils/render";
+import {remove, render, replace} from "../utils/render";
 import {actionByType, Keys} from "../const";
 
 export const Mode = {
@@ -154,5 +154,10 @@ export default class PointController {
     if (this._mode !== Mode.DEFAULT) {
       this._replaceEditToCard();
     }
+  }
+
+  destroy() {
+    remove(this._editCardComponent);
+    remove(this._cardComponent);
   }
 }
