@@ -29,6 +29,7 @@ export default class TripController {
     this._sortComponent = new Sort(sortOptions);
     this._cards = [];
     this._pointControllers = [];
+    this._creatingPoint = null;
 
     this._onDataChange = this._onDataChange.bind(this);
     this._onViewChange = this._onViewChange.bind(this);
@@ -97,10 +98,15 @@ export default class TripController {
   }
 
   _onDataChange(cardComponent, newCardData, oldCardData) {
-    const isSuccess = this._pointModel.updatePoint(oldCardData.id, newCardData);
+    if (newCardData === null) {
+      this._pointModel.removePoint(oldCardData.id);
+      this._updatePoints();
+    } else {
+      const isSuccess = this._pointModel.updatePoint(oldCardData.id, newCardData);
 
-    if (isSuccess) {
-      cardComponent.render(newCardData);
+      if (isSuccess) {
+        cardComponent.render(newCardData);
+      }
     }
   }
 
@@ -109,6 +115,16 @@ export default class TripController {
       pointController.setDefaultView();
     });
   }
+
+  /*createPoint() {
+    if (this._creatingTask) {
+      return;
+    }
+
+    const taskListElement = this._cardComponent.getElement();
+    this._creatingTask = new TaskController(taskListElement, this._onDataChange, this._onViewChange);
+    this._creatingTask.render(EmptyTask, TaskControllerMode.ADDING);
+  }*/
 
   _removePoints() {
     this._pointControllers.forEach((pointController) => pointController.destroy());

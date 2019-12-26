@@ -183,6 +183,7 @@ export default class CardEdit extends AbstractSmartComponent {
     super();
     this._cardData = cardData;
     this._onSubmit = null;
+    this._onDeleteButtonClick = null;
     this._onActionTypeClick = null;
     this._onStartDateChange = null;
     this._onEndDateChange = null;
@@ -234,6 +235,11 @@ export default class CardEdit extends AbstractSmartComponent {
     this._onEndDateChange = handler;
   }
 
+  setDeleteButtonClickHandler(handler) {
+    this.getElement().querySelector(`.event__reset-btn`).addEventListener(`click`, handler);
+    this._onDeleteButtonClick = handler;
+  }
+
   removeSubmitHandler(handler) {
     this.getElement().removeEventListener(`submit`, handler);
   }
@@ -248,6 +254,10 @@ export default class CardEdit extends AbstractSmartComponent {
 
   removeEndDateChangeHandler(handler) {
     this._endDate.removeEventListener(`change`, handler);
+  }
+
+  removeDeleteButtonClickHandler(handler) {
+    this.getElement().querySelector(`.event__reset-btn`).removeEventListener(`click`, handler);
   }
 
   setSelectedActionType(editContainer) {
@@ -284,6 +294,7 @@ export default class CardEdit extends AbstractSmartComponent {
     this.setActionTypeHandler(this._onActionTypeClick);
     this.setStartDateChangeHandler(this._onStartDateChange);
     this.setEndDateChangeHandler(this._onEndDateChange);
+    this.setDeleteButtonClickHandler(this._onDeleteButtonClick);
   }
 
   rerender() {

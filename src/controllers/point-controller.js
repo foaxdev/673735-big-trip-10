@@ -79,11 +79,20 @@ export default class PointController {
       this._editCardComponent.changeMaxStartDate(this._newEndDate);
     };
 
+    const deleteCardHandler = () => {
+      this._onDataChange(
+        this._cardComponent,
+        null,
+        this._pointData
+      );
+    };
+
     const removeEventListenersFromEditCard = () => {
       this._editCardComponent.removeSubmitHandler(submitFormHandler);
       this._editCardComponent.removeActionTypeHandler(actionTypeClickHandler);
       this._editCardComponent.removeStartDateChangeHandler(startDateChangeHandler);
       this._editCardComponent.removeEndDateChangeHandler(endDateChangeHandler);
+      this._editCardComponent.removeDeleteButtonClickHandler(deleteCardHandler);
       document.removeEventListener(`keydown`, escKeyDownHandler);
     };
 
@@ -103,6 +112,8 @@ export default class PointController {
       actionTypes.forEach((actionType) => {
         actionType.addEventListener(`click`, onActionTypeChange);
       });
+
+      this._editCardComponent.setDeleteButtonClickHandler(deleteCardHandler);
 
       const favButton = this._editCardComponent.getElement().querySelector(`.event__favorite-btn`);
       favButton.addEventListener(`click`, () => {
