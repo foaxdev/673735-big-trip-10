@@ -97,8 +97,15 @@ const getRandomDate = () => {
   return targetDate;
 };
 
+let idNumber = 10;
+
+const getId = () => {
+  return idNumber--;
+};
+
 const generateCard = () => {
   return {
+    id: getId(),
     type: getRandomType(),
     city: getRandomCity(),
     photos: getRandomPhotos(),
@@ -112,7 +119,7 @@ const generateCard = () => {
 };
 
 const generateCards = () => {
-  return new Array(20)
+  return new Array(10)
     .fill(``)
     .map(generateCard);
 };

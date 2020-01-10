@@ -45,3 +45,9 @@ export const amenities = [
     price: 40
   }
 ];
+
+export const FilterType = {
+  EVERYTHING: `everything`,
+  FUTURE: `future`,
+  PAST: `past`
+};

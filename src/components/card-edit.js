@@ -183,6 +183,7 @@ export default class CardEdit extends AbstractSmartComponent {
     super();
     this._cardData = cardData;
     this._onSubmit = null;
+    this._onDeleteButtonClick = null;
     this._onActionTypeClick = null;
     this._onStartDateChange = null;
     this._onEndDateChange = null;
@@ -234,20 +235,17 @@ export default class CardEdit extends AbstractSmartComponent {
     this._onEndDateChange = handler;
   }
 
-  removeSubmitHandler(handler) {
-    this.getElement().removeEventListener(`submit`, handler);
+  setDeleteButtonClickHandler(handler) {
+    this.getElement().querySelector(`.event__reset-btn`).addEventListener(`click`, handler);
+    this._onDeleteButtonClick = handler;
   }
 
-  removeActionTypeHandler(handler) {
-    this._actionTypeButton.removeEventListener(`click`, handler);
-  }
-
-  removeStartDateChangeHandler(handler) {
-    this._startDate.removeEventListener(`change`, handler);
-  }
-
-  removeEndDateChangeHandler(handler) {
-    this._endDate.removeEventListener(`change`, handler);
+  removeHandlers() {
+    this.getElement().removeEventListener(`submit`, this._onSubmit);
+    this._actionTypeButton.removeEventListener(`click`, this._onActionTypeClick);
+    this._startDate.removeEventListener(`change`, this._onStartDateChange);
+    this._endDate.removeEventListener(`change`, this._onEndDateChange);
+    this.getElement().querySelector(`.event__reset-btn`).removeEventListener(`click`, this._onDeleteButtonClick);
   }
 
   setSelectedActionType(editContainer) {
@@ -284,6 +282,7 @@ export default class CardEdit extends AbstractSmartComponent {
     this.setActionTypeHandler(this._onActionTypeClick);
     this.setStartDateChangeHandler(this._onStartDateChange);
     this.setEndDateChangeHandler(this._onEndDateChange);
+    this.setDeleteButtonClickHandler(this._onDeleteButtonClick);
   }
 
   rerender() {
