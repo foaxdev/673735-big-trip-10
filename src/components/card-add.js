@@ -121,6 +121,7 @@ export default class CardAdd extends AbstractComponent {
     this._onActionTypeChange = null;
     this._onStartDateChange = null;
     this._onEndDateChange = null;
+    this._onCancelButtonClick = null;
 
     this._flatpickrStartDate = null;
     this._flatpickrEndDate = null;
@@ -130,6 +131,7 @@ export default class CardAdd extends AbstractComponent {
     this._actionTypeInputs = this.getElement().querySelectorAll(`.event__type-input`);
     this._startDate = this.getElement().querySelector(`#event-start-time-1`);
     this._endDate = this.getElement().querySelector(`#event-end-time-1`);
+    this._cancelButton = this.getElement().querySelector(`.event__reset-btn`);
 
     this._applyFlatpickr();
   }
@@ -160,6 +162,48 @@ export default class CardAdd extends AbstractComponent {
     this._onActionTypeChange = handler;
   }
 
+  setCancelButtonClickHandler(handler) {
+    this._cancelButton.addEventListener(`click`, handler);
+    this._onCancelButtonClick = handler;
+  }
+
+  removeHandlers() {
+    this.getElement().removeEventListener(`submit`, this._onSubmit);
+    this._actionTypeButton.removeEventListener(`click`, this._onActionTypeClick);
+    this._startDate.removeEventListener(`change`, this._onStartDateChange);
+    this._endDate.removeEventListener(`change`, this._onEndDateChange);
+    this._actionTypeInputs.forEach((actionTypeInput) => {
+      actionTypeInput.removeEventListener(`click`, this._onActionTypeChange);
+    });
+    this._cancelButton.removeEventListener(`click`, this._onCancelButtonClick);
+  }
+
+  reset() {
+    this.getElement().reset();
+    this._applyFlatpickr();
+  }
+
+  cancelAddingCard() {
+    this.removeHandlers();
+    this.reset();
+    this.removeElement();
+  }
+
+  removeElement() {
+    if (this._flatpickrStartDate) {
+      this._flatpickrStartDate.destroy();
+      this._flatpickrStartDate = null;
+    }
+
+    if (this._flatpickrEndDate) {
+      this._flatpickrEndDate.destroy();
+      this._flatpickrEndDate = null;
+    }
+
+    this.showOrHideCard();
+
+    super.removeElement();
+  }
 
   setSelectedActionType(editContainer) {
     const actionTypes = editContainer.querySelectorAll(`.event__type-input`);

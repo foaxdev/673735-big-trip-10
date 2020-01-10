@@ -33,7 +33,7 @@ export default class TripController {
     this._sortComponent = new Sort(sortOptions);
     this._cards = [];
     this._pointControllers = [];
-    this._addNewCard = new CardAdd();
+    this._addNewCard = null;
     this._isAddNewFormOpened = false;
 
     this._onDataChange = this._onDataChange.bind(this);
@@ -52,7 +52,6 @@ export default class TripController {
       render(this._container, this._sortComponent);
       this._sortComponent.setEventSortActive();
 
-      render(this._container, this._addNewCard);
       render(this._container, new Task());
 
       const eventsList = this._container.querySelector(`.trip-events__list`);
@@ -106,12 +105,20 @@ export default class TripController {
       this._addNewCard.changeMaxStartDate(evt.target.value);
     };
 
+    const cancelButtonClickHandler = () => {
+      this._addNewCard.cancelAddingCard();
+      isFormOpened = !isFormOpened;
+    };
+
     this._addButton.addEventListener(`click`, () => {
       if (!isFormOpened) {
+        this._addNewCard = new CardAdd();
+        render(this._sortComponent.getElement(), this._addNewCard, RenderPosition.AFTEREND);
         this._addNewCard.showOrHideCard();
         this._addNewCard.setActionTypeHandler(actionTypeClickHandler);
         this._addNewCard.setStartDateChangeHandler(startDateChangeHandler);
         this._addNewCard.setEndDateChangeHandler(endDateChangeHandler);
+        this._addNewCard.setCancelButtonClickHandler(cancelButtonClickHandler);
         isFormOpened = !isFormOpened;
       }
     });
