@@ -9,6 +9,19 @@ export const Mode = {
   EDIT: `edit`,
 };
 
+export const EmptyPoint = {
+  id: 0,
+  type: `flight`,
+  city: null,
+  photos: [],
+  description: ``,
+  amenities: null,
+  start: new Date(),
+  end: new Date(),
+  price: null,
+  isFavorite: false
+};
+
 export default class PointController {
 
   constructor(container, dataChangeHandler, viewChangeHandler) {
@@ -88,11 +101,7 @@ export default class PointController {
     };
 
     const removeEventListenersFromEditCard = () => {
-      this._editCardComponent.removeSubmitHandler(submitFormHandler);
-      this._editCardComponent.removeActionTypeHandler(actionTypeClickHandler);
-      this._editCardComponent.removeStartDateChangeHandler(startDateChangeHandler);
-      this._editCardComponent.removeEndDateChangeHandler(endDateChangeHandler);
-      this._editCardComponent.removeDeleteButtonClickHandler(deleteCardHandler);
+      this._editCardComponent.removeHandlers();
       document.removeEventListener(`keydown`, escKeyDownHandler);
     };
 

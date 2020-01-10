@@ -1,9 +1,10 @@
 import AbstractComponent from "./abstract-component";
+import flatpickr from "flatpickr";
 
 const createAddEventTemplate = () => {
   return (`
     <form class="trip-events__item  event  event--edit" action="#" method="post">
-      <header class="event__header">
+      <header class="event__header visually-hidden">
         <div class="event__type-wrapper">
           <label class="event__type  event__type-btn" for="event-type-toggle-1">
             <span class="visually-hidden">Choose event type</span>
@@ -112,9 +113,116 @@ const createAddEventTemplate = () => {
   `);
 };
 
-export default class Event extends AbstractComponent {
+export default class CardAdd extends AbstractComponent {
+
+  constructor() {
+    super();
+    this._onActionTypeClick = null;
+    this._onActionTypeChange = null;
+    this._onStartDateChange = null;
+    this._onEndDateChange = null;
+
+    this._flatpickrStartDate = null;
+    this._flatpickrEndDate = null;
+
+    this._actionTypesList = this.getElement().querySelector(`.event__type-list`);
+    this._actionTypeButton = this.getElement().querySelector(`.event__type`);
+    this._actionTypeInputs = this.getElement().querySelectorAll(`.event__type-input`);
+    this._startDate = this.getElement().querySelector(`#event-start-time-1`);
+    this._endDate = this.getElement().querySelector(`#event-end-time-1`);
+
+    this._applyFlatpickr();
+  }
 
   getTemplate() {
     return createAddEventTemplate(this._cardData);
+  }
+
+  setActionTypeHandler(handler) {
+    this._actionTypeButton.addEventListener(`click`, handler);
+    this._onActionTypeClick = handler;
+  }
+
+  setStartDateChangeHandler(handler) {
+    this._startDate.addEventListener(`change`, handler);
+    this._onStartDateChange = handler;
+  }
+
+  setEndDateChangeHandler(handler) {
+    this._endDate.addEventListener(`change`, handler);
+    this._onEndDateChange = handler;
+  }
+
+  setActionActionInputsHandler(handler) {
+    this._actionTypeInputs.forEach((actionTypeInput) => {
+      actionTypeInput.addEventListener(`click`, handler);
+    });
+    this._onActionTypeChange = handler;
+  }
+
+
+  setSelectedActionType(editContainer) {
+    const actionTypes = editContainer.querySelectorAll(`.event__type-input`);
+    actionTypes.forEach((actionType) => {
+      if (actionType.hasAttribute(`checked`)) {
+        actionType.removeAttribute(`checked`);
+      }
+      if (actionType.getAttribute(`value`) === this._cardData.type) {
+        actionType.setAttribute(`checked`, `checked`);
+      }
+    });
+  }
+
+  showTypesList() {
+    this._actionTypesList.style.display = `block`;
+  }
+
+  hideTypesList() {
+    this._actionTypesList.style.display = `none`;
+  }
+
+  showOrHideCard() {
+    this.getElement().querySelector(`.event__header`).classList.toggle(`visually-hidden`);
+  }
+
+  changeMaxStartDate(newDate) {
+    this._flatpickrStartDate.set(`maxDate`, newDate);
+  }
+
+  changeMinEndDate(newDate) {
+    this._flatpickrEndDate.set(`minDate`, newDate);
+  }
+
+  _applyFlatpickr() {
+    if (this._flatpickrStartDate) {
+      this._flatpickrStartDate.destroy();
+      this._flatpickrStartDate = null;
+    }
+
+    if (this._flatpickrEndDate) {
+      this._flatpickrEndDate.destroy();
+      this._flatpickrEndDate = null;
+    }
+    const now = Date.now();
+
+    this._flatpickrStartDate = flatpickr(this._startDate, {
+      altInput: true,
+      allowInput: true,
+      defaultDate: now,
+      format: `d/m/Y H:i`,
+      altFormat: `d/m/Y H:i`,
+      maxDate: now,
+      minDate: now,
+      enableTime: true
+    });
+    this._flatpickrEndDate = flatpickr(this._endDate, {
+      altInput: true,
+      allowInput: true,
+      defaultDate: now,
+      format: `d/m/Y H:i`,
+      altFormat: `d/m/Y H:i`,
+      minDate: now,
+      enableTime: true
+    });
   }
 }

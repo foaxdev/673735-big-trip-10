@@ -1,12 +1,12 @@
 import {remove, render, RenderPosition} from "../utils/render";
 import Sort, {SortType} from "../components/sort";
 import {sortOptions} from "../mock/sort";
-import Event from "../components/event";
+import CardAdd from "../components/card-add";
 import Task from "../components/task";
 import Route from "../components/route";
-import PointController from "./point-controller";
+import PointController, {EmptyPoint} from "./point-controller";
 import Tip from "../components/tip";
-import {TIP_MESSAGE} from "../const";
+import {actionByType, TIP_MESSAGE} from "../const";
 
 const renderPointControllers = (cardsContainer, cards, dataChangeHandler, viewChangeHandler) => {
   let pointControllers = [];
@@ -27,11 +27,14 @@ export default class TripController {
     this._header = header;
     this._tripRoute = this._header.querySelector(`.trip-main__trip-info`);
     this._totalPrice = this._header.querySelector(`.trip-info__cost-value`);
+    this._addButton = this._header.querySelector(`.trip-main__event-add-btn`);
     this._pointModel = pointModel;
     this._route = null;
     this._sortComponent = new Sort(sortOptions);
     this._cards = [];
     this._pointControllers = [];
+    this._addNewCard = new CardAdd();
+    this._isAddNewFormOpened = false;
 
     this._onDataChange = this._onDataChange.bind(this);
     this._onViewChange = this._onViewChange.bind(this);
@@ -49,14 +52,15 @@ export default class TripController {
       render(this._container, this._sortComponent);
       this._sortComponent.setEventSortActive();
 
-      render(this._container, new Event());
+      render(this._container, this._addNewCard);
       render(this._container, new Task());
 
       const eventsList = this._container.querySelector(`.trip-events__list`);
-      this._pointController = new PointController(eventsList, this._onDataChange.bind(this), this._onViewChange);
-      this._pointControllers = renderPointControllers(eventsList, cardsData, this._onDataChange.bind(this), this._onViewChange.bind(this));
+      this._pointController = new PointController(eventsList, this._onDataChange, this._onViewChange);
+      this._pointControllers = renderPointControllers(eventsList, cardsData, this._onDataChange, this._onViewChange);
       this._route = new Route(this._cards);
       render(this._tripRoute, this._route, RenderPosition.AFTERBEGIN);
+
       this._totalPrice.textContent = this._getTotalSum(this._cards);
 
       this._sortComponent.setSortTypeChangeHandler((sortType) => {
@@ -68,6 +72,49 @@ export default class TripController {
     } else {
       this._addMessageToEmptyRoute();
     }
+
+    this._addEventListenerToAddButton(this._isAddNewFormOpened);
+  }
+
+  _changeEventPlaceholder(type) {
+    const eventLabel = this._addNewCard.getElement().querySelector(`.event__label`);
+    eventLabel.textContent = actionByType.get(type);
+  }
+
+  _changeActionTypeIcon(type) {
+    const eventIcon = this._addNewCard.getElement().querySelector(`.event__type-icon`);
+    eventIcon.src = `img/icons/${type}.png`;
+  }
+
+  _addEventListenerToAddButton(isFormOpened) {
+    const onActionTypeChange = (evt) => {
+      this._changeEventPlaceholder(evt.target.value);
+      this._changeActionTypeIcon(evt.target.value);
+      this._addNewCard.hideTypesList();
+    };
+
+    const actionTypeClickHandler = () => {
+      this._addNewCard.showTypesList();
+      this._addNewCard.setActionActionInputsHandler(onActionTypeChange);
+    };
+
+    const startDateChangeHandler = (evt) => {
+      this._addNewCard.changeMinEndDate(evt.target.value);
+    };
+
+    const endDateChangeHandler = (evt) => {
+      this._addNewCard.changeMaxStartDate(evt.target.value);
+    };
+
+    this._addButton.addEventListener(`click`, () => {
+      if (!isFormOpened) {
+        this._addNewCard.showOrHideCard();
+        this._addNewCard.setActionTypeHandler(actionTypeClickHandler);
+        this._addNewCard.setStartDateChangeHandler(startDateChangeHandler);
+        this._addNewCard.setEndDateChangeHandler(endDateChangeHandler);
+        isFormOpened = !isFormOpened;
+      }
+    });
   }
 
   _addMessageToEmptyRoute() {
@@ -123,16 +170,6 @@ export default class TripController {
       pointController.setDefaultView();
     });
   }
-
-  /*createPoint() {
-    if (this._creatingTask) {
-      return;
-    }
-
-    const taskListElement = this._cardComponent.getElement();
-    this._creatingTask = new TaskController(taskListElement, this._onDataChange, this._onViewChange);
-    this._creatingTask.render(EmptyTask, TaskControllerMode.ADDING);
-  }*/
 
   _removePoints() {
     this._pointControllers.forEach((pointController) => pointController.destroy());

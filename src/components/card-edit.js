@@ -39,7 +39,7 @@ const createEditCardTemplate = (cardData) => {
 
   return (`
     <form class="event event--edit" action="#" method="post">
-      <header class="event__header">
+      <header class="event__header visually-hidden">
         <div class="event__type-wrapper">
           <label class="event__type  event__type-btn" for="event-type-toggle-1">
             <span class="visually-hidden">Choose event type</span>
@@ -240,24 +240,12 @@ export default class CardEdit extends AbstractSmartComponent {
     this._onDeleteButtonClick = handler;
   }
 
-  removeSubmitHandler(handler) {
-    this.getElement().removeEventListener(`submit`, handler);
-  }
-
-  removeActionTypeHandler(handler) {
-    this._actionTypeButton.removeEventListener(`click`, handler);
-  }
-
-  removeStartDateChangeHandler(handler) {
-    this._startDate.removeEventListener(`change`, handler);
-  }
-
-  removeEndDateChangeHandler(handler) {
-    this._endDate.removeEventListener(`change`, handler);
-  }
-
-  removeDeleteButtonClickHandler(handler) {
-    this.getElement().querySelector(`.event__reset-btn`).removeEventListener(`click`, handler);
+  removeHandlers() {
+    this.getElement().removeEventListener(`submit`, this._onSubmit);
+    this._actionTypeButton.removeEventListener(`click`, this._onActionTypeClick);
+    this._startDate.removeEventListener(`change`, this._onStartDateChange);
+    this._endDate.removeEventListener(`change`, this._onEndDateChange);
+    this.getElement().querySelector(`.event__reset-btn`).removeEventListener(`click`, this._onDeleteButtonClick);
   }
 
   setSelectedActionType(editContainer) {
