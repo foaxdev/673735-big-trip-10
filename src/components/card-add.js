@@ -122,6 +122,7 @@ export default class CardAdd extends AbstractComponent {
     this._onStartDateChange = null;
     this._onEndDateChange = null;
     this._onCancelButtonClick = null;
+    this._onSubmit = null;
 
     this._flatpickrStartDate = null;
     this._flatpickrEndDate = null;
@@ -138,6 +139,11 @@ export default class CardAdd extends AbstractComponent {
 
   getTemplate() {
     return createAddEventTemplate(this._cardData);
+  }
+
+  setSubmitHandler(handler) {
+    this.getElement().addEventListener(`submit`, handler);
+    this._onSubmit = handler;
   }
 
   setActionTypeHandler(handler) {
@@ -215,6 +221,10 @@ export default class CardAdd extends AbstractComponent {
         actionType.setAttribute(`checked`, `checked`);
       }
     });
+  }
+
+  getData() {
+    return new FormData(this.getElement());
   }
 
   showTypesList() {

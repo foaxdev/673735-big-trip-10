@@ -9,19 +9,6 @@ export const Mode = {
   EDIT: `edit`,
 };
 
-export const EmptyPoint = {
-  id: 0,
-  type: `flight`,
-  city: null,
-  photos: [],
-  description: ``,
-  amenities: null,
-  start: new Date(),
-  end: new Date(),
-  price: null,
-  isFavorite: false
-};
-
 export default class PointController {
 
   constructor(container, dataChangeHandler, viewChangeHandler) {
