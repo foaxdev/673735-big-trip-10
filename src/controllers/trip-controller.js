@@ -6,7 +6,7 @@ import Task from "../components/task";
 import Route from "../components/route";
 import PointController from "./point-controller";
 import Tip from "../components/tip";
-import {actionByType, TIP_MESSAGE} from "../const";
+import {actionByType, HIDDEN_CLASS, TIP_MESSAGE} from "../const";
 
 const parseFormData = (formData, point) => {
   point.price = parseInt(formData.get(`event-price`));
@@ -38,7 +38,6 @@ export default class TripController {
     this._route = null;
     this._sortComponent = new Sort(sortOptions);
     this._cards = [];
-    this._currentSortType = SortType.DEFAULT;
     this._newPointData = this._setDefaultNewPointData();
     this._pointControllers = [];
     this._addNewCard = null;
@@ -82,6 +81,18 @@ export default class TripController {
     }
 
     this._addEventListenerToAddButton(this._isAddNewFormOpened);
+  }
+
+  hide() {
+    if (this._container) {
+      this._container.classList.add(HIDDEN_CLASS);
+    }
+  }
+
+  show() {
+    if (this._container) {
+      this._container.classList.remove(HIDDEN_CLASS);
+    }
   }
 
   _changeEventPlaceholder(type) {

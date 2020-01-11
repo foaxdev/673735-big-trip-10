@@ -1,4 +1,5 @@
 import {createElement} from "../utils/render";
+import {HIDDEN_CLASS} from "../const";
 
 export default class AbstractComponent {
 
@@ -20,6 +21,18 @@ export default class AbstractComponent {
     }
 
     return this._element;
+  }
+
+  show() {
+    if (this._element) {
+      this._element.classList.remove(HIDDEN_CLASS);
+    }
+  }
+
+  hide() {
+    if (this._element) {
+      this._element.classList.add(HIDDEN_CLASS);
+    }
   }
 
   removeElement() {

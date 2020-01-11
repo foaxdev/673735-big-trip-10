@@ -3,7 +3,7 @@ import {createItems} from "../utils/render";
 
 const getMenuHtml = (menuName) => {
   return (`
-    <a class="trip-tabs__btn" href="#">${menuName}</a>
+    <a class="trip-tabs__btn" data-name="${menuName}" href="#">${menuName}</a>
   `);
 };
 
@@ -21,7 +21,10 @@ export default class Menu extends AbstractComponent {
     super();
     this._menuNames = menuNames;
 
-    this.setMenuItemActive(this.getElement().querySelectorAll(`.trip-tabs__btn`)[1]);
+    this._menuTable = this.getElement().querySelector(`[data-name="Table"]`);
+    this._menuStats = this.getElement().querySelector(`[data-name="Stats"]`);
+
+    this.setMenuItemActive(this._menuTable);
   }
 
   getTemplate() {
@@ -39,5 +42,13 @@ export default class Menu extends AbstractComponent {
     }
 
     menuElement.classList.add(`trip-tabs__btn--active`);
+  }
+
+  setClickListenersToMenuTableItem(handler) {
+    this._menuTable.addEventListener(`click`, handler);
+  }
+
+  setClickListenersToMenuStatsItem(handler) {
+    this._menuStats.addEventListener(`click`, handler);
   }
 }
