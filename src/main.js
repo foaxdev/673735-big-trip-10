@@ -12,6 +12,7 @@ const tripView = document.querySelector(`.trip-main__trip-controls`);
 const menuHeader = tripView.querySelectorAll(`h2`)[0];
 const filterHeader = tripView.querySelectorAll(`h2`)[1];
 const tripEvents = document.querySelector(`.trip-events`);
+const pageBodyContainer = document.querySelector(`.page-main .page-body__container`);
 
 const menuComponent = new Menu(menuNames);
 render(menuHeader, menuComponent, RenderPosition.AFTEREND);
@@ -23,7 +24,7 @@ const tripController = new TripController(tripEvents, tripControl, pointModel);
 tripController.render();
 
 const statisticsComponent = new Statistics(pointModel.getPoints());
-render(tripEvents, statisticsComponent);
+render(pageBodyContainer, statisticsComponent);
 statisticsComponent.hide();
 
 menuComponent.setClickListenersToMenuTableItem(() => {

@@ -72,7 +72,7 @@ export default class TripController {
       this._sortComponent.setSortTypeChangeHandler((sortType) => {
         this._eventsList.innerHTML = ``;
         this._currentSortType = sortType;
-        this._getSortedCards(sortType, this._cards).forEach((card) => {
+        this._getSortedCards(this._currentSortType, this._cards).forEach((card) => {
           this._pointController.render(card);
         });
       });

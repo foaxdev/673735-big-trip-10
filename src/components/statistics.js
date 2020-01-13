@@ -2,37 +2,69 @@ import AbstractSmartComponent from "./abstract-smart-component";
 import Chart from "chart.js";
 import ChartDataLabels from "chartjs-plugin-datalabels";
 
-const renderMoneyChart = (moneyCtx, points) => {
+const labelTitleByType = new Map([
+  [`bus`, `🚌`],
+  [`check-in`, `🏨`],
+  [`drive`, `🚗`],
+  [`flight`, `✈️`],
+  [`restaurant`, `🍴`],
+  [`ship`, `🛳`],
+  [`sightseeing`, `🏛`],
+  [`taxi`, `🚕`],
+  [`train`, `🚂`],
+  [`transport`, `🚊`]
+]);
+
+const renderMoneyChart = (moneyCtx, prices) => {
+  let filteredPrices = Array.from(prices).filter(price => price[1] !== 0);
+  filteredPrices.sort((a, b) => b[1] - a[1]);
+
+  let filteredTitles = filteredPrices.map(el => Array.from(labelTitleByType).filter(it => it[0] === el[0])).map(arr => arr[0][1]);
+
   return new Chart(moneyCtx, {
     plugins: [ChartDataLabels],
-    type: `line`,
+    type: `horizontalBar`,
     data: {
-      labels: formattedDates,
+      labels: filteredTitles,
       datasets: [{
-        data: points,
-        backgroundColor: `transparent`,
-        borderColor: `#000000`,
-        borderWidth: 1,
-        lineTension: 0,
-        pointRadius: 8,
-        pointHoverRadius: 8,
-        pointBackgroundColor: `#000000`
+        data: filteredPrices.map(arr => arr[1]),
+        backgroundColor: `#FFFFFF`
       }]
     },
     options: {
+      title: {
+        display: true,
+        text: `MONEY`,
+        fontSize: 22,
+        backgroundColor: `transparent`,
+        position: `left`,
+        fontColor: `#000000`
+      },
+      legend: {
+        display: false
+      },
       plugins: {
         datalabels: {
-          font: {
-            size: 8
+          formatter: function(value, context) {
+            return filteredPrices.map(arr => arr[1]).map(price => `€ ${price}`)[context.dataIndex];
           },
-          color: `#ffffff`
+          font: {
+            size: 16,
+            weight: `bold`
+          },
+          color: `#000000`,
+          anchor: `end`,
+          align: `start`
         }
+      },
+      tooltips: {
+        enabled: false
       },
       scales: {
         yAxes: [{
           ticks: {
             beginAtZero: true,
-            display: false
+            display: true
           },
           gridLines: {
             display: false,
@@ -41,25 +73,13 @@ const renderMoneyChart = (moneyCtx, points) => {
         }],
         xAxes: [{
           ticks: {
-            fontStyle: `bold`,
-            fontColor: `#000000`
+            display: false
           },
           gridLines: {
             display: false,
             drawBorder: false
           }
         }]
-      },
-      legend: {
-        display: false
-      },
-      layout: {
-        padding: {
-          top: 10
-        }
-      },
-      tooltips: {
-        enabled: false
       }
     }
   });
@@ -116,16 +136,75 @@ export default class Statistics extends AbstractSmartComponent {
     this._renderCharts();
   }
 
+  _getMapOfPrices() {
+    let busPrice = 0;
+    let checkInPrice = 0;
+    let drivePrice = 0;
+    let flightPrice = 0;
+    let restaurantPrice = 0;
+    let shipPrice = 0;
+    let sightseeingPrice = 0;
+    let taxiPrice = 0;
+    let trainPrice = 0;
+    let transportPrice = 0;
+
+    for (let i = 0; i < this._points.length; i++) {
+      switch (this._points[i].type) {
+        case `bus`:
+          busPrice += this._points[i].price;
+          break;
+        case `check-in`:
+          checkInPrice += this._points[i].price;
+          break;
+        case `drive`:
+          drivePrice += this._points[i].price;
+          break;
+        case `flight`:
+          flightPrice += this._points[i].price;
+          break;
+        case `restaurant`:
+          restaurantPrice += this._points[i].price;
+          break;
+        case `ship`:
+          shipPrice += this._points[i].price;
+          break;
+        case `sightseeing`:
+          sightseeingPrice += this._points[i].price;
+          break;
+        case `taxi`:
+          taxiPrice += this._points[i].price;
+          break;
+        case `train`:
+          trainPrice += this._points[i].price;
+          break;
+        case `transport`:
+          transportPrice += this._points[i].price;
+          break;
+      }
+    }
+
+    return new Map([
+      [`bus`, busPrice],
+      [`check-in`, checkInPrice],
+      [`drive`, drivePrice],
+      [`flight`, flightPrice],
+      [`restaurant`, restaurantPrice],
+      [`ship`, shipPrice],
+      [`sightseeing`, sightseeingPrice],
+      [`taxi`, taxiPrice],
+      [`train`, trainPrice],
+      [`transport`, transportPrice]
+    ]);
+  }
+
   _renderCharts() {
-    const element = this.getElement();
+    const moneyCtx = this.getElement().querySelector(`.statistics__chart--money`);
+    const transportCtx = this.getElement().querySelector(`.statistics__chart--transport`);
+    const timeCtx = this.getElement().querySelector(`.statistics__chart--time`);
 
-    const moneyCtx = element.querySelector(`.statistics__chart--money`);
-    const transportCtx = element.querySelector(`.statistics__chart--transport`);
-    const timeCtx = element.querySelector(`.statistics__chart--time`);
+    this._resetCharts();
 
-    //this._resetCharts();
-
-    //this._moneyChart = renderMoneyChart(moneyCtx, this._points);
+    this._moneyChart = renderMoneyChart(moneyCtx, this._getMapOfPrices());
     //this._transportChart = renderTagsChart(transportCtx, this._points);
     //this._timeChart = renderColorsChart(timeCtx, this._points);
   }
