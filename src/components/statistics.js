@@ -12,29 +12,28 @@ const labelTitleByType = new Map([
   [`sightseeing`, `🏛`],
   [`taxi`, `🚕`],
   [`train`, `🚂`],
-  [`transport`, `🚊`]
+  [`transport`, `🚊`],
+  [`ride`, `🚕`]
 ]);
 
-const renderMoneyChart = (moneyCtx, prices) => {
-  let filteredPrices = Array.from(prices).filter(price => price[1] !== 0);
-  filteredPrices.sort((a, b) => b[1] - a[1]);
+const renderChart = (ctx, chartData, title, formatterLabel) => {
+  const filteredData = chartData.sort((a, b) => b[1] - a[1]);
+  const filteredTitles = filteredData.map(el => Array.from(labelTitleByType).filter(it => it[0] === el[0])).map(arr => arr[0][1]);
 
-  let filteredTitles = filteredPrices.map(el => Array.from(labelTitleByType).filter(it => it[0] === el[0])).map(arr => arr[0][1]);
-
-  return new Chart(moneyCtx, {
+  return new Chart(ctx, {
     plugins: [ChartDataLabels],
     type: `horizontalBar`,
     data: {
       labels: filteredTitles,
       datasets: [{
-        data: filteredPrices.map(arr => arr[1]),
+        data: filteredData.map(arr => arr[1]),
         backgroundColor: `#FFFFFF`
       }]
     },
     options: {
       title: {
         display: true,
-        text: `MONEY`,
+        text: title,
         fontSize: 22,
         backgroundColor: `transparent`,
         position: `left`,
@@ -45,9 +44,7 @@ const renderMoneyChart = (moneyCtx, prices) => {
       },
       plugins: {
         datalabels: {
-          formatter: function(value, context) {
-            return filteredPrices.map(arr => arr[1]).map(price => `€ ${price}`)[context.dataIndex];
-          },
+          formatter: formatterLabel,
           font: {
             size: 16,
             weight: `bold`
@@ -62,6 +59,8 @@ const renderMoneyChart = (moneyCtx, prices) => {
       },
       scales: {
         yAxes: [{
+          maxBarThickness: 50,
+          barThickness: 50,
           ticks: {
             beginAtZero: true,
             display: true
@@ -72,6 +71,7 @@ const renderMoneyChart = (moneyCtx, prices) => {
           }
         }],
         xAxes: [{
+          minBarLength: 50,
           ticks: {
             display: false
           },
@@ -85,7 +85,6 @@ const renderMoneyChart = (moneyCtx, prices) => {
   });
 };
 
-
 const createStatisticsTemplate = () => {
   return (`
     <section class="statistics">
@@ -95,7 +94,7 @@ const createStatisticsTemplate = () => {
         <canvas class="statistics__chart  statistics__chart--money" width="900"></canvas>
       </div>
 
-      <div class="statistics__item statistics__item--transport">
+      <div class="statistics__item statistics__item--transport" height="300">
         <canvas class="statistics__chart  statistics__chart--transport" width="900"></canvas>
       </div>
 
@@ -136,7 +135,7 @@ export default class Statistics extends AbstractSmartComponent {
     this._renderCharts();
   }
 
-  _getMapOfPrices() {
+  _getArrayOfPrices() {
     let busPrice = 0;
     let checkInPrice = 0;
     let drivePrice = 0;
@@ -183,7 +182,7 @@ export default class Statistics extends AbstractSmartComponent {
       }
     }
 
-    return new Map([
+    return [
       [`bus`, busPrice],
       [`check-in`, checkInPrice],
       [`drive`, drivePrice],
@@ -194,7 +193,112 @@ export default class Statistics extends AbstractSmartComponent {
       [`taxi`, taxiPrice],
       [`train`, trainPrice],
       [`transport`, transportPrice]
-    ]);
+    ].filter(price => price[1] !== 0);
+  }
+
+  _getArrayOfTransport() {
+    let driveTransport = 0; // bus, taxi, train
+    let flightTransport = 0;
+    let shipTransport = 0;
+    let rideTransport = 0; // transport, drive
+
+    for (let i = 0; i < this._points.length; i++) {
+      switch (this._points[i].type) {
+        case `bus`:
+          driveTransport++;
+          break;
+        case `drive`:
+          rideTransport++;
+          break;
+        case `flight`:
+          flightTransport++;
+          break;
+        case `ship`:
+          shipTransport++;
+          break;
+        case `taxi`:
+          driveTransport++;
+          break;
+        case `train`:
+          driveTransport++;
+          break;
+        case `transport`:
+          rideTransport++;
+          break;
+      }
+    }
+
+    return [
+      [`drive`, driveTransport],
+      [`flight`, flightTransport],
+      [`ship`, shipTransport],
+      [`ride`, rideTransport]
+    ].filter(transportQuantity => transportQuantity[1] !== 0);
+  }
+
+  _getHours(index) {
+    return Math.floor((this._points[index].end - this._points[index].start) / (1000 * 60 * 60));
+  }
+
+  _getArrayOfTime() {
+    let busTime = 0;
+    let checkInTime = 0;
+    let driveTime = 0;
+    let flightTime = 0;
+    let restaurantTime = 0;
+    let shipTime = 0;
+    let sightseeingTime = 0;
+    let taxiTime = 0;
+    let trainTime = 0;
+    let transportTime = 0;
+
+    for (let i = 0; i < this._points.length; i++) {
+      switch (this._points[i].type) {
+        case `bus`:
+          busTime += this._getHours(i);
+          break;
+        case `check-in`:
+          checkInTime += this._getHours(i);
+          break;
+        case `drive`:
+          driveTime += this._getHours(i);
+          break;
+        case `flight`:
+          flightTime += this._getHours(i);
+          break;
+        case `restaurant`:
+          restaurantTime += this._getHours(i);
+          break;
+        case `ship`:
+          shipTime += this._getHours(i);
+          break;
+        case `sightseeing`:
+          sightseeingTime += this._getHours(i);
+          break;
+        case `taxi`:
+          taxiTime += this._getHours(i);
+          break;
+        case `train`:
+          trainTime += this._getHours(i);
+          break;
+        case `transport`:
+          transportTime += this._getHours(i);
+          break;
+      }
+    }
+
+    return [
+      [`bus`, busTime],
+      [`check-in`, checkInTime],
+      [`drive`, driveTime],
+      [`flight`, flightTime],
+      [`restaurant`, restaurantTime],
+      [`ship`, shipTime],
+      [`sightseeing`, sightseeingTime],
+      [`taxi`, taxiTime],
+      [`train`, trainTime],
+      [`transport`, transportTime]
+    ].filter(time => time[1] !== 0);
   }
 
   _renderCharts() {
@@ -204,9 +308,33 @@ export default class Statistics extends AbstractSmartComponent {
 
     this._resetCharts();
 
-    this._moneyChart = renderMoneyChart(moneyCtx, this._getMapOfPrices());
-    //this._transportChart = renderTagsChart(transportCtx, this._points);
-    //this._timeChart = renderColorsChart(timeCtx, this._points);
+    this._moneyChart = renderChart(
+      moneyCtx,
+      this._getArrayOfPrices(),
+      `MONEY`,
+      (context) => {
+        let arr = this._getArrayOfPrices().sort((a, b) => b - a);
+        return arr.map(arr => arr[1]).map(price => `€ ${price}`)[context.dataIndex];
+      }
+    );
+    this._transportChart = renderChart(
+      transportCtx,
+      this._getArrayOfTransport(),
+      `TRANSPORT`,
+      (context) => {
+        let arr = this._getArrayOfTransport().sort((a, b) => b - a);
+        return arr.map(arr => arr[1]).map(time => `${time}x`)[context.dataIndex];
+      }
+    );
+    this._timeChart = renderChart(
+      timeCtx,
+      this._getArrayOfTime(),
+      `TIME SPENT`,
+      (context) => {
+        let arr = this._getArrayOfTime().sort((a, b) => b - a);
+        return arr.map(arr => arr[1]).map(time => `${time}H`)[context.dataIndex];
+      }
+      );
   }
 
   _resetCharts() {
