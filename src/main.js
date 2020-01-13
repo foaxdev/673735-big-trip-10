@@ -20,12 +20,12 @@ render(menuHeader, menuComponent, RenderPosition.AFTEREND);
 const pointModel = new Points();
 pointModel.setPoints(data);
 
-const tripController = new TripController(tripEvents, tripControl, pointModel);
-tripController.render();
-
 const statisticsComponent = new Statistics(pointModel.getPoints());
 render(pageBodyContainer, statisticsComponent);
 statisticsComponent.hide();
+
+const tripController = new TripController(tripEvents, tripControl, pointModel, statisticsComponent);
+tripController.render();
 
 menuComponent.setClickListenersToMenuTableItem(() => {
   statisticsComponent.hide();

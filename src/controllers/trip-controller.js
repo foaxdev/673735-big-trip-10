@@ -27,7 +27,7 @@ const renderPointControllers = (cardsContainer, cards, dataChangeHandler, viewCh
 
 export default class TripController {
 
-  constructor(container, header, pointModel) {
+  constructor(container, header, pointModel, statisticsComponent) {
     this._container = container;
     this._header = header;
     this._tripRoute = this._header.querySelector(`.trip-main__trip-info`);
@@ -35,6 +35,7 @@ export default class TripController {
     this._addButton = this._header.querySelector(`.trip-main__event-add-btn`);
     this._eventsList = null;
     this._pointModel = pointModel;
+    this._statisticsComponent = statisticsComponent;
     this._route = null;
     this._sortComponent = new Sort(sortOptions);
     this._cards = [];
@@ -208,17 +209,22 @@ export default class TripController {
       this._pointModel.removePoint(oldCardData.id);
       this._updatePoints();
       this._updateHeaderInfo(this._pointModel.getPoints());
+      this._statisticsComponent.setNewData(this._pointModel.getPoints());
     } else if (oldCardData === null) {
       this._pointModel.addPoint(newCardData);
       this._cards = this._pointModel.getPoints();
       this._updatePoints();
       this._updateHeaderInfo(this._pointModel.getPoints());
       this._newPointData = this._setDefaultNewPointData();
+      this._statisticsComponent.setNewData(this._pointModel.getPoints());
     } else {
       const isSuccess = this._pointModel.updatePoint(oldCardData.id, newCardData);
 
       if (isSuccess) {
-        cardComponent.render(newCardData);
+        cardComponent.setNewData(newCardData);
+        this._updatePoints();
+        this._updateHeaderInfo(this._pointModel.getPoints());
+        this._statisticsComponent.setNewData(this._pointModel.getPoints());
       }
     }
   }

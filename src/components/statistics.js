@@ -2,7 +2,7 @@ import AbstractSmartComponent from "./abstract-smart-component";
 import Chart from "chart.js";
 import ChartDataLabels from "chartjs-plugin-datalabels";
 
-const labelTitleByType = new Map([
+const labelTitleByType = [
   [`bus`, `🚌`],
   [`check-in`, `🏨`],
   [`drive`, `🚗`],
@@ -14,11 +14,11 @@ const labelTitleByType = new Map([
   [`train`, `🚂`],
   [`transport`, `🚊`],
   [`ride`, `🚕`]
-]);
+];
 
-const renderChart = (ctx, chartData, title, formatterLabel) => {
+const renderChart = (ctx, chartData, title, formatLabel) => {
   const filteredData = chartData.sort((a, b) => b[1] - a[1]);
-  const filteredTitles = filteredData.map(el => Array.from(labelTitleByType).filter(it => it[0] === el[0])).map(arr => arr[0][1]);
+  const filteredTitles = filteredData.map(el => labelTitleByType.filter(it => it[0] === el[0])).map(arr => arr[0][1]);
 
   return new Chart(ctx, {
     plugins: [ChartDataLabels],
@@ -26,6 +26,9 @@ const renderChart = (ctx, chartData, title, formatterLabel) => {
     data: {
       labels: filteredTitles,
       datasets: [{
+        maxBarThickness: 50,
+        barThickness: 50,
+        minBarLength: 50,
         data: filteredData.map(arr => arr[1]),
         backgroundColor: `#FFFFFF`
       }]
@@ -44,7 +47,9 @@ const renderChart = (ctx, chartData, title, formatterLabel) => {
       },
       plugins: {
         datalabels: {
-          formatter: formatterLabel,
+          formatter: (value, context) => {
+            return filteredData.map(arr => arr[1]).map(it => formatLabel(it))[context.dataIndex];
+          },
           font: {
             size: 16,
             weight: `bold`
@@ -59,8 +64,6 @@ const renderChart = (ctx, chartData, title, formatterLabel) => {
       },
       scales: {
         yAxes: [{
-          maxBarThickness: 50,
-          barThickness: 50,
           ticks: {
             beginAtZero: true,
             display: true
@@ -71,7 +74,6 @@ const renderChart = (ctx, chartData, title, formatterLabel) => {
           }
         }],
         xAxes: [{
-          minBarLength: 50,
           ticks: {
             display: false
           },
@@ -127,6 +129,10 @@ export default class Statistics extends AbstractSmartComponent {
     super.show();
 
     this.rerender();
+  }
+
+  setNewData(newPointsData) {
+    this._points = newPointsData;
   }
 
   rerender() {
@@ -312,28 +318,21 @@ export default class Statistics extends AbstractSmartComponent {
       moneyCtx,
       this._getArrayOfPrices(),
       `MONEY`,
-      (context) => {
-        let arr = this._getArrayOfPrices().sort((a, b) => b - a);
-        return arr.map(arr => arr[1]).map(price => `€ ${price}`)[context.dataIndex];
-      }
+      (it) => `€ ${it}`
     );
     this._transportChart = renderChart(
       transportCtx,
       this._getArrayOfTransport(),
       `TRANSPORT`,
-      (context) => {
-        let arr = this._getArrayOfTransport().sort((a, b) => b - a);
-        return arr.map(arr => arr[1]).map(time => `${time}x`)[context.dataIndex];
+      (it) => {
+        return `${it}x`;
       }
     );
     this._timeChart = renderChart(
       timeCtx,
       this._getArrayOfTime(),
       `TIME SPENT`,
-      (context) => {
-        let arr = this._getArrayOfTime().sort((a, b) => b - a);
-        return arr.map(arr => arr[1]).map(time => `${time}H`)[context.dataIndex];
-      }
+      (it) => `${it}H`
       );
   }
 
