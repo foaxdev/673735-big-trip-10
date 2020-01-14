@@ -8,9 +8,9 @@ import moment from "moment";
 import 'flatpickr/dist/flatpickr.min.css';
 import 'flatpickr/dist/themes/light.css';
 
-const getImageHtml = (imageSrc) => {
+const getImageHtml = (imageData) => {
   return(`
-    <img class="event__photo" src="${imageSrc}" alt="Event photo">
+    <img class="event__photo" src="${imageData[`src`]}" alt="${imageData[`description`]}">
   `);
 };
 
