@@ -6,7 +6,7 @@ import Task from "../components/task";
 import Route from "../components/route";
 import PointController from "./point-controller";
 import Tip from "../components/tip";
-import {actionByType, TIP_MESSAGE} from "../const";
+import {actionByType, HIDDEN_CLASS, TIP_MESSAGE} from "../const";
 
 const parseFormData = (formData, point) => {
   point.price = parseInt(formData.get(`event-price`));
@@ -27,7 +27,7 @@ const renderPointControllers = (cardsContainer, cards, dataChangeHandler, viewCh
 
 export default class TripController {
 
-  constructor(container, header, pointModel) {
+  constructor(container, header, pointModel, statisticsComponent) {
     this._container = container;
     this._header = header;
     this._tripRoute = this._header.querySelector(`.trip-main__trip-info`);
@@ -35,10 +35,10 @@ export default class TripController {
     this._addButton = this._header.querySelector(`.trip-main__event-add-btn`);
     this._eventsList = null;
     this._pointModel = pointModel;
+    this._statisticsComponent = statisticsComponent;
     this._route = null;
     this._sortComponent = new Sort(sortOptions);
     this._cards = [];
-    this._currentSortType = SortType.DEFAULT;
     this._newPointData = this._setDefaultNewPointData();
     this._pointControllers = [];
     this._addNewCard = null;
@@ -73,7 +73,7 @@ export default class TripController {
       this._sortComponent.setSortTypeChangeHandler((sortType) => {
         this._eventsList.innerHTML = ``;
         this._currentSortType = sortType;
-        this._getSortedCards(sortType, this._cards).forEach((card) => {
+        this._getSortedCards(this._currentSortType, this._cards).forEach((card) => {
           this._pointController.render(card);
         });
       });
@@ -82,6 +82,18 @@ export default class TripController {
     }
 
     this._addEventListenerToAddButton(this._isAddNewFormOpened);
+  }
+
+  hide() {
+    if (this._container) {
+      this._container.classList.add(HIDDEN_CLASS);
+    }
+  }
+
+  show() {
+    if (this._container) {
+      this._container.classList.remove(HIDDEN_CLASS);
+    }
   }
 
   _changeEventPlaceholder(type) {
@@ -197,17 +209,22 @@ export default class TripController {
       this._pointModel.removePoint(oldCardData.id);
       this._updatePoints();
       this._updateHeaderInfo(this._pointModel.getPoints());
+      this._statisticsComponent.setNewData(this._pointModel.getPoints());
     } else if (oldCardData === null) {
       this._pointModel.addPoint(newCardData);
       this._cards = this._pointModel.getPoints();
       this._updatePoints();
       this._updateHeaderInfo(this._pointModel.getPoints());
       this._newPointData = this._setDefaultNewPointData();
+      this._statisticsComponent.setNewData(this._pointModel.getPoints());
     } else {
       const isSuccess = this._pointModel.updatePoint(oldCardData.id, newCardData);
 
       if (isSuccess) {
-        cardComponent.render(newCardData);
+        cardComponent.setNewData(newCardData);
+        this._updatePoints();
+        this._updateHeaderInfo(this._pointModel.getPoints());
+        this._statisticsComponent.setNewData(this._pointModel.getPoints());
       }
     }
   }
