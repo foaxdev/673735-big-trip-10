@@ -151,7 +151,7 @@ export default class TripController {
 
     this._addButton.addEventListener(`click`, () => {
       if (!isFormOpened) {
-        this._addNewCard = new CardAdd();
+        this._addNewCard = new CardAdd(this._destinationsModel);
         render(this._sortComponent.getElement(), this._addNewCard, RenderPosition.AFTEREND);
         this._addNewCard.showOrHideCard();
         this._addNewCard.setActionTypeHandler(actionTypeClickHandler);

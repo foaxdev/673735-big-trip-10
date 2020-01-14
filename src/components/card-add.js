@@ -1,7 +1,14 @@
 import AbstractComponent from "./abstract-component";
 import flatpickr from "flatpickr";
+import {createItems} from "../utils/render";
 
-const createAddEventTemplate = () => {
+const getDestinationHtml = (destination) => {
+  return(`
+    <option value="${destination.city}"></option>
+  `)
+};
+
+const createAddEventTemplate = (destinations) => {
   return (`
     <form class="trip-events__item  event  event--edit" action="#" method="post">
       <header class="event__header visually-hidden">
@@ -79,10 +86,7 @@ const createAddEventTemplate = () => {
           </label>
           <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="" list="destination-list-1">
           <datalist id="destination-list-1">
-            <option value="Amsterdam"></option>
-            <option value="Geneva"></option>
-            <option value="Chamonix"></option>
-            <option value="Saint Petersburg"></option>
+            ${createItems(destinations, getDestinationHtml)}
           </datalist>
         </div>
 
@@ -115,8 +119,11 @@ const createAddEventTemplate = () => {
 
 export default class CardAdd extends AbstractComponent {
 
-  constructor() {
+  constructor(destinationsModel) {
     super();
+
+    this._destinationsModel = destinationsModel;
+
     this._onActionTypeClick = null;
     this._onActionTypeChange = null;
     this._onStartDateChange = null;
@@ -138,7 +145,7 @@ export default class CardAdd extends AbstractComponent {
   }
 
   getTemplate() {
-    return createAddEventTemplate(this._cardData);
+    return createAddEventTemplate(this._destinationsModel.getDestinations());
   }
 
   setSubmitHandler(handler) {

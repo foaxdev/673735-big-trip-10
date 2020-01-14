@@ -4,7 +4,6 @@ import {actionByType} from "../const";
 import flatpickr from "flatpickr";
 import moment from "moment";
 
-
 import 'flatpickr/dist/flatpickr.min.css';
 import 'flatpickr/dist/themes/light.css';
 
