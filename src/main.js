@@ -10,7 +10,7 @@ import {AUTHORIZATION} from "./const";
 import Destinations from "./models/destinations";
 import Offers from "./models/offers";
 
-const END_POINT = `https://htmlacademy-es-10.appspot.com/big-trip/`;
+const END_POINT = `https://htmlacademy-es-10.appspot.com/big-trip`;
 
 const tripControl = document.querySelector(`.trip-main`);
 const tripView = document.querySelector(`.trip-main__trip-controls`);
@@ -45,7 +45,7 @@ api.getPoints()
             render(pageBodyContainer, statisticsComponent);
             statisticsComponent.hide();
 
-            const tripController = new TripController(tripEvents, tripControl, pointsModel, statisticsComponent, destinationsModel, offersModel);
+            const tripController = new TripController(tripEvents, tripControl, pointsModel, statisticsComponent, destinationsModel, offersModel, api);
             tripController.render();
 
             menuComponent.setClickListenersToMenuTableItem(() => {

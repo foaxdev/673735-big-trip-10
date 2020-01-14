@@ -3,7 +3,7 @@ export default class Point {
   constructor(data) {
     this.id = data[`id`];
     this.type = data[`type`];
-    this.isFavorite = Boolean(data[`is_favourite`]);
+    this.isFavorite = Boolean(data[`is_favorite`]);
     this.price = data[`base_price`];
     this.start = new Date(data[`date_from`]);
     this.end = new Date(data[`date_to`]);
@@ -17,11 +17,11 @@ export default class Point {
     return {
       'id': this.id,
       'type': this.type,
-      'is_favourite': this.isFavorite,
+      'is_favorite': this.isFavorite,
       'base_price': this.price,
-      'date_from': this.start,
-      'date_to': this.end,
-      'destination': {description: this.description, name: this.city, pictures: this.photos},
+      'date_from': this.start.toISOString(),
+      'date_to': this.end.toISOString(),
+      'destination': {"description": this.description, "name": this.city, "pictures": this.photos},
       'offers': this.amenities
     };
   }

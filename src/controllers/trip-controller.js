@@ -27,16 +27,17 @@ const renderPointControllers = (cardsContainer, destinationsModel, offersModel, 
 
 export default class TripController {
 
-  constructor(container, header, pointModel, statisticsComponent, destinationsModel, offersModel) {
+  constructor(container, header, pointModel, statisticsComponent, destinationsModel, offersModel, api) {
     this._container = container;
     this._destinationsModel = destinationsModel;
     this._offersModel = offersModel;
+    this._api = api;
     this._header = header;
     this._tripRoute = this._header.querySelector(`.trip-main__trip-info`);
     this._totalPrice = this._header.querySelector(`.trip-info__cost-value`);
     this._addButton = this._header.querySelector(`.trip-main__event-add-btn`);
     this._eventsList = null;
-    this._pointModel = pointModel;
+    this._pointsModel = pointModel;
     this._statisticsComponent = statisticsComponent;
     this._route = null;
     this._sortComponent = new Sort(sortOptions);
@@ -50,11 +51,11 @@ export default class TripController {
     this._onViewChange = this._onViewChange.bind(this);
     this._onFilterChange = this._onFilterChange.bind(this);
 
-    this._pointModel.setFilterChangeHandler(this._onFilterChange);
+    this._pointsModel.setFilterChangeHandler(this._onFilterChange);
   }
 
   render() {
-    const cardsData = this._pointModel.getPoints();
+    const cardsData = this._pointsModel.getPoints();
 
     if (cardsData.length > 0) {
       this._cards = this._getSortedCards(null, cardsData);
@@ -206,28 +207,41 @@ export default class TripController {
     };
   }
 
-  _onDataChange(cardComponent, newCardData, oldCardData) {
-    if (newCardData === null) {
-      this._pointModel.removePoint(oldCardData.id);
+  _onDataChange(cardComponent, newPointData, oldPointData) {
+    if (newPointData === null) {
+      this._api.deletePoint(oldPointData.id)
+        .then(() => {
+          this._pointsModel.removePoint(oldPointData.id);
+          this._updatePoints();
+          this._updateHeaderInfo(this._pointsModel.getPoints());
+          this._statisticsComponent.setNewData(this._pointsModel.getPoints());
+        })
+        .catch(() => {
+          console.log(`No success`);
+          //TODO: no success behaviour
+        });
+    } else if (oldPointData === null) {
+      this._pointsModel.addPoint(newPointData);
+      this._cards = this._pointsModel.getPoints();
       this._updatePoints();
-      this._updateHeaderInfo(this._pointModel.getPoints());
-      this._statisticsComponent.setNewData(this._pointModel.getPoints());
-    } else if (oldCardData === null) {
-      this._pointModel.addPoint(newCardData);
-      this._cards = this._pointModel.getPoints();
-      this._updatePoints();
-      this._updateHeaderInfo(this._pointModel.getPoints());
+      this._updateHeaderInfo(this._pointsModel.getPoints());
       this._newPointData = this._setDefaultNewPointData();
-      this._statisticsComponent.setNewData(this._pointModel.getPoints());
+      this._statisticsComponent.setNewData(this._pointsModel.getPoints());
     } else {
-      const isSuccess = this._pointModel.updatePoint(oldCardData.id, newCardData);
+      this._api.updatePoint(oldPointData.id, newPointData)
+        .then(() => {
+          const isSuccess = this._pointsModel.updatePoint(oldPointData.id, newPointData);
 
-      if (isSuccess) {
-        cardComponent.setNewData(newCardData);
-        this._updatePoints();
-        this._updateHeaderInfo(this._pointModel.getPoints());
-        this._statisticsComponent.setNewData(this._pointModel.getPoints());
-      }
+          if (isSuccess) {
+            cardComponent.setNewData(newPointData);
+            this._updateHeaderInfo(this._pointsModel.getPoints());
+            this._statisticsComponent.setNewData(this._pointsModel.getPoints());
+          }
+        })
+        .catch(() => {
+          console.log(`No success`);
+          //TODO: no success behaviour
+        });
     }
   }
 
@@ -257,7 +271,7 @@ export default class TripController {
 
   _updatePoints() {
     this._removePoints();
-    this._renderPoints(this._pointModel.getPoints().slice(0));
+    this._renderPoints(this._pointsModel.getPoints().slice(0));
   }
 
   _onFilterChange() {

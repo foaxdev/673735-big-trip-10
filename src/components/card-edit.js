@@ -316,6 +316,10 @@ export default class CardEdit extends AbstractSmartComponent {
     this._flatpickrEndDate.set(`minDate`, newDate);
   }
 
+  getData() {
+    return new FormData(this.getElement());
+  }
+
   _applyFlatpickr() {
     if (this._flatpickrStartDate) {
       this._flatpickrStartDate.destroy();

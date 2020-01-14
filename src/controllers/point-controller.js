@@ -2,6 +2,7 @@ import Card from "../components/card";
 import CardEdit from "../components/card-edit";
 import {remove, render, replace} from "../utils/render";
 import {actionByType, Keys} from "../const";
+import Point from "../models/point";
 
 export const Mode = {
   ADDING: `adding`,
@@ -53,17 +54,16 @@ export default class PointController {
       removeEventListenersFromEditCard();
       this._replaceEditToCard();
       this._updatePointData();
+      const formData = this._editCardComponent.getData();
+      const data = this._parseFormData(formData);
+
       this._onDataChange(
         this._cardComponent,
-        Object.assign(
-          {},
-          this._pointData,
-          this._newPointData
-        ),
+        data,
         this._pointData
       );
-      this._editCardComponent.setNewData(this._newPointData);
-      this._cardComponent.setNewData(this._newPointData);
+      this._editCardComponent.setNewData(data);
+      this._cardComponent.setNewData(data);
     };
 
     const actionTypeClickHandler = () => {
@@ -128,6 +128,21 @@ export default class PointController {
     });
 
     render(this._container, this._cardComponent);
+  }
+
+  _parseFormData(formData) {
+    return new Point({
+      'type': this._newPointData.type,
+      'is_favourite': false,
+      'base_price': parseInt(formData.get(`event-price`)),
+      'date_from': this._newPointData.start,
+      'date_to': this._newPointData.end,
+      'destination': {
+        'name': formData.get(`event-destination`),
+        'description': ` `,
+        'pictures': []},
+      'offers': []
+    });
   }
 
   _updatePointData() {
