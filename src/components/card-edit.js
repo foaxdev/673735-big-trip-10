@@ -27,8 +27,14 @@ const getAmenityHtml = (amenityInfo) => {
   `);
 };
 
+const getDestinationHtml = (destination) => {
+  return(`
+    <option value="${destination.city}"></option>
+  `)
+};
 
-const createEditCardTemplate = (cardData) => {
+
+const createEditCardTemplate = (cardData, destinations) => {
   const {type, city, photos, description, start, end, price} = cardData;
 
   const startDate = moment(start).format(`DD/MM/YYYY HH:mm`);
@@ -114,9 +120,7 @@ const createEditCardTemplate = (cardData) => {
           </label>
           <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${city}" list="destination-list-1">
           <datalist id="destination-list-1">
-            <option value="Amsterdam"></option>
-            <option value="Geneva"></option>
-            <option value="Chamonix"></option>
+            ${createItems(destinations, getDestinationHtml)}
           </datalist>
         </div>
 
@@ -179,9 +183,10 @@ const createEditCardTemplate = (cardData) => {
 
 export default class CardEdit extends AbstractSmartComponent {
 
-  constructor(cardData) {
+  constructor(cardData, destinationsModel) {
     super();
     this._cardData = cardData;
+    this._destinations = destinationsModel.getDestinations();
     this._onSubmit = null;
     this._onDeleteButtonClick = null;
     this._onActionTypeClick = null;
@@ -198,7 +203,7 @@ export default class CardEdit extends AbstractSmartComponent {
   }
 
   getTemplate() {
-    return createEditCardTemplate(this._cardData);
+    return createEditCardTemplate(this._cardData, this._destinations);
   }
 
   removeElement() {

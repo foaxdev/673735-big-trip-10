@@ -1,4 +1,5 @@
 import Point from "../models/point";
+import Destination from "../models/destination";
 
 const Method = {
   GET: `GET`,
@@ -26,6 +27,12 @@ export default class Api {
     return this._load({url: `points`})
       .then((response) => response.json())
       .then(Point.parsePoints);
+  }
+
+  getDestinations() {
+    return this._load({url: `destinations`})
+      .then((response) => response.json())
+      .then(Destination.parseDestinations);
   }
 
   updatePoint(id, data) {

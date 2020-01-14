@@ -53,3 +53,4 @@ export const FilterType = {
 };
 
 export const HIDDEN_CLASS = `visually-hidden`;
+export const AUTHORIZATION = `Basic eo0w560ik56889a`;
