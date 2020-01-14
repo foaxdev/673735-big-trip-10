@@ -8,6 +8,7 @@ import Statistics from "./components/statistics";
 import Api from "./api";
 import {AUTHORIZATION} from "./const";
 import Destinations from "./models/destinations";
+import Offers from "./models/offers";
 
 const END_POINT = `https://htmlacademy-es-10.appspot.com/big-trip/`;
 
@@ -24,6 +25,7 @@ render(menuHeader, menuComponent, RenderPosition.AFTEREND);
 
 const pointsModel = new Points();
 const destinationsModel = new Destinations();
+const offersModel = new Offers();
 
 api.getPoints()
   .then((points) => {
@@ -33,26 +35,33 @@ api.getPoints()
     api.getDestinations()
       .then((destinations) => {
         destinationsModel.setDestinations(destinations);
-        const statisticsComponent = new Statistics(pointsModel.getPoints());
-        render(pageBodyContainer, statisticsComponent);
-        statisticsComponent.hide();
+      })
+      .then(() => {
+        api.getOffers()
+          .then((offers) => {
+            offersModel.setOffers(offers);
 
-        const tripController = new TripController(tripEvents, tripControl, pointsModel, statisticsComponent, destinationsModel);
-        tripController.render();
+            const statisticsComponent = new Statistics(pointsModel.getPoints());
+            render(pageBodyContainer, statisticsComponent);
+            statisticsComponent.hide();
 
-        menuComponent.setClickListenersToMenuTableItem(() => {
-          statisticsComponent.hide();
-          tripController.show();
-          menuComponent.setMenuItemActive(menuComponent.getElement().querySelector(`[data-name="Table"]`));
-        });
+            const tripController = new TripController(tripEvents, tripControl, pointsModel, statisticsComponent, destinationsModel, offersModel);
+            tripController.render();
 
-        menuComponent.setClickListenersToMenuStatsItem(() => {
-          statisticsComponent.show();
-          tripController.hide();
-          menuComponent.setMenuItemActive(menuComponent.getElement().querySelector(`[data-name="Stats"]`));
-        });
+            menuComponent.setClickListenersToMenuTableItem(() => {
+              statisticsComponent.hide();
+              tripController.show();
+              menuComponent.setMenuItemActive(menuComponent.getElement().querySelector(`[data-name="Table"]`));
+            });
 
-        const filterController = new FilterController(filterHeader, pointsModel);
-        filterController.render();
+            menuComponent.setClickListenersToMenuStatsItem(() => {
+              statisticsComponent.show();
+              tripController.hide();
+              menuComponent.setMenuItemActive(menuComponent.getElement().querySelector(`[data-name="Stats"]`));
+            });
+
+            const filterController = new FilterController(filterHeader, pointsModel);
+            filterController.render();
+          })
       })
   });

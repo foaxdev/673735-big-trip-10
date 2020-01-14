@@ -6,23 +6,11 @@ export default class Destination {
     this.photos = data[`pictures`];
   }
 
-  toRAW() {
-    return {
-      'description': this.description,
-      'name': this.city,
-      'pictures': this.photos
-    };
-  }
-
   static parseDestination(data) {
     return new Destination(data);
   }
 
   static parseDestinations(data) {
     return data.map(Destination.parseDestination);
-  }
-
-  static clone(data) {
-    return new Destination(data.toRAW());
   }
 }

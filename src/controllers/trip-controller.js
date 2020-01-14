@@ -13,10 +13,10 @@ const parseFormData = (formData, point) => {
   point.city = formData.get(`event-destination`);
 };
 
-const renderPointControllers = (cardsContainer, destinationsModel, cards, dataChangeHandler, viewChangeHandler) => {
+const renderPointControllers = (cardsContainer, destinationsModel, offersModel, cards, dataChangeHandler, viewChangeHandler) => {
   let pointControllers = [];
   cards.forEach((card) => {
-    const pointController = new PointController(cardsContainer, destinationsModel, dataChangeHandler, viewChangeHandler);
+    const pointController = new PointController(cardsContainer, destinationsModel, offersModel, dataChangeHandler, viewChangeHandler);
     pointController.render(card);
 
     pointControllers.push(pointController);
@@ -27,9 +27,10 @@ const renderPointControllers = (cardsContainer, destinationsModel, cards, dataCh
 
 export default class TripController {
 
-  constructor(container, header, pointModel, statisticsComponent, destinationsModel) {
+  constructor(container, header, pointModel, statisticsComponent, destinationsModel, offersModel) {
     this._container = container;
     this._destinationsModel = destinationsModel;
+    this._offersModel = offersModel;
     this._header = header;
     this._tripRoute = this._header.querySelector(`.trip-main__trip-info`);
     this._totalPrice = this._header.querySelector(`.trip-info__cost-value`);
@@ -64,8 +65,8 @@ export default class TripController {
       render(this._container, new Task());
 
       this._eventsList = this._container.querySelector(`.trip-events__list`);
-      this._pointController = new PointController(this._eventsList, this._destinationsModel, this._onDataChange, this._onViewChange);
-      this._pointControllers = renderPointControllers(this._eventsList, this._destinationsModel, cardsData, this._onDataChange, this._onViewChange);
+      this._pointController = new PointController(this._eventsList, this._destinationsModel, this._offersModel, this._onDataChange, this._onViewChange);
+      this._pointControllers = renderPointControllers(this._eventsList, this._destinationsModel, this._offersModel, cardsData, this._onDataChange, this._onViewChange);
       this._route = new Route(this._cards);
       render(this._tripRoute, this._route, RenderPosition.AFTERBEGIN);
 

@@ -11,9 +11,10 @@ export const Mode = {
 
 export default class PointController {
 
-  constructor(container, destinationsModel, dataChangeHandler, viewChangeHandler) {
+  constructor(container, destinationsModel, offersModel, dataChangeHandler, viewChangeHandler) {
     this._container = container;
     this._destinationsModel = destinationsModel;
+    this._offersModel = offersModel;
     this._onDataChange = dataChangeHandler;
     this._onViewChange = viewChangeHandler;
     this._mode = Mode.DEFAULT;
@@ -29,7 +30,7 @@ export default class PointController {
     this._pointData = pointData;
     this._newPointData = this._pointData;
     this._cardComponent = new Card(this._pointData);
-    this._editCardComponent = new CardEdit(this._pointData, this._destinationsModel);
+    this._editCardComponent = new CardEdit(this._pointData, this._destinationsModel, this._offersModel);
     const actionTypes = document.querySelectorAll(`.event__type-input`);
 
     const onActionTypeChange = (evt) => {

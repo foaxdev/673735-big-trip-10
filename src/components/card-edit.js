@@ -1,6 +1,6 @@
 import AbstractSmartComponent from "./abstract-smart-component";
 import {createItems} from "../utils/render";
-import {actionByType, amenities} from "../const";
+import {actionByType} from "../const";
 import flatpickr from "flatpickr";
 import moment from "moment";
 
@@ -14,14 +14,14 @@ const getImageHtml = (imageData) => {
   `);
 };
 
-const getAmenityHtml = (amenityInfo) => {
+const getAmenityHtml = (offer) => {
   return(`
     <div class="event__offer-selector">
-      <input class="event__offer-checkbox  visually-hidden" id="event-offer-${amenityInfo.type}" type="checkbox" name="event-offer-${amenityInfo.type}">
-      <label class="event__offer-label" for="event-offer-${amenityInfo.type}">
-        <span class="event__offer-title">${amenityInfo.title}</span>
+      <input class="event__offer-checkbox  visually-hidden" id="event-offer-${offer}" type="checkbox" name="event-offer-${offer}">
+      <label class="event__offer-label" for="event-offer-${offer}">
+        <span class="event__offer-title">${offer.title}</span>
         &plus;
-        &euro;&nbsp;<span class="event__offer-price">${amenityInfo.price}</span>
+        &euro;&nbsp;<span class="event__offer-price">${offer.price}</span>
       </label>
     </div>
   `);
@@ -34,7 +34,7 @@ const getDestinationHtml = (destination) => {
 };
 
 
-const createEditCardTemplate = (cardData, destinations) => {
+const createEditCardTemplate = (cardData, destinations, offersModel) => {
   const {type, city, photos, description, start, end, price} = cardData;
 
   const startDate = moment(start).format(`DD/MM/YYYY HH:mm`);
@@ -164,7 +164,7 @@ const createEditCardTemplate = (cardData, destinations) => {
         <section class="event__section  event__section--offers">
           <h3 class="event__section-title  event__section-title--offers">Offers</h3>
           <div class="event__available-offers">
-            ${createItems(amenities, getAmenityHtml)}
+            ${createItems(offersModel.getOffersByType(type), getAmenityHtml)}
           </div>
         </section>
         <section class="event__section  event__section--destination">
@@ -183,10 +183,11 @@ const createEditCardTemplate = (cardData, destinations) => {
 
 export default class CardEdit extends AbstractSmartComponent {
 
-  constructor(cardData, destinationsModel) {
+  constructor(cardData, destinationsModel, offersModel) {
     super();
     this._cardData = cardData;
     this._destinations = destinationsModel.getDestinations();
+    this._offersModel = offersModel;
     this._onSubmit = null;
     this._onDeleteButtonClick = null;
     this._onActionTypeClick = null;
@@ -203,7 +204,7 @@ export default class CardEdit extends AbstractSmartComponent {
   }
 
   getTemplate() {
-    return createEditCardTemplate(this._cardData, this._destinations);
+    return createEditCardTemplate(this._cardData, this._destinations, this._offersModel);
   }
 
   removeElement() {
