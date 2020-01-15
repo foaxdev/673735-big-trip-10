@@ -124,10 +124,9 @@ export default class TripController {
     const submitFormHandler = (evt) => {
       evt.preventDefault();
       const formData = this._addNewCard.getData();
-      this._parseFormData(formData);
       this._onDataChange(
           null,
-          this._newPointData,
+          this._parseFormData(formData),
           null
       );
       this._addNewCard.cancelAddingCard();
@@ -158,8 +157,9 @@ export default class TripController {
       'date_to': this._newPointData.end,
       'destination': {
         'name': formData.get(`event-destination`),
-        'description': this._destinationsModel.getDescriptionByCity(this._newPointData.type),
-        'pictures': []},
+        'description': this._destinationsModel.getDescriptionByCity(formData.get(`event-destination`)),
+        'pictures': this._destinationsModel.getPicturesByCity(formData.get(`event-destination`))
+      },
       'offers': []
     });
   }
@@ -219,12 +219,16 @@ export default class TripController {
           // TODO: no success behaviour
         });
     } else if (oldPointData === null) {
-      this._pointsModel.addPoint(newPointData);
-      this._cards = this._pointsModel.getPoints();
-      this._updatePoints();
-      this._updateHeaderInfo(this._pointsModel.getPoints());
-      this._newPointData = this._setDefaultNewPointData();
-      this._statisticsComponent.setNewData(this._pointsModel.getPoints());
+      this._api.addPoint(newPointData)
+        .then(() => {
+          this._pointsModel.addPoint(newPointData);
+          this._updatePoints();
+          this._updateHeaderInfo(this._pointsModel.getPoints());
+          this._statisticsComponent.setNewData(this._pointsModel.getPoints());
+        })
+        .catch(() => {
+          // TODO: no success behaviour
+        });
     } else {
       this._api.updatePoint(oldPointData.id, newPointData)
         .then(() => {
