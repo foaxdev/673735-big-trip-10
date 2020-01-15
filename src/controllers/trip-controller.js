@@ -7,23 +7,7 @@ import Route from "../components/route";
 import PointController from "./point-controller";
 import Tip from "../components/tip";
 import {actionByType, HIDDEN_CLASS, TIP_MESSAGE} from "../const";
-
-const parseFormData = (formData, point) => {
-  point.price = parseInt(formData.get(`event-price`));
-  point.city = formData.get(`event-destination`);
-};
-
-const renderPointControllers = (cardsContainer, destinationsModel, offersModel, cards, dataChangeHandler, viewChangeHandler) => {
-  let pointControllers = [];
-  cards.forEach((card) => {
-    const pointController = new PointController(cardsContainer, destinationsModel, offersModel, dataChangeHandler, viewChangeHandler);
-    pointController.render(card);
-
-    pointControllers.push(pointController);
-  });
-
-  return pointControllers;
-};
+import Point from "../models/point";
 
 export default class TripController {
 
@@ -67,7 +51,7 @@ export default class TripController {
 
       this._eventsList = this._container.querySelector(`.trip-events__list`);
       this._pointController = new PointController(this._eventsList, this._destinationsModel, this._offersModel, this._onDataChange, this._onViewChange);
-      this._pointControllers = renderPointControllers(this._eventsList, this._destinationsModel, this._offersModel, cardsData, this._onDataChange, this._onViewChange);
+      this._pointControllers = this._renderPointControllers();
       this._route = new Route(this._cards);
       render(this._tripRoute, this._route, RenderPosition.AFTERBEGIN);
 
@@ -140,11 +124,11 @@ export default class TripController {
     const submitFormHandler = (evt) => {
       evt.preventDefault();
       const formData = this._addNewCard.getData();
-      parseFormData(formData, this._newPointData);
+      this._parseFormData(formData);
       this._onDataChange(
-        null,
-        this._newPointData,
-        null
+          null,
+          this._newPointData,
+          null
       );
       this._addNewCard.cancelAddingCard();
       isFormOpened = !isFormOpened;
@@ -165,26 +149,41 @@ export default class TripController {
     });
   }
 
+  _parseFormData(formData) {
+    return new Point({
+      'type': this._newPointData.type,
+      'is_favourite': false,
+      'base_price': parseInt(formData.get(`event-price`), 10),
+      'date_from': this._newPointData.start,
+      'date_to': this._newPointData.end,
+      'destination': {
+        'name': formData.get(`event-destination`),
+        'description': this._destinationsModel.getDescriptionByCity(this._newPointData.type),
+        'pictures': []},
+      'offers': []
+    });
+  }
+
   _addMessageToEmptyRoute() {
     render(this._container, new Tip(TIP_MESSAGE).getElement());
   }
 
   _getSortedCards(sortType, cards) {
-      let sortedTasks = [];
+    let sortedTasks = [];
 
-      switch (sortType) {
-        case SortType.TIME:
-          sortedTasks = cards.slice().sort((a, b) => b.start - a.start);
-          break;
-        case SortType.PRICE:
-          sortedTasks = cards.slice().sort((a, b) => b.price - a.price);
-          break;
-        default:
-          sortedTasks = cards.slice(0);
-          break;
-      }
+    switch (sortType) {
+      case SortType.TIME:
+        sortedTasks = cards.slice().sort((a, b) => b.start - a.start);
+        break;
+      case SortType.PRICE:
+        sortedTasks = cards.slice().sort((a, b) => b.price - a.price);
+        break;
+      default:
+        sortedTasks = cards.slice(0);
+        break;
+    }
 
-      return sortedTasks;
+    return sortedTasks;
   }
 
   _getTotalSum(tripPoints) {
@@ -217,8 +216,7 @@ export default class TripController {
           this._statisticsComponent.setNewData(this._pointsModel.getPoints());
         })
         .catch(() => {
-          console.log(`No success`);
-          //TODO: no success behaviour
+          // TODO: no success behaviour
         });
     } else if (oldPointData === null) {
       this._pointsModel.addPoint(newPointData);
@@ -239,8 +237,7 @@ export default class TripController {
           }
         })
         .catch(() => {
-          console.log(`No success`);
-          //TODO: no success behaviour
+          // TODO: no success behaviour
         });
     }
   }
@@ -264,17 +261,29 @@ export default class TripController {
     this._container.querySelector(`.trip-events__list`).innerHTML = ``;
   }
 
-  _renderPoints(points) {
-    const newPoints = renderPointControllers(this._container.querySelector(`.trip-events__list`), points, this._onDataChange, this._onViewChange);
+  _renderPoints() {
+    const newPoints = this._renderPointControllers();
     this._pointControllers = this._pointControllers.concat(newPoints);
   }
 
   _updatePoints() {
     this._removePoints();
-    this._renderPoints(this._pointsModel.getPoints().slice(0));
+    this._renderPoints();
   }
 
   _onFilterChange() {
     this._updatePoints();
+  }
+
+  _renderPointControllers() {
+    let pointControllers = [];
+    this._pointsModel.getPoints().forEach((card) => {
+      const pointController = new PointController(this._container.querySelector(`.trip-events__list`), this._destinationsModel, this._offersModel, this._onDataChange, this._onViewChange);
+      pointController.render(card);
+
+      pointControllers.push(pointController);
+    });
+
+    return pointControllers;
   }
 }

@@ -35,10 +35,12 @@ export default class PointController {
     const actionTypes = document.querySelectorAll(`.event__type-input`);
 
     const onActionTypeChange = (evt) => {
-      this._changeEventPlaceholder(evt.target.value);
-      this._changeActionTypeIcon(evt.target.value);
       this._newCurrentType = evt.target.value;
+      this._changeEventPlaceholder(this._newCurrentType);
+      this._changeActionTypeIcon(this._newCurrentType);
       this._editCardComponent.hideTypesList();
+      // TODO: change amenities (remove what was bought from price)
+      this._editCardComponent.changeAmenities(this._newCurrentType);
     };
 
     const escKeyDownHandler = (evt) => {
@@ -58,9 +60,9 @@ export default class PointController {
       const data = this._parseFormData(formData);
 
       this._onDataChange(
-        this._cardComponent,
-        data,
-        this._pointData
+          this._cardComponent,
+          data,
+          this._pointData
       );
       this._editCardComponent.setNewData(data);
       this._cardComponent.setNewData(data);
@@ -81,11 +83,16 @@ export default class PointController {
       this._editCardComponent.changeMaxStartDate(this._newEndDate);
     };
 
+    const cityChangeHandler = (evt) => {
+      this._editCardComponent.changeDescription(evt.target.value);
+      this._editCardComponent.changePictures(evt.target.value);
+    };
+
     const deleteCardHandler = () => {
       this._onDataChange(
-        this._cardComponent,
-        null,
-        this._pointData
+          this._cardComponent,
+          null,
+          this._pointData
       );
     };
 
@@ -111,18 +118,20 @@ export default class PointController {
         actionType.addEventListener(`click`, onActionTypeChange);
       });
 
+      this._editCardComponent.setCityInputHandler(cityChangeHandler);
+
       this._editCardComponent.setDeleteButtonClickHandler(deleteCardHandler);
 
       const favButton = this._editCardComponent.getElement().querySelector(`.event__favorite-btn`);
       favButton.addEventListener(`click`, () => {
         this._onDataChange(
-          this._cardComponent,
-          Object.assign(
-            {},
-            this._pointData,
-            { isFavorite: !this._pointData.isFavorite }
-          ),
-          this._pointData
+            this._cardComponent,
+            Object.assign(
+                {},
+                this._pointData,
+                {isFavorite: !this._pointData.isFavorite}
+            ),
+            this._pointData
         );
       });
     });
@@ -132,9 +141,10 @@ export default class PointController {
 
   _parseFormData(formData) {
     return new Point({
+      'id': this._pointData.id,
       'type': this._newPointData.type,
-      'is_favourite': false,
-      'base_price': parseInt(formData.get(`event-price`)),
+      'is_favourite': this._pointData.isFavorite,
+      'base_price': parseInt(formData.get(`event-price`), 10),
       'date_from': this._newPointData.start,
       'date_to': this._newPointData.end,
       'destination': {

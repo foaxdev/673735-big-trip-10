@@ -1,7 +1,7 @@
 import AbstractComponent from "./abstract-component";
 
 const createTipTemplate = (message) => {
-  return(`
+  return (`
     <p class="trip-events__msg">${message}</p>
   `);
 };

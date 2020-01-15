@@ -10,7 +10,7 @@ export default class Offers {
         return this._offers[i].offers;
       }
     }
-    return null;
+    return [];
   }
 
   setOffers(offers) {

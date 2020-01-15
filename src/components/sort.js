@@ -69,9 +69,9 @@ export default class Sort extends AbstractComponent {
   setSortItemChecked(sortItem) {
     const sortItems = this._element.querySelectorAll(`.trip-sort__input`);
 
-    for (const sortItem of sortItems) {
-      if (sortItem.hasAttribute(`checked`)) {
-        sortItem.removeAttribute(`checked`);
+    for (const sortElement of sortItems) {
+      if (sortElement.hasAttribute(`checked`)) {
+        sortElement.removeAttribute(`checked`);
         break;
       }
     }

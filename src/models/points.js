@@ -15,10 +15,6 @@ export default class Points {
     return getPointsByFilter(this._points, this._activeFilterType);
   }
 
-  getPointsAll() {
-    return this._points;
-  }
-
   setPoints(points) {
     this._points = points;
   }
@@ -48,7 +44,7 @@ export default class Points {
   }
 
   updatePoint(id, point) {
-    const index = this._points.findIndex((point) => point.id === id);
+    const index = this._points.findIndex((pointItem) => pointItem.id === id);
 
     if (index === -1) {
       return false;

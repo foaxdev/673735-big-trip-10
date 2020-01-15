@@ -43,12 +43,12 @@ export const replace = (newComponent, oldComponent) => {
 };
 
 export const createItems = (elementsData, getHtml) => {
-    const container = document.createDocumentFragment();
-    container.innerHTML = ``;
+  const container = document.createDocumentFragment();
+  container.innerHTML = ``;
 
-    for (const elementData of elementsData) {
-        container.innerHTML += getHtml(elementData);
-    }
+  for (const elementData of elementsData) {
+    container.innerHTML += getHtml(elementData);
+  }
 
-    return container.innerHTML;
+  return container.innerHTML;
 };

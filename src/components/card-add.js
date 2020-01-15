@@ -3,9 +3,9 @@ import flatpickr from "flatpickr";
 import {createItems} from "../utils/render";
 
 const getDestinationHtml = (destination) => {
-  return(`
+  return (`
     <option value="${destination.city}"></option>
-  `)
+  `);
 };
 
 const createAddEventTemplate = (destinations) => {

@@ -8,13 +8,13 @@ import 'flatpickr/dist/flatpickr.min.css';
 import 'flatpickr/dist/themes/light.css';
 
 const getImageHtml = (imageData) => {
-  return(`
+  return (`
     <img class="event__photo" src="${imageData[`src`]}" alt="${imageData[`description`]}">
   `);
 };
 
 const getAmenityHtml = (offer) => {
-  return(`
+  return (`
     <div class="event__offer-selector">
       <input class="event__offer-checkbox  visually-hidden" id="event-offer-${offer}" type="checkbox" name="event-offer-${offer}">
       <label class="event__offer-label" for="event-offer-${offer}">
@@ -27,9 +27,9 @@ const getAmenityHtml = (offer) => {
 };
 
 const getDestinationHtml = (destination) => {
-  return(`
+  return (`
     <option value="${destination.city}"></option>
-  `)
+  `);
 };
 
 
@@ -185,15 +185,21 @@ export default class CardEdit extends AbstractSmartComponent {
   constructor(cardData, destinationsModel, offersModel) {
     super();
     this._cardData = cardData;
+    this._destinationsModel = destinationsModel;
     this._destinations = destinationsModel.getDestinations();
     this._offersModel = offersModel;
+
     this._onSubmit = null;
     this._onDeleteButtonClick = null;
     this._onActionTypeClick = null;
     this._onStartDateChange = null;
     this._onEndDateChange = null;
+    this._onCityChange = null;
+
     this._flatpickrStartDate = null;
     this._flatpickrEndDate = null;
+
+    this._cityInput = this.getElement().querySelector(`.event__input--destination`);
     this._actionTypesList = this.getElement().querySelector(`.event__type-list`);
     this._actionTypeButton = this.getElement().querySelector(`.event__type`);
     this._startDate = this.getElement().querySelector(`#event-start-time-1`);
@@ -245,12 +251,18 @@ export default class CardEdit extends AbstractSmartComponent {
     this._onDeleteButtonClick = handler;
   }
 
+  setCityInputHandler(handler) {
+    this._cityInput.addEventListener(`change`, handler);
+    this._onCityChange = handler;
+  }
+
   removeHandlers() {
     this.getElement().removeEventListener(`submit`, this._onSubmit);
     this._actionTypeButton.removeEventListener(`click`, this._onActionTypeClick);
     this._startDate.removeEventListener(`change`, this._onStartDateChange);
     this._endDate.removeEventListener(`change`, this._onEndDateChange);
     this.getElement().querySelector(`.event__reset-btn`).removeEventListener(`click`, this._onDeleteButtonClick);
+    this._cityInput.removeEventListener(`change`, this._onCityChange);
   }
 
   setSelectedActionType(editContainer) {
@@ -288,6 +300,7 @@ export default class CardEdit extends AbstractSmartComponent {
     this.setStartDateChangeHandler(this._onStartDateChange);
     this.setEndDateChangeHandler(this._onEndDateChange);
     this.setDeleteButtonClickHandler(this._onDeleteButtonClick);
+    this.setCityInputHandler(this._onCityChange);
   }
 
   rerender() {
@@ -314,6 +327,18 @@ export default class CardEdit extends AbstractSmartComponent {
 
   changeMinEndDate(newDate) {
     this._flatpickrEndDate.set(`minDate`, newDate);
+  }
+
+  changeAmenities(type) {
+    this.getElement().querySelector(`.event__available-offers`).innerHTML = createItems(this._offersModel.getOffersByType(type), getAmenityHtml);
+  }
+
+  changeDescription(city) {
+    this.getElement().querySelector(`.event__destination-description`).innerHTML = this._destinationsModel.getDescriptionByCity(city);
+  }
+
+  changePictures(city) {
+    this.getElement().querySelector(`.event__photos-tape`).innerHTML = createItems(this._destinationsModel.getPicturesByCity(city), getImageHtml);
   }
 
   getData() {
