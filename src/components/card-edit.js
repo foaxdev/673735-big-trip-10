@@ -1,34 +1,39 @@
 import AbstractSmartComponent from "./abstract-smart-component";
 import {createItems} from "../utils/render";
-import {actionByType, amenities} from "../const";
+import {actionByType} from "../const";
 import flatpickr from "flatpickr";
 import moment from "moment";
-
 
 import 'flatpickr/dist/flatpickr.min.css';
 import 'flatpickr/dist/themes/light.css';
 
-const getImageHtml = (imageSrc) => {
-  return(`
-    <img class="event__photo" src="${imageSrc}" alt="Event photo">
+const getImageHtml = (imageData) => {
+  return (`
+    <img class="event__photo" src="${imageData[`src`]}" alt="${imageData[`description`]}">
   `);
 };
 
-const getAmenityHtml = (amenityInfo) => {
-  return(`
+const getAmenityHtml = (offer) => {
+  return (`
     <div class="event__offer-selector">
-      <input class="event__offer-checkbox  visually-hidden" id="event-offer-${amenityInfo.type}" type="checkbox" name="event-offer-${amenityInfo.type}">
-      <label class="event__offer-label" for="event-offer-${amenityInfo.type}">
-        <span class="event__offer-title">${amenityInfo.title}</span>
+      <input class="event__offer-checkbox  visually-hidden" id="event-offer-${offer}" type="checkbox" name="event-offer-${offer}">
+      <label class="event__offer-label" for="event-offer-${offer}">
+        <span class="event__offer-title">${offer.title}</span>
         &plus;
-        &euro;&nbsp;<span class="event__offer-price">${amenityInfo.price}</span>
+        &euro;&nbsp;<span class="event__offer-price">${offer.price}</span>
       </label>
     </div>
   `);
 };
 
+const getDestinationHtml = (destination) => {
+  return (`
+    <option value="${destination.city}"></option>
+  `);
+};
 
-const createEditCardTemplate = (cardData) => {
+
+const createEditCardTemplate = (cardData, destinations, offersModel) => {
   const {type, city, photos, description, start, end, price} = cardData;
 
   const startDate = moment(start).format(`DD/MM/YYYY HH:mm`);
@@ -114,9 +119,7 @@ const createEditCardTemplate = (cardData) => {
           </label>
           <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${city}" list="destination-list-1">
           <datalist id="destination-list-1">
-            <option value="Amsterdam"></option>
-            <option value="Geneva"></option>
-            <option value="Chamonix"></option>
+            ${createItems(destinations, getDestinationHtml)}
           </datalist>
         </div>
 
@@ -160,7 +163,7 @@ const createEditCardTemplate = (cardData) => {
         <section class="event__section  event__section--offers">
           <h3 class="event__section-title  event__section-title--offers">Offers</h3>
           <div class="event__available-offers">
-            ${createItems(amenities, getAmenityHtml)}
+            ${createItems(offersModel.getOffersByType(type), getAmenityHtml)}
           </div>
         </section>
         <section class="event__section  event__section--destination">
@@ -179,16 +182,24 @@ const createEditCardTemplate = (cardData) => {
 
 export default class CardEdit extends AbstractSmartComponent {
 
-  constructor(cardData) {
+  constructor(cardData, destinationsModel, offersModel) {
     super();
     this._cardData = cardData;
+    this._destinationsModel = destinationsModel;
+    this._destinations = destinationsModel.getDestinations();
+    this._offersModel = offersModel;
+
     this._onSubmit = null;
     this._onDeleteButtonClick = null;
     this._onActionTypeClick = null;
     this._onStartDateChange = null;
     this._onEndDateChange = null;
+    this._onCityChange = null;
+
     this._flatpickrStartDate = null;
     this._flatpickrEndDate = null;
+
+    this._cityInput = this.getElement().querySelector(`.event__input--destination`);
     this._actionTypesList = this.getElement().querySelector(`.event__type-list`);
     this._actionTypeButton = this.getElement().querySelector(`.event__type`);
     this._startDate = this.getElement().querySelector(`#event-start-time-1`);
@@ -198,7 +209,7 @@ export default class CardEdit extends AbstractSmartComponent {
   }
 
   getTemplate() {
-    return createEditCardTemplate(this._cardData);
+    return createEditCardTemplate(this._cardData, this._destinations, this._offersModel);
   }
 
   removeElement() {
@@ -240,12 +251,18 @@ export default class CardEdit extends AbstractSmartComponent {
     this._onDeleteButtonClick = handler;
   }
 
+  setCityInputHandler(handler) {
+    this._cityInput.addEventListener(`change`, handler);
+    this._onCityChange = handler;
+  }
+
   removeHandlers() {
     this.getElement().removeEventListener(`submit`, this._onSubmit);
     this._actionTypeButton.removeEventListener(`click`, this._onActionTypeClick);
     this._startDate.removeEventListener(`change`, this._onStartDateChange);
     this._endDate.removeEventListener(`change`, this._onEndDateChange);
     this.getElement().querySelector(`.event__reset-btn`).removeEventListener(`click`, this._onDeleteButtonClick);
+    this._cityInput.removeEventListener(`change`, this._onCityChange);
   }
 
   setSelectedActionType(editContainer) {
@@ -283,6 +300,7 @@ export default class CardEdit extends AbstractSmartComponent {
     this.setStartDateChangeHandler(this._onStartDateChange);
     this.setEndDateChangeHandler(this._onEndDateChange);
     this.setDeleteButtonClickHandler(this._onDeleteButtonClick);
+    this.setCityInputHandler(this._onCityChange);
   }
 
   rerender() {
@@ -309,6 +327,22 @@ export default class CardEdit extends AbstractSmartComponent {
 
   changeMinEndDate(newDate) {
     this._flatpickrEndDate.set(`minDate`, newDate);
+  }
+
+  changeAmenities(type) {
+    this.getElement().querySelector(`.event__available-offers`).innerHTML = createItems(this._offersModel.getOffersByType(type), getAmenityHtml);
+  }
+
+  changeDescription(city) {
+    this.getElement().querySelector(`.event__destination-description`).innerHTML = this._destinationsModel.getDescriptionByCity(city);
+  }
+
+  changePictures(city) {
+    this.getElement().querySelector(`.event__photos-tape`).innerHTML = createItems(this._destinationsModel.getPicturesByCity(city), getImageHtml);
+  }
+
+  getData() {
+    return new FormData(this.getElement());
   }
 
   _applyFlatpickr() {

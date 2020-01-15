@@ -18,7 +18,7 @@ const labelTitleByType = [
 
 const renderChart = (ctx, chartData, title, formatLabel) => {
   const filteredData = chartData.sort((a, b) => b[1] - a[1]);
-  const filteredTitles = filteredData.map(el => labelTitleByType.filter(it => it[0] === el[0])).map(arr => arr[0][1]);
+  const filteredTitles = filteredData.map((el) => labelTitleByType.filter((it) => it[0] === el[0])).map((arr) => arr[0][1]);
 
   return new Chart(ctx, {
     plugins: [ChartDataLabels],
@@ -29,7 +29,7 @@ const renderChart = (ctx, chartData, title, formatLabel) => {
         maxBarThickness: 50,
         barThickness: 50,
         minBarLength: 50,
-        data: filteredData.map(arr => arr[1]),
+        data: filteredData.map((arr) => arr[1]),
         backgroundColor: `#FFFFFF`
       }]
     },
@@ -48,7 +48,7 @@ const renderChart = (ctx, chartData, title, formatLabel) => {
       plugins: {
         datalabels: {
           formatter: (value, context) => {
-            return filteredData.map(arr => arr[1]).map(it => formatLabel(it))[context.dataIndex];
+            return filteredData.map((arr) => arr[1]).map((it) => formatLabel(it))[context.dataIndex];
           },
           font: {
             size: 16,
@@ -199,7 +199,7 @@ export default class Statistics extends AbstractSmartComponent {
       [`taxi`, taxiPrice],
       [`train`, trainPrice],
       [`transport`, transportPrice]
-    ].filter(price => price[1] !== 0);
+    ].filter((price) => price[1] !== 0);
   }
 
   _getArrayOfTransport() {
@@ -239,7 +239,7 @@ export default class Statistics extends AbstractSmartComponent {
       [`flight`, flightTransport],
       [`ship`, shipTransport],
       [`ride`, rideTransport]
-    ].filter(transportQuantity => transportQuantity[1] !== 0);
+    ].filter((transportQuantity) => transportQuantity[1] !== 0);
   }
 
   _getHours(index) {
@@ -304,7 +304,7 @@ export default class Statistics extends AbstractSmartComponent {
       [`taxi`, taxiTime],
       [`train`, trainTime],
       [`transport`, transportTime]
-    ].filter(time => time[1] !== 0);
+    ].filter((time) => time[1] !== 0);
   }
 
   _renderCharts() {
@@ -315,25 +315,25 @@ export default class Statistics extends AbstractSmartComponent {
     this._resetCharts();
 
     this._moneyChart = renderChart(
-      moneyCtx,
-      this._getArrayOfPrices(),
-      `MONEY`,
-      (it) => `€ ${it}`
+        moneyCtx,
+        this._getArrayOfPrices(),
+        `MONEY`,
+        (it) => `€ ${it}`
     );
     this._transportChart = renderChart(
-      transportCtx,
-      this._getArrayOfTransport(),
-      `TRANSPORT`,
-      (it) => {
-        return `${it}x`;
-      }
+        transportCtx,
+        this._getArrayOfTransport(),
+        `TRANSPORT`,
+        (it) => {
+          return `${it}x`;
+        }
     );
     this._timeChart = renderChart(
-      timeCtx,
-      this._getArrayOfTime(),
-      `TIME SPENT`,
-      (it) => `${it}H`
-      );
+        timeCtx,
+        this._getArrayOfTime(),
+        `TIME SPENT`,
+        (it) => `${it}H`
+    );
   }
 
   _resetCharts() {
