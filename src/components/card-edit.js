@@ -7,6 +7,11 @@ import moment from "moment";
 import 'flatpickr/dist/flatpickr.min.css';
 import 'flatpickr/dist/themes/light.css';
 
+const DefaultData = {
+  DELETE_BUTTON_TEXT: `Delete`,
+  SAVE_BUTTON_TEXT: `Save`,
+};
+
 const getImageHtml = (imageData) => {
   return (`
     <img class="event__photo" src="${imageData[`src`]}" alt="${imageData[`description`]}">
@@ -33,7 +38,7 @@ const getDestinationHtml = (destination) => {
 };
 
 
-const createEditCardTemplate = (cardData, destinations, offersModel) => {
+const createEditCardTemplate = (cardData, destinations, offersModel, externalData) => {
   const {type, city, photos, description, start, end, price} = cardData;
 
   const startDate = moment(start).format(`DD/MM/YYYY HH:mm`);
@@ -41,6 +46,9 @@ const createEditCardTemplate = (cardData, destinations, offersModel) => {
 
   const isFavourite = cardData.isFavorite ? `checked` : ``;
   const prefixForActivity = actionByType.get(type);
+
+  const deleteButtonText = externalData.DELETE_BUTTON_TEXT;
+  const saveButtonText = externalData.SAVE_BUTTON_TEXT;
 
   return (`
     <form class="event event--edit" action="#" method="post">
@@ -143,8 +151,8 @@ const createEditCardTemplate = (cardData, destinations, offersModel) => {
           <input class="event__input  event__input--price" id="event-price-1" type="text" name="event-price" value="${price}">
         </div>
 
-        <button class="event__save-btn  btn  btn--blue" type="submit">Save</button>
-        <button class="event__reset-btn" type="reset">Delete</button>
+        <button class="event__save-btn  btn  btn--blue" type="submit">${saveButtonText}</button>
+        <button class="event__reset-btn" type="reset">${deleteButtonText}</button>
 
         <input id="event-favorite-1" class="event__favorite-checkbox  visually-hidden" type="checkbox" name="event-favorite" ${isFavourite}>
         <label class="event__favorite-btn" for="event-favorite-1">
@@ -198,6 +206,7 @@ export default class CardEdit extends AbstractSmartComponent {
 
     this._flatpickrStartDate = null;
     this._flatpickrEndDate = null;
+    this._externalData = DefaultData;
 
     this._cityInput = this.getElement().querySelector(`.event__input--destination`);
     this._actionTypesList = this.getElement().querySelector(`.event__type-list`);
@@ -209,7 +218,7 @@ export default class CardEdit extends AbstractSmartComponent {
   }
 
   getTemplate() {
-    return createEditCardTemplate(this._cardData, this._destinations, this._offersModel);
+    return createEditCardTemplate(this._cardData, this._destinations, this._offersModel, this._externalData);
   }
 
   removeElement() {
@@ -343,6 +352,11 @@ export default class CardEdit extends AbstractSmartComponent {
 
   getData() {
     return new FormData(this.getElement());
+  }
+
+  setButtonsData(buttonsData) {
+    this._externalData = Object.assign({}, DefaultData, buttonsData);
+    this.rerender();
   }
 
   _applyFlatpickr() {

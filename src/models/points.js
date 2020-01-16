@@ -15,6 +15,18 @@ export default class Points {
     return getPointsByFilter(this._points, this._activeFilterType);
   }
 
+  getNewId() {
+    const ids = [];
+
+    for (let i = 0; i < this._points.length; i++) {
+      ids.push(this._points[i].id);
+    }
+
+    ids.sort((a, b) => b - a);
+
+    return parseInt(ids[0]) + 1;
+  }
+
   setPoints(points) {
     this._points = points;
   }

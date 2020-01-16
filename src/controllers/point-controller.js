@@ -4,6 +4,8 @@ import {remove, render, replace} from "../utils/render";
 import {actionByType, Keys} from "../const";
 import Point from "../models/point";
 
+const SHAKE_ANIMATION_TIMEOUT = 600;
+
 export const Mode = {
   ADDING: `adding`,
   DEFAULT: `default`,
@@ -39,7 +41,6 @@ export default class PointController {
       this._changeEventPlaceholder(this._newCurrentType);
       this._changeActionTypeIcon(this._newCurrentType);
       this._editCardComponent.hideTypesList();
-      // TODO: change amenities (remove what was bought from price)
       this._editCardComponent.changeAmenities(this._newCurrentType);
     };
 
@@ -47,20 +48,23 @@ export default class PointController {
       if (evt.key === Keys.ESCAPE) {
         this._editCardComponent.reset();
         removeEventListenersFromEditCard();
-        this._replaceEditToCard();
+        this.replaceEditToCard();
       }
     };
 
     const submitFormHandler = (evt) => {
       evt.preventDefault();
+      this._editCardComponent.setButtonsData({
+        SAVE_BUTTON_TEXT: `Saving...`
+      });
       removeEventListenersFromEditCard();
-      this._replaceEditToCard();
+      //this._replaceEditToCard();
       this._updatePointData();
       const formData = this._editCardComponent.getData();
       const data = this._parseFormData(formData);
 
       this._onDataChange(
-          this._cardComponent,
+          this,
           data,
           this._pointData
       );
@@ -89,8 +93,12 @@ export default class PointController {
     };
 
     const deleteCardHandler = () => {
+      this._editCardComponent.setButtonsData({
+        DELETE_BUTTON_TEXT: `Deleting...`
+      });
+
       this._onDataChange(
-          this._cardComponent,
+          this,
           null,
           this._pointData
       );
@@ -125,7 +133,7 @@ export default class PointController {
       const favButton = this._editCardComponent.getElement().querySelector(`.event__favorite-btn`);
       favButton.addEventListener(`click`, () => {
         this._onDataChange(
-            this._cardComponent,
+            this,
             Object.assign(
                 {},
                 this._pointData,
@@ -178,7 +186,7 @@ export default class PointController {
     this._editCardComponent.recoveryListeners();
   }
 
-  _replaceEditToCard() {
+  replaceEditToCard() {
     replace(this._cardComponent, this._editCardComponent);
     this._mode = Mode.DEFAULT;
     this._cardComponent.recoveryListeners();
@@ -186,12 +194,29 @@ export default class PointController {
 
   setDefaultView() {
     if (this._mode !== Mode.DEFAULT) {
-      this._replaceEditToCard();
+      this.replaceEditToCard();
     }
   }
 
   destroy() {
     remove(this._editCardComponent);
     remove(this._cardComponent);
+  }
+
+  getMode() {
+    return this._mode;
+  }
+
+  shake() {
+    this._editCardComponent.getElement().style.animation = `shake ${SHAKE_ANIMATION_TIMEOUT / 1000}s`;
+
+    setTimeout(() => {
+      this._editCardComponent.getElement().style.animation = ``;
+
+      this._editCardComponent.setButtonsData({
+        SAVE_BUTTON_TEXT: `Save`,
+        DELETE_BUTTON_TEXT: `Delete`,
+      });
+    }, SHAKE_ANIMATION_TIMEOUT);
   }
 }

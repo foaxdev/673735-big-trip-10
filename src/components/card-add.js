@@ -124,6 +124,8 @@ export default class CardAdd extends AbstractComponent {
 
     this._destinationsModel = destinationsModel;
 
+    this._isOpened = false;
+
     this._onActionTypeClick = null;
     this._onActionTypeChange = null;
     this._onStartDateChange = null;
@@ -146,6 +148,10 @@ export default class CardAdd extends AbstractComponent {
 
   getTemplate() {
     return createAddEventTemplate(this._destinationsModel.getDestinations());
+  }
+
+  isOpened() {
+    return this._isOpened;
   }
 
   setSubmitHandler(handler) {
@@ -244,6 +250,7 @@ export default class CardAdd extends AbstractComponent {
 
   showOrHideCard() {
     this.getElement().querySelector(`.event__header`).classList.toggle(`visually-hidden`);
+    this._isOpened = !this._isOpened;
   }
 
   changeMaxStartDate(newDate) {
