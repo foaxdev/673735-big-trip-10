@@ -2,10 +2,10 @@ import AbstractSmartComponent from "./abstract-smart-component";
 import {createItems} from "../utils/render";
 import {actionByType} from "../const";
 import flatpickr from "flatpickr";
-import moment from "moment";
 
 import 'flatpickr/dist/flatpickr.min.css';
 import 'flatpickr/dist/themes/light.css';
+
 
 const getImageHtml = (imageData) => {
   return (`
@@ -34,10 +34,7 @@ const getDestinationHtml = (destination) => {
 
 
 const createEditCardTemplate = (cardData, destinations, offersModel) => {
-  const {type, city, photos, description, start, end, price} = cardData;
-
-  const startDate = moment(start).format(`DD/MM/YYYY HH:mm`);
-  const endDate = moment(end).format(`DD/MM/YYYY HH:mm`);
+  const {type, city, photos, description, price} = cardData;
 
   const isFavourite = cardData.isFavorite ? `checked` : ``;
   const prefixForActivity = actionByType.get(type);
@@ -117,7 +114,7 @@ const createEditCardTemplate = (cardData, destinations, offersModel) => {
           <label class="event__label  event__type-output" for="event-destination-1">
             ${prefixForActivity}
           </label>
-          <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${city}" list="destination-list-1">
+          <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${city}" list="destination-list-1" required>
           <datalist id="destination-list-1">
             ${createItems(destinations, getDestinationHtml)}
           </datalist>
@@ -127,12 +124,12 @@ const createEditCardTemplate = (cardData, destinations, offersModel) => {
           <label class="visually-hidden" for="event-start-time-1">
             From
           </label>
-          <input class="event__input  event__input--time" id="event-start-time-1" type="text" name="event-start-time" value="${startDate}">
+          <input class="event__input  event__input--time" id="event-start-time-1" type="text" name="event-start-time" value="" required>
           &mdash;
           <label class="visually-hidden" for="event-end-time-1">
             To
           </label>
-          <input class="event__input  event__input--time" id="event-end-time-1" type="text" name="event-end-time" value="${endDate}">
+          <input class="event__input  event__input--time" id="event-end-time-1" type="text" name="event-end-time" value="" required>
         </div>
 
         <div class="event__field-group  event__field-group--price">
@@ -195,6 +192,7 @@ export default class CardEdit extends AbstractSmartComponent {
     this._onStartDateChange = null;
     this._onEndDateChange = null;
     this._onCityChange = null;
+    this._onActionTypeChange = null;
 
     this._flatpickrStartDate = null;
     this._flatpickrEndDate = null;
@@ -204,6 +202,9 @@ export default class CardEdit extends AbstractSmartComponent {
     this._actionTypeButton = this.getElement().querySelector(`.event__type`);
     this._startDate = this.getElement().querySelector(`#event-start-time-1`);
     this._endDate = this.getElement().querySelector(`#event-end-time-1`);
+    this._saveButton = this.getElement().querySelector(`.event__save-btn`);
+    this._deleteButton = this.getElement().querySelector(`.event__reset-btn`);
+    this._actionTypeInputs = this.getElement().querySelectorAll(`.event__type-input`);
 
     this._applyFlatpickr();
   }
@@ -256,6 +257,13 @@ export default class CardEdit extends AbstractSmartComponent {
     this._onCityChange = handler;
   }
 
+  setActionInputsHandler(handler) {
+    this._actionTypeInputs.forEach((actionTypeInput) => {
+      actionTypeInput.addEventListener(`click`, handler);
+    });
+    this._onActionTypeChange = handler;
+  }
+
   removeHandlers() {
     this.getElement().removeEventListener(`submit`, this._onSubmit);
     this._actionTypeButton.removeEventListener(`click`, this._onActionTypeClick);
@@ -263,6 +271,9 @@ export default class CardEdit extends AbstractSmartComponent {
     this._endDate.removeEventListener(`change`, this._onEndDateChange);
     this.getElement().querySelector(`.event__reset-btn`).removeEventListener(`click`, this._onDeleteButtonClick);
     this._cityInput.removeEventListener(`change`, this._onCityChange);
+    this._actionTypeInputs.forEach((actionTypeInput) => {
+      actionTypeInput.removeEventListener(`click`, this._onActionTypeChange);
+    });
   }
 
   setSelectedActionType(editContainer) {
@@ -281,7 +292,7 @@ export default class CardEdit extends AbstractSmartComponent {
     const amenitiesCheckboxes = editContainer.querySelectorAll(`.event__offer-checkbox`);
     amenitiesCheckboxes.forEach((amenityCheckbox) => {
       for (let i = 0; i < this._cardData.amenities.length; i++) {
-        if (amenityCheckbox.getAttribute(`id`).endsWith(this._cardData.amenities[i].type)) {
+        if (amenityCheckbox.nextElementSibling.querySelector(`.event__offer-title`).textContent === this._cardData.amenities[i].title) {
           amenityCheckbox.setAttribute(`checked`, `checked`);
           break;
         }
@@ -301,6 +312,7 @@ export default class CardEdit extends AbstractSmartComponent {
     this.setEndDateChangeHandler(this._onEndDateChange);
     this.setDeleteButtonClickHandler(this._onDeleteButtonClick);
     this.setCityInputHandler(this._onCityChange);
+    this.setActionInputsHandler(this._onActionTypeChange);
   }
 
   rerender() {
@@ -345,6 +357,22 @@ export default class CardEdit extends AbstractSmartComponent {
     return new FormData(this.getElement());
   }
 
+  setButtonSaveText(saveButtonText) {
+    this._saveButton.textContent = saveButtonText;
+  }
+
+  setButtonDeleteText(deleteButtonText) {
+    this._deleteButton.textContent = deleteButtonText;
+  }
+
+  blockForm() {
+    this.getElement().setAttribute(`disabled`, `disabled`);
+  }
+
+  unblockForm() {
+    this.getElement().removeAttribute(`disabled`);
+  }
+
   _applyFlatpickr() {
     if (this._flatpickrStartDate) {
       this._flatpickrStartDate.destroy();
@@ -366,6 +394,7 @@ export default class CardEdit extends AbstractSmartComponent {
       minDate: Date.now(),
       enableTime: true
     });
+
     this._flatpickrEndDate = flatpickr(this._endDate, {
       altInput: true,
       allowInput: true,

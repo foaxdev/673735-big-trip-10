@@ -15,13 +15,13 @@ export default class Destinations {
       }
     }
 
-    return ``;
+    return ` `;
   }
 
   getPicturesByCity(city) {
     for (let i = 0; i < this._destinations.length; i++) {
       if (this._destinations[i].city === city) {
-        return this._destinations[i].pictures;
+        return this._destinations[i].photos;
       }
     }
 

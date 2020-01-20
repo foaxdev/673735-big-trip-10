@@ -18,34 +18,6 @@ export const actionByType = new Map([
     [`restaurant`, `Restaurant in`]
 ]);
 
-export const amenities = [
-  {
-    type: `luggage`,
-    title: `Add luggage`,
-    price: 10
-  },
-  {
-    type: `comfort`,
-    title: `Switch to comfort class`,
-    price: 150
-  },
-  {
-    type: `meal`,
-    title: `Add meal`,
-    price: 2
-  },
-  {
-    type: `seats`,
-    title: `Choose seats`,
-    price: 9
-  },
-  {
-    type: `train`,
-    title: `Travel by train`,
-    price: 40
-  }
-];
-
 export const FilterType = {
   EVERYTHING: `everything`,
   FUTURE: `future`,
