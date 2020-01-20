@@ -151,10 +151,6 @@ export default class CardAdd extends AbstractSmartComponent {
     return createAddEventTemplate(this._destinationsModel.getDestinations());
   }
 
-  isOpened() {
-    return this._isOpened;
-  }
-
   setSubmitHandler(handler) {
     this.getElement().addEventListener(`submit`, handler);
     this._onSubmit = handler;
@@ -204,7 +200,8 @@ export default class CardAdd extends AbstractSmartComponent {
 
   recoveryListeners() {
     this.setSubmitHandler(this._onSubmit);
-    this.setActionInputsHandler(this._onActionTypeClick);
+    this.setActionTypeHandler(this._onActionTypeClick);
+    this.setActionInputsHandler(this._onActionTypeChange);
     this.setStartDateChangeHandler(this._onStartDateChange);
     this.setEndDateChangeHandler(this._onEndDateChange);
     this.setCancelButtonClickHandler(this._onCancelButtonClick);
@@ -267,15 +264,19 @@ export default class CardAdd extends AbstractSmartComponent {
     this._actionTypesList.style.display = `none`;
   }
 
-  showOrHideCard() {
-    if (this._isOpened) {
+  showOrHideCard(toShow) {
+    if (toShow) {
+      if (!this._isOpened) {
+        this.recoveryListeners();
+        this.getElement().querySelector(`.event__header`).classList.remove(`visually-hidden`);
+        this._isOpened = true;
+      }
+    } else {
       this.removeHandlers();
       this.reset();
-    } else {
-      this.recoveryListeners();
+      this.getElement().querySelector(`.event__header`).classList.add(`visually-hidden`);
+      this._isOpened = false;
     }
-    this.getElement().querySelector(`.event__header`).classList.toggle(`visually-hidden`);
-    this._isOpened = !this._isOpened;
   }
 
   changeMaxStartDate(newDate) {

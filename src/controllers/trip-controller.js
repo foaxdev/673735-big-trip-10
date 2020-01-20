@@ -115,7 +115,7 @@ export default class TripController {
     };
 
     const cancelButtonClickHandler = () => {
-      this._addNewCard.showOrHideCard();
+      this._addNewCard.showOrHideCard(false);
     };
 
     const submitFormHandler = (evt) => {
@@ -132,7 +132,7 @@ export default class TripController {
     };
 
     this._addButton.addEventListener(`click`, () => {
-      if (!this._addNewCard || !this._addNewCard.isOpened()) {
+      if (!this._addNewCard) {
         this._addNewCard = new CardAdd(this._destinationsModel);
         render(this._sortComponent.getElement(), this._addNewCard, RenderPosition.AFTEREND);
         this._addNewCard.setActionTypeHandler(actionTypeClickHandler);
@@ -140,12 +140,10 @@ export default class TripController {
         this._addNewCard.setEndDateChangeHandler(endDateChangeHandler);
         this._addNewCard.setCancelButtonClickHandler(cancelButtonClickHandler);
         this._addNewCard.setSubmitHandler(submitFormHandler);
-
-        this._closeEditCards();
       } else {
-        this._addNewCard.showOrHideCard();
-        this._closeEditCards();
+        this._addNewCard.showOrHideCard(true);
       }
+      this._closeEditCards();
     });
   }
 
@@ -248,7 +246,7 @@ export default class TripController {
           this._statisticsComponent.setNewData(this._pointsModel.getPoints());
           this._addNewCard.setSaveButtonText(`Save`);
           this._addNewCard.unblockForm();
-          this._addNewCard.showOrHideCard();
+          this._addNewCard.showOrHideCard(false);
         })
         .catch(() => {
           this._shake();
@@ -281,6 +279,9 @@ export default class TripController {
     this._pointControllers.forEach((pointController) => {
       pointController.setDefaultView();
     });
+    if (this._addNewCard) {
+      this._addNewCard.showOrHideCard(false);
+    }
   }
 
   _removePoints() {
