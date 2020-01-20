@@ -41,8 +41,8 @@ const getDestinationHtml = (destination) => {
 const createEditCardTemplate = (cardData, destinations, offersModel, externalData) => {
   const {type, city, photos, description, start, end, price} = cardData;
 
-  const startDate = moment(start).format(`DD/MM/YYYY HH:mm`);
-  const endDate = moment(end).format(`DD/MM/YYYY HH:mm`);
+  const startDate = moment(start).format(`YYYY-MM-DD HH:mm`);
+  const endDate = moment(end).format(`YYYY-MM-DD HH:mm`);
 
   const isFavourite = cardData.isFavorite ? `checked` : ``;
   const prefixForActivity = actionByType.get(type);
@@ -125,7 +125,7 @@ const createEditCardTemplate = (cardData, destinations, offersModel, externalDat
           <label class="event__label  event__type-output" for="event-destination-1">
             ${prefixForActivity}
           </label>
-          <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${city}" list="destination-list-1">
+          <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${city}" list="destination-list-1" required>
           <datalist id="destination-list-1">
             ${createItems(destinations, getDestinationHtml)}
           </datalist>
@@ -135,12 +135,12 @@ const createEditCardTemplate = (cardData, destinations, offersModel, externalDat
           <label class="visually-hidden" for="event-start-time-1">
             From
           </label>
-          <input class="event__input  event__input--time" id="event-start-time-1" type="text" name="event-start-time" value="${startDate}">
+          <input class="event__input  event__input--time" id="event-start-time-1" type="text" name="event-start-time" value="${startDate}" required>
           &mdash;
           <label class="visually-hidden" for="event-end-time-1">
             To
           </label>
-          <input class="event__input  event__input--time" id="event-end-time-1" type="text" name="event-end-time" value="${endDate}">
+          <input class="event__input  event__input--time" id="event-end-time-1" type="text" name="event-end-time" value="${endDate}" required>
         </div>
 
         <div class="event__field-group  event__field-group--price">
@@ -290,7 +290,7 @@ export default class CardEdit extends AbstractSmartComponent {
     const amenitiesCheckboxes = editContainer.querySelectorAll(`.event__offer-checkbox`);
     amenitiesCheckboxes.forEach((amenityCheckbox) => {
       for (let i = 0; i < this._cardData.amenities.length; i++) {
-        if (amenityCheckbox.getAttribute(`id`).endsWith(this._cardData.amenities[i].type)) {
+        if (amenityCheckbox.nextElementSibling.querySelector(`.event__offer-title`).textContent === this._cardData.amenities[i].title) {
           amenityCheckbox.setAttribute(`checked`, `checked`);
           break;
         }
@@ -380,6 +380,7 @@ export default class CardEdit extends AbstractSmartComponent {
       minDate: Date.now(),
       enableTime: true
     });
+
     this._flatpickrEndDate = flatpickr(this._endDate, {
       altInput: true,
       allowInput: true,

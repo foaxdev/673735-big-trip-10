@@ -132,13 +132,11 @@ export default class PointController {
 
       const favButton = this._editCardComponent.getElement().querySelector(`.event__favorite-btn`);
       favButton.addEventListener(`click`, () => {
+        const newPoint = Point.clone(this._pointData);
+        newPoint.isFavorite = !this._pointData.isFavorite;
         this._onDataChange(
             this,
-            Object.assign(
-                {},
-                this._pointData,
-                {isFavorite: !this._pointData.isFavorite}
-            ),
+            newPoint,
             this._pointData
         );
       });
@@ -157,9 +155,9 @@ export default class PointController {
       'date_to': this._newPointData.end,
       'destination': {
         'name': formData.get(`event-destination`),
-        'description': ` `,
-        'pictures': []},
-      'offers': []
+        'description': this._pointData.description,
+        'pictures': this._pointData.photos},
+      'offers': this._pointData.amenities
     });
   }
 
