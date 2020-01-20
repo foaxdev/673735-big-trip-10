@@ -42,6 +42,7 @@ export default class PointController {
       this._changeActionTypeIcon(this._newCurrentType);
       this._editCardComponent.hideTypesList();
       this._editCardComponent.changeAmenities(this._newCurrentType);
+      this._pointData.amenities = [];
     };
 
     const escKeyDownHandler = (evt) => {
