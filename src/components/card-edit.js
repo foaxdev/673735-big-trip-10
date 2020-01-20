@@ -2,15 +2,10 @@ import AbstractSmartComponent from "./abstract-smart-component";
 import {createItems} from "../utils/render";
 import {actionByType} from "../const";
 import flatpickr from "flatpickr";
-import moment from "moment";
 
 import 'flatpickr/dist/flatpickr.min.css';
 import 'flatpickr/dist/themes/light.css';
 
-const DefaultData = {
-  DELETE_BUTTON_TEXT: `Delete`,
-  SAVE_BUTTON_TEXT: `Save`
-};
 
 const getImageHtml = (imageData) => {
   return (`
@@ -38,17 +33,11 @@ const getDestinationHtml = (destination) => {
 };
 
 
-const createEditCardTemplate = (cardData, destinations, offersModel, externalData) => {
-  const {type, city, photos, description, start, end, price} = cardData;
-
-  const startDate = moment(start).format(`YYYY-MM-DD HH:mm`);
-  const endDate = moment(end).format(`YYYY-MM-DD HH:mm`);
+const createEditCardTemplate = (cardData, destinations, offersModel) => {
+  const {type, city, photos, description, price} = cardData;
 
   const isFavourite = cardData.isFavorite ? `checked` : ``;
   const prefixForActivity = actionByType.get(type);
-
-  const deleteButtonText = externalData.DELETE_BUTTON_TEXT;
-  const saveButtonText = externalData.SAVE_BUTTON_TEXT;
 
   return (`
     <form class="event event--edit" action="#" method="post">
@@ -135,12 +124,12 @@ const createEditCardTemplate = (cardData, destinations, offersModel, externalDat
           <label class="visually-hidden" for="event-start-time-1">
             From
           </label>
-          <input class="event__input  event__input--time" id="event-start-time-1" type="text" name="event-start-time" value="${startDate}" required>
+          <input class="event__input  event__input--time" id="event-start-time-1" type="text" name="event-start-time" value="" required>
           &mdash;
           <label class="visually-hidden" for="event-end-time-1">
             To
           </label>
-          <input class="event__input  event__input--time" id="event-end-time-1" type="text" name="event-end-time" value="${endDate}" required>
+          <input class="event__input  event__input--time" id="event-end-time-1" type="text" name="event-end-time" value="" required>
         </div>
 
         <div class="event__field-group  event__field-group--price">
@@ -151,8 +140,8 @@ const createEditCardTemplate = (cardData, destinations, offersModel, externalDat
           <input class="event__input  event__input--price" id="event-price-1" type="text" name="event-price" value="${price}">
         </div>
 
-        <button class="event__save-btn  btn  btn--blue" type="submit">${saveButtonText}</button>
-        <button class="event__reset-btn" type="reset">${deleteButtonText}</button>
+        <button class="event__save-btn  btn  btn--blue" type="submit">Save</button>
+        <button class="event__reset-btn" type="reset">Delete</button>
 
         <input id="event-favorite-1" class="event__favorite-checkbox  visually-hidden" type="checkbox" name="event-favorite" ${isFavourite}>
         <label class="event__favorite-btn" for="event-favorite-1">
@@ -207,7 +196,6 @@ export default class CardEdit extends AbstractSmartComponent {
 
     this._flatpickrStartDate = null;
     this._flatpickrEndDate = null;
-    this._externalData = DefaultData;
 
     this._cityInput = this.getElement().querySelector(`.event__input--destination`);
     this._actionTypesList = this.getElement().querySelector(`.event__type-list`);
@@ -222,7 +210,7 @@ export default class CardEdit extends AbstractSmartComponent {
   }
 
   getTemplate() {
-    return createEditCardTemplate(this._cardData, this._destinations, this._offersModel, this._externalData);
+    return createEditCardTemplate(this._cardData, this._destinations, this._offersModel);
   }
 
   removeElement() {
