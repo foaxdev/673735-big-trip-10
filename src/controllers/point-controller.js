@@ -4,7 +4,7 @@ import {remove, render, replace} from "../utils/render";
 import {actionByType, Keys} from "../const";
 import Point from "../models/point";
 
-const SHAKE_ANIMATION_TIMEOUT = 600;
+export const SHAKE_ANIMATION_TIMEOUT = 600;
 
 export const Mode = {
   ADDING: `adding`,

@@ -1,6 +1,6 @@
-import AbstractComponent from "./abstract-component";
 import flatpickr from "flatpickr";
 import {createItems} from "../utils/render";
+import AbstractSmartComponent from "./abstract-smart-component";
 
 const getDestinationHtml = (destination) => {
   return (`
@@ -11,7 +11,7 @@ const getDestinationHtml = (destination) => {
 const createAddEventTemplate = (destinations) => {
   return (`
     <form class="trip-events__item  event  event--edit" action="#" method="post">
-      <header class="event__header visually-hidden">
+      <header class="event__header">
         <div class="event__type-wrapper">
           <label class="event__type  event__type-btn" for="event-type-toggle-1">
             <span class="visually-hidden">Choose event type</span>
@@ -117,7 +117,7 @@ const createAddEventTemplate = (destinations) => {
   `);
 };
 
-export default class CardAdd extends AbstractComponent {
+export default class CardAdd extends AbstractSmartComponent {
 
   constructor(destinationsModel) {
     super();
@@ -141,6 +141,7 @@ export default class CardAdd extends AbstractComponent {
     this._actionTypeInputs = this.getElement().querySelectorAll(`.event__type-input`);
     this._startDate = this.getElement().querySelector(`#event-start-time-1`);
     this._endDate = this.getElement().querySelector(`#event-end-time-1`);
+    this._saveButton = this.getElement().querySelector(`.event__save-btn`);
     this._cancelButton = this.getElement().querySelector(`.event__reset-btn`);
 
     this._applyFlatpickr();
@@ -174,7 +175,7 @@ export default class CardAdd extends AbstractComponent {
     this._onEndDateChange = handler;
   }
 
-  setActionActionInputsHandler(handler) {
+  setActionInputsHandler(handler) {
     this._actionTypeInputs.forEach((actionTypeInput) => {
       actionTypeInput.addEventListener(`click`, handler);
     });
@@ -184,6 +185,10 @@ export default class CardAdd extends AbstractComponent {
   setCancelButtonClickHandler(handler) {
     this._cancelButton.addEventListener(`click`, handler);
     this._onCancelButtonClick = handler;
+  }
+
+  setSaveButtonText(buttonText) {
+    this._saveButton.textContent = buttonText;
   }
 
   removeHandlers() {
@@ -197,15 +202,31 @@ export default class CardAdd extends AbstractComponent {
     this._cancelButton.removeEventListener(`click`, this._onCancelButtonClick);
   }
 
+  recoveryListeners() {
+    this.setSubmitHandler(this._onSubmit);
+    this.setActionInputsHandler(this._onActionTypeClick);
+    this.setStartDateChangeHandler(this._onStartDateChange);
+    this.setEndDateChangeHandler(this._onEndDateChange);
+    this.setCancelButtonClickHandler(this._onCancelButtonClick);
+  }
+
+  rerender() {
+    super.rerender();
+
+    this._applyFlatpickr();
+  }
+
   reset() {
     this.getElement().reset();
     this._applyFlatpickr();
   }
 
-  cancelAddingCard() {
-    this.removeHandlers();
-    this.reset();
-    this.removeElement();
+  blockForm() {
+    this.getElement().setAttribute(`disabled`, `disabled`);
+  }
+
+  unblockForm() {
+    this.getElement().removeAttribute(`disabled`);
   }
 
   removeElement() {
@@ -218,8 +239,6 @@ export default class CardAdd extends AbstractComponent {
       this._flatpickrEndDate.destroy();
       this._flatpickrEndDate = null;
     }
-
-    this.showOrHideCard();
 
     super.removeElement();
   }
@@ -249,6 +268,12 @@ export default class CardAdd extends AbstractComponent {
   }
 
   showOrHideCard() {
+    if (this._isOpened) {
+      this.removeHandlers();
+      this.reset();
+    } else {
+      this.recoveryListeners();
+    }
     this.getElement().querySelector(`.event__header`).classList.toggle(`visually-hidden`);
     this._isOpened = !this._isOpened;
   }

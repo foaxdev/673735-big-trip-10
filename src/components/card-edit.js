@@ -9,7 +9,7 @@ import 'flatpickr/dist/themes/light.css';
 
 const DefaultData = {
   DELETE_BUTTON_TEXT: `Delete`,
-  SAVE_BUTTON_TEXT: `Save`,
+  SAVE_BUTTON_TEXT: `Save`
 };
 
 const getImageHtml = (imageData) => {
