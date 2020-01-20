@@ -75,7 +75,6 @@ export default class Card extends AbstractSmartComponent {
 
   setNewData(newData) {
     this._cardData = newData;
-    this.rerender();
   }
 
   setEditButtonClickHandler(handler) {
