@@ -54,11 +54,9 @@ export default class PointController {
 
     const submitFormHandler = (evt) => {
       evt.preventDefault();
-      this._editCardComponent.setButtonsData({
-        SAVE_BUTTON_TEXT: `Saving...`
-      });
+      this._editCardComponent.setButtonSaveText(`Saving...`);
+      this._editCardComponent.blockForm();
       removeEventListenersFromEditCard();
-      //this._replaceEditToCard();
       this._updatePointData();
       const formData = this._editCardComponent.getData();
       const data = this._parseFormData(formData);
@@ -74,6 +72,7 @@ export default class PointController {
 
     const actionTypeClickHandler = () => {
       this._editCardComponent.showTypesList();
+      this._editCardComponent.setActionInputsHandler(onActionTypeChange);
       this._editCardComponent.setSelectedActionType(this._editCardComponent.getElement());
     };
 
@@ -93,9 +92,8 @@ export default class PointController {
     };
 
     const deleteCardHandler = () => {
-      this._editCardComponent.setButtonsData({
-        DELETE_BUTTON_TEXT: `Deleting...`
-      });
+      this._editCardComponent.setButtonDeleteText(`Deleting...`);
+      this._editCardComponent.blockForm();
 
       this._onDataChange(
           this,
@@ -211,10 +209,9 @@ export default class PointController {
     setTimeout(() => {
       this._editCardComponent.getElement().style.animation = ``;
 
-      this._editCardComponent.setButtonsData({
-        SAVE_BUTTON_TEXT: `Save`,
-        DELETE_BUTTON_TEXT: `Delete`,
-      });
+      this._editCardComponent.setButtonSaveText(`Save`);
+      this._editCardComponent.setButtonDeleteText(`Delete`);
+      this._editCardComponent.unblockForm();
     }, SHAKE_ANIMATION_TIMEOUT);
   }
 }

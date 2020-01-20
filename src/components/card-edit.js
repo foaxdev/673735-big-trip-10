@@ -203,6 +203,7 @@ export default class CardEdit extends AbstractSmartComponent {
     this._onStartDateChange = null;
     this._onEndDateChange = null;
     this._onCityChange = null;
+    this._onActionTypeChange = null;
 
     this._flatpickrStartDate = null;
     this._flatpickrEndDate = null;
@@ -213,6 +214,9 @@ export default class CardEdit extends AbstractSmartComponent {
     this._actionTypeButton = this.getElement().querySelector(`.event__type`);
     this._startDate = this.getElement().querySelector(`#event-start-time-1`);
     this._endDate = this.getElement().querySelector(`#event-end-time-1`);
+    this._saveButton = this.getElement().querySelector(`.event__save-btn`);
+    this._deleteButton = this.getElement().querySelector(`.event__reset-btn`);
+    this._actionTypeInputs = this.getElement().querySelectorAll(`.event__type-input`);
 
     this._applyFlatpickr();
   }
@@ -265,6 +269,13 @@ export default class CardEdit extends AbstractSmartComponent {
     this._onCityChange = handler;
   }
 
+  setActionInputsHandler(handler) {
+    this._actionTypeInputs.forEach((actionTypeInput) => {
+      actionTypeInput.addEventListener(`click`, handler);
+    });
+    this._onActionTypeChange = handler;
+  }
+
   removeHandlers() {
     this.getElement().removeEventListener(`submit`, this._onSubmit);
     this._actionTypeButton.removeEventListener(`click`, this._onActionTypeClick);
@@ -272,6 +283,9 @@ export default class CardEdit extends AbstractSmartComponent {
     this._endDate.removeEventListener(`change`, this._onEndDateChange);
     this.getElement().querySelector(`.event__reset-btn`).removeEventListener(`click`, this._onDeleteButtonClick);
     this._cityInput.removeEventListener(`change`, this._onCityChange);
+    this._actionTypeInputs.forEach((actionTypeInput) => {
+      actionTypeInput.removeEventListener(`click`, this._onActionTypeChange);
+    });
   }
 
   setSelectedActionType(editContainer) {
@@ -310,6 +324,7 @@ export default class CardEdit extends AbstractSmartComponent {
     this.setEndDateChangeHandler(this._onEndDateChange);
     this.setDeleteButtonClickHandler(this._onDeleteButtonClick);
     this.setCityInputHandler(this._onCityChange);
+    this.setActionInputsHandler(this._onActionTypeChange);
   }
 
   rerender() {
@@ -354,9 +369,20 @@ export default class CardEdit extends AbstractSmartComponent {
     return new FormData(this.getElement());
   }
 
-  setButtonsData(buttonsData) {
-    this._externalData = Object.assign({}, DefaultData, buttonsData);
-    this.rerender();
+  setButtonSaveText(saveButtonText) {
+    this._saveButton.textContent = saveButtonText;
+  }
+
+  setButtonDeleteText(deleteButtonText) {
+    this._deleteButton.textContent = deleteButtonText;
+  }
+
+  blockForm() {
+    this.getElement().setAttribute(`disabled`, `disabled`);
+  }
+
+  unblockForm() {
+    this.getElement().removeAttribute(`disabled`);
   }
 
   _applyFlatpickr() {
