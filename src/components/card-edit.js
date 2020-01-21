@@ -193,6 +193,7 @@ export default class CardEdit extends AbstractSmartComponent {
     this._onEndDateChange = null;
     this._onCityChange = null;
     this._onActionTypeChange = null;
+    this._onFavButtonClick = null;
 
     this._flatpickrStartDate = null;
     this._flatpickrEndDate = null;
@@ -205,6 +206,7 @@ export default class CardEdit extends AbstractSmartComponent {
     this._saveButton = this.getElement().querySelector(`.event__save-btn`);
     this._deleteButton = this.getElement().querySelector(`.event__reset-btn`);
     this._actionTypeInputs = this.getElement().querySelectorAll(`.event__type-input`);
+    this._favButton = this.getElement().querySelector(`.event__favorite-btn`);
 
     this._applyFlatpickr();
   }
@@ -264,6 +266,11 @@ export default class CardEdit extends AbstractSmartComponent {
     this._onActionTypeChange = handler;
   }
 
+  setFavButtonHandler(handler) {
+    this._favButton.addEventListener(`click`, handler);
+    this._onFavButtonClick = handler;
+  }
+
   removeHandlers() {
     this.getElement().removeEventListener(`submit`, this._onSubmit);
     this._actionTypeButton.removeEventListener(`click`, this._onActionTypeClick);
@@ -274,6 +281,7 @@ export default class CardEdit extends AbstractSmartComponent {
     this._actionTypeInputs.forEach((actionTypeInput) => {
       actionTypeInput.removeEventListener(`click`, this._onActionTypeChange);
     });
+    this._favButton.removeEventListener(`click`, this._onFavButtonClick);
   }
 
   setSelectedActionType(editContainer) {
@@ -313,6 +321,7 @@ export default class CardEdit extends AbstractSmartComponent {
     this.setDeleteButtonClickHandler(this._onDeleteButtonClick);
     this.setCityInputHandler(this._onCityChange);
     this.setActionInputsHandler(this._onActionTypeChange);
+    this.setFavButtonHandler(this._onFavButtonClick);
   }
 
   rerender() {

@@ -68,7 +68,6 @@ export default class PointController {
           this._pointData
       );
       this._editCardComponent.setNewData(data);
-      this._cardComponent.setNewData(data);
     };
 
     const actionTypeClickHandler = () => {
@@ -103,6 +102,16 @@ export default class PointController {
       );
     };
 
+    const favButtonClickHandler = () => {
+      const newPoint = Point.clone(this._pointData);
+      newPoint.isFavorite = !this._pointData.isFavorite;
+      this._onDataChange(
+        this,
+        newPoint,
+        this._pointData
+      );
+    };
+
     const removeEventListenersFromEditCard = () => {
       this._editCardComponent.removeHandlers();
       document.removeEventListener(`keydown`, escKeyDownHandler);
@@ -126,19 +135,8 @@ export default class PointController {
       });
 
       this._editCardComponent.setCityInputHandler(cityChangeHandler);
-
       this._editCardComponent.setDeleteButtonClickHandler(deleteCardHandler);
-
-      const favButton = this._editCardComponent.getElement().querySelector(`.event__favorite-btn`);
-      favButton.addEventListener(`click`, () => {
-        const newPoint = Point.clone(this._pointData);
-        newPoint.isFavorite = !this._pointData.isFavorite;
-        this._onDataChange(
-            this,
-            newPoint,
-            this._pointData
-        );
-      });
+      this._editCardComponent.setFavButtonHandler(favButtonClickHandler);
     });
 
     render(this._container, this._cardComponent);
