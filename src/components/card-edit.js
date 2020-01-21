@@ -2,7 +2,6 @@ import AbstractSmartComponent from "./abstract-smart-component";
 import {createItems} from "../utils/render";
 import {actionByType} from "../const";
 import flatpickr from "flatpickr";
-import moment from "moment";
 
 import 'flatpickr/dist/flatpickr.min.css';
 import 'flatpickr/dist/themes/light.css';
@@ -17,8 +16,8 @@ const getImageHtml = (imageData) => {
 const getAmenityHtml = (offer) => {
   return (`
     <div class="event__offer-selector">
-      <input class="event__offer-checkbox  visually-hidden" id="event-offer-${offer}" type="checkbox" name="event-offer-${offer}">
-      <label class="event__offer-label" for="event-offer-${offer}">
+      <input class="event__offer-checkbox  visually-hidden" id="event-offer" type="checkbox" name="event-offer">
+      <label class="event__offer-label" for="event-offer">
         <span class="event__offer-title">${offer.title}</span>
         &plus;
         &euro;&nbsp;<span class="event__offer-price">${offer.price}</span>
@@ -195,6 +194,7 @@ export default class CardEdit extends AbstractSmartComponent {
     this._onCityChange = null;
     this._onActionTypeChange = null;
     this._onFavButtonClick = null;
+    this._onAmenityClickHandler = null;
 
     this._flatpickrStartDate = null;
     this._flatpickrEndDate = null;
@@ -267,6 +267,13 @@ export default class CardEdit extends AbstractSmartComponent {
     this._onActionTypeChange = handler;
   }
 
+  setAmenitiesClickHandler(handler) {
+    this.getElement().querySelectorAll(`.event__offer-label`).forEach((amenityLabel) => {
+      amenityLabel.addEventListener(`click`, handler);
+    });
+    this._onAmenityClickHandler = handler;
+  }
+
   setFavButtonHandler(handler) {
     this._favButton.addEventListener(`click`, handler);
     this._onFavButtonClick = handler;
@@ -283,6 +290,9 @@ export default class CardEdit extends AbstractSmartComponent {
       actionTypeInput.removeEventListener(`click`, this._onActionTypeChange);
     });
     this._favButton.removeEventListener(`click`, this._onFavButtonClick);
+    this.getElement().querySelectorAll(`.event__offer-label`).forEach((amenityLabel) => {
+      amenityLabel.removeEventListener(`click`, this._onAmenityClickHandler);
+    });
   }
 
   setSelectedActionType(editContainer) {
@@ -323,6 +333,7 @@ export default class CardEdit extends AbstractSmartComponent {
     this.setCityInputHandler(this._onCityChange);
     this.setActionInputsHandler(this._onActionTypeChange);
     this.setFavButtonHandler(this._onFavButtonClick);
+    this.setAmenitiesClickHandler(this._onAmenityClickHandler);
   }
 
   rerender() {

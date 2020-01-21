@@ -117,12 +117,37 @@ export default class PointController {
       document.removeEventListener(`keydown`, escKeyDownHandler);
     };
 
+    const amenitiesClickHandler = (evt) => {
+      let wrapElement = null;
+      evt.preventDefault();
+      if (!evt.target.previousElementSibling) {
+        evt.target.parentElement.previousElementSibling.toggleAttribute(`checked`);
+        wrapElement = evt.target.parentElement.parentElement;
+      } else {
+        evt.target.previousElementSibling.toggleAttribute(`checked`);
+        wrapElement = evt.target.parentElement;
+      }
+
+      const amenityTitle = wrapElement.querySelector(`.event__offer-title`).textContent;
+      const amenityPrice = parseInt(wrapElement.querySelector(`.event__offer-price`).textContent, 10);
+
+      if (wrapElement.querySelector(`input`).hasAttribute(`checked`)) {
+        this._pointData.amenities.push({
+          title: amenityTitle,
+          price: amenityPrice
+        });
+      } else {
+        this._pointData.amenities = this._pointData.amenities.filter((amenity) => amenity.title !== amenityTitle);
+      }
+    };
+
     const setEventListenersToEditCard = () => {
       document.addEventListener(`keydown`, escKeyDownHandler);
       this._editCardComponent.setSubmitHandler(submitFormHandler);
       this._editCardComponent.setActionTypeHandler(actionTypeClickHandler);
       this._editCardComponent.setStartDateChangeHandler(startDateChangeHandler);
       this._editCardComponent.setEndDateChangeHandler(endDateChangeHandler);
+      this._editCardComponent.setAmenitiesClickHandler(amenitiesClickHandler);
     };
 
     this._cardComponent.setEditButtonClickHandler(() => {
