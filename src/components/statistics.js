@@ -98,7 +98,7 @@ const createStatisticsTemplate = () => {
         <canvas class="statistics__chart  statistics__chart--money" width="900"></canvas>
       </div>
 
-      <div class="statistics__item statistics__item--transport">
+      <div class="statistics__item statistics__item--transport" style="height:200px;">
         <canvas class="statistics__chart  statistics__chart--transport" width="900"></canvas>
       </div>
 
