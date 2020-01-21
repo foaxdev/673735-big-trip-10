@@ -26,14 +26,16 @@ const renderChart = (ctx, chartData, title, formatLabel) => {
     data: {
       labels: filteredTitles,
       datasets: [{
-        maxBarThickness: 50,
-        barThickness: 50,
+        maxBarThickness: 40,
+        barThickness: 40,
         minBarLength: 50,
         data: filteredData.map((arr) => arr[1]),
         backgroundColor: `#FFFFFF`
       }]
     },
     options: {
+      responsive: true,
+      maintainAspectRatio: false,
       title: {
         display: true,
         text: title,
@@ -96,7 +98,7 @@ const createStatisticsTemplate = () => {
         <canvas class="statistics__chart  statistics__chart--money" width="900"></canvas>
       </div>
 
-      <div class="statistics__item statistics__item--transport" height="300">
+      <div class="statistics__item statistics__item--transport">
         <canvas class="statistics__chart  statistics__chart--transport" width="900"></canvas>
       </div>
 

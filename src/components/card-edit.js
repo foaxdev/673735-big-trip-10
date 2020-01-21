@@ -2,6 +2,7 @@ import AbstractSmartComponent from "./abstract-smart-component";
 import {createItems} from "../utils/render";
 import {actionByType} from "../const";
 import flatpickr from "flatpickr";
+import moment from "moment";
 
 import 'flatpickr/dist/flatpickr.min.css';
 import 'flatpickr/dist/themes/light.css';
@@ -399,8 +400,6 @@ export default class CardEdit extends AbstractSmartComponent {
       defaultDate: this._cardData.start,
       format: `d/m/Y H:i`,
       altFormat: `d/m/Y H:i`,
-      maxDate: this._cardData.end,
-      minDate: Date.now(),
       enableTime: true
     });
 
@@ -410,7 +409,6 @@ export default class CardEdit extends AbstractSmartComponent {
       defaultDate: this._cardData.end,
       format: `d/m/Y H:i`,
       altFormat: `d/m/Y H:i`,
-      minDate: new Date(this._cardData.start).setDate(this._cardData.start.getDate() + 1),
       enableTime: true
     });
   }

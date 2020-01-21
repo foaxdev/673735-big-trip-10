@@ -36,7 +36,7 @@ export default class PointController {
     this._editCardComponent = new CardEdit(this._pointData, this._destinationsModel, this._offersModel);
     const actionTypes = document.querySelectorAll(`.event__type-input`);
 
-    const onActionTypeChange = (evt) => {
+    const actionTypeChangeHandler = (evt) => {
       this._newCurrentType = evt.target.value;
       this._changeEventPlaceholder(this._newCurrentType);
       this._changeActionTypeIcon(this._newCurrentType);
@@ -72,7 +72,7 @@ export default class PointController {
 
     const actionTypeClickHandler = () => {
       this._editCardComponent.showTypesList();
-      this._editCardComponent.setActionInputsHandler(onActionTypeChange);
+      this._editCardComponent.setActionInputsHandler(actionTypeChangeHandler);
       this._editCardComponent.setSelectedActionType(this._editCardComponent.getElement());
     };
 
@@ -131,7 +131,7 @@ export default class PointController {
       setEventListenersToEditCard();
 
       actionTypes.forEach((actionType) => {
-        actionType.addEventListener(`click`, onActionTypeChange);
+        actionType.addEventListener(`click`, actionTypeChangeHandler);
       });
 
       this._editCardComponent.setCityInputHandler(cityChangeHandler);
