@@ -1,6 +1,11 @@
 import Filter from "../components/filter";
 import {render, RenderPosition, replace} from "../utils/render";
-import {filters} from "../mock/filter";
+
+const filters = [
+  `everything`,
+  `future`,
+  `past`
+];
 
 export default class FilterController {
   constructor(container, pointsModel) {

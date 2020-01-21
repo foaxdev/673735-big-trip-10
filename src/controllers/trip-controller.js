@@ -1,6 +1,5 @@
 import {remove, render, RenderPosition} from "../utils/render";
 import Sort, {SortType} from "../components/sort";
-import {sortOptions} from "../mock/sort";
 import CardAdd from "../components/card-add";
 import Task from "../components/task";
 import Route from "../components/route";
@@ -8,6 +7,8 @@ import PointController, {Mode, SHAKE_ANIMATION_TIMEOUT} from "./point-controller
 import Tip from "../components/tip";
 import {actionByType, HIDDEN_CLASS, TIP_MESSAGE} from "../const";
 import Point from "../models/point";
+
+const sortOptions = [`event`, `time`, `price`];
 
 export default class TripController {
 
