@@ -34,7 +34,7 @@ const getDestinationHtml = (destination) => {
 
 
 const createEditCardTemplate = (cardData, destinations, offersModel) => {
-  const {type, city, photos, description, price} = cardData;
+  const {type, photos, description, price} = cardData;
 
   const isFavourite = cardData.isFavorite ? `checked` : ``;
   const prefixForActivity = actionByType.get(type);
@@ -198,7 +198,7 @@ export default class CardEdit extends AbstractSmartComponent {
     this._flatpickrStartDate = null;
     this._flatpickrEndDate = null;
 
-    this._cityInput = this.getElement().querySelector(`.event__input--destination`);
+    this._citySelect = this.getElement().querySelector(`.event__input--destination`);
     this._actionTypesList = this.getElement().querySelector(`.event__type-list`);
     this._actionTypeButton = this.getElement().querySelector(`.event__type`);
     this._startDate = this.getElement().querySelector(`#event-start-time-1`);
@@ -209,10 +209,15 @@ export default class CardEdit extends AbstractSmartComponent {
     this._favButton = this.getElement().querySelector(`.event__favorite-btn`);
 
     this._applyFlatpickr();
+    this.setSelectedCity();
   }
 
   getTemplate() {
     return createEditCardTemplate(this._cardData, this._destinations, this._offersModel);
+  }
+
+  setSelectedCity() {
+    this._citySelect.selectedIndex = this._destinations.map((it) => it.city).indexOf(this._cardData.city);
   }
 
   removeElement() {
@@ -255,7 +260,7 @@ export default class CardEdit extends AbstractSmartComponent {
   }
 
   setCityInputHandler(handler) {
-    this._cityInput.addEventListener(`change`, handler);
+    this._citySelect.addEventListener(`change`, handler);
     this._onCityChange = handler;
   }
 
@@ -284,7 +289,7 @@ export default class CardEdit extends AbstractSmartComponent {
     this._startDate.removeEventListener(`change`, this._onStartDateChange);
     this._endDate.removeEventListener(`change`, this._onEndDateChange);
     this.getElement().querySelector(`.event__reset-btn`).removeEventListener(`click`, this._onDeleteButtonClick);
-    this._cityInput.removeEventListener(`change`, this._onCityChange);
+    this._citySelect.removeEventListener(`change`, this._onCityChange);
     this._actionTypeInputs.forEach((actionTypeInput) => {
       actionTypeInput.removeEventListener(`click`, this._onActionTypeChange);
     });
