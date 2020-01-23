@@ -21,6 +21,7 @@ export default class TripController {
     this._tripRoute = this._header.querySelector(`.trip-main__trip-info`);
     this._totalPrice = this._header.querySelector(`.trip-info__cost-value`);
     this._addButton = this._header.querySelector(`.trip-main__event-add-btn`);
+    this._loadingText = this._container.querySelector(`.trip-events__msg`);
     this._eventsList = null;
     this._pointsModel = pointModel;
     this._statisticsComponent = statisticsComponent;
@@ -40,6 +41,9 @@ export default class TripController {
 
   render() {
     const cardsData = this._pointsModel.getPoints();
+
+    this._loadingText.classList.add(HIDDEN_CLASS);
+    this.enableAddButton();
 
     if (cardsData.length > 0) {
       this._cards = this._getSortedCards(null, cardsData);
@@ -82,6 +86,14 @@ export default class TripController {
     }
   }
 
+  disableAddButton() {
+    this._addButton.setAttribute(`disabled`, `disabled`);
+  }
+
+  enableAddButton() {
+    this._addButton.removeAttribute(`disabled`);
+  }
+
   _changeEventPlaceholder(type) {
     const eventLabel = this._addNewCard.getElement().querySelector(`.event__label`);
     eventLabel.textContent = actionByType.get(type);
@@ -117,6 +129,7 @@ export default class TripController {
 
     const cancelButtonClickHandler = () => {
       this._addNewCard.showOrHideCard(false);
+      this.enableAddButton();
     };
 
     const submitFormHandler = (evt) => {
@@ -144,6 +157,7 @@ export default class TripController {
       } else {
         this._addNewCard.showOrHideCard(true);
       }
+      this.disableAddButton();
       this._closeEditCards();
     });
   }
@@ -248,6 +262,7 @@ export default class TripController {
           this._addNewCard.setSaveButtonText(`Save`);
           this._addNewCard.unblockForm();
           this._addNewCard.showOrHideCard(false);
+          this.enableAddButton();
         })
         .catch(() => {
           this._shake();
