@@ -28,7 +28,7 @@ const getAmenityHtml = (offer) => {
 
 const getDestinationHtml = (destination) => {
   return (`
-    <option value="${destination.city}"></option>
+    <option value="${destination.city}">${destination.city}</option>
   `);
 };
 
@@ -114,10 +114,9 @@ const createEditCardTemplate = (cardData, destinations, offersModel) => {
           <label class="event__label  event__type-output" for="event-destination-1">
             ${prefixForActivity}
           </label>
-          <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${city}" list="destination-list-1" required>
-          <datalist id="destination-list-1">
+          <select class="event__input  event__input--destination" id="destination-list-1" name="event-destination" required>
             ${createItems(destinations, getDestinationHtml)}
-          </datalist>
+          </select>
         </div>
 
         <div class="event__field-group  event__field-group--time">
