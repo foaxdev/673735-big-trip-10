@@ -110,26 +110,50 @@ export default class TripController {
       this._changeEventPlaceholder(evt.target.value);
       this._changeActionTypeIcon(evt.target.value);
       this._addNewCard.hideTypesList();
+      this._addNewCard.changeAmenities(evt.target.value);
+      this._addNewCard.setAmenitiesChangeHandler(amenitiesChangeHandler);
     };
 
     const actionTypeClickHandler = () => {
       this._addNewCard.showTypesList();
-      this._addNewCard.setActionInputsHandler(onActionTypeChange);
+      this._addNewCard.setActionInputsClickHandler(onActionTypeChange);
     };
 
     const startDateChangeHandler = (evt) => {
       this._newPointData.start = new Date(evt.target.value);
-      this._addNewCard.changeMinEndDate(evt.target.value);
     };
 
     const endDateChangeHandler = (evt) => {
       this._newPointData.end = new Date(evt.target.value);
-      this._addNewCard.changeMaxStartDate(evt.target.value);
     };
 
     const cancelButtonClickHandler = () => {
+      this._addNewCard.hideEventDetailsBlock();
       this._addNewCard.showOrHideCard(false);
       this.enableAddButton();
+    };
+
+    const cityChangeHandler = () => {
+      this._addNewCard.showEventDetailsBlock();
+      this._addNewCard.changeAmenities(this._newPointData.type);
+      this._addNewCard.setAmenitiesChangeHandler(amenitiesChangeHandler);
+      this._addNewCard.changeDescription();
+      this._addNewCard.changePictures();
+    };
+
+    const amenitiesChangeHandler = (evt) => {
+      evt.preventDefault();
+      const amenityTitle = evt.target.nextElementSibling.querySelector(`.event__offer-title`).textContent;
+      const amenityPrice = parseInt(evt.target.nextElementSibling.querySelector(`.event__offer-price`).textContent, 10);
+
+      if (evt.target.checked) {
+        this._newPointData.amenities.push({
+          title: amenityTitle,
+          price: amenityPrice
+        });
+      } else {
+        this._newPointData.amenities = this._newPointData.amenities.filter((amenity) => amenity.title !== amenityTitle);
+      }
     };
 
     const submitFormHandler = (evt) => {
@@ -147,13 +171,14 @@ export default class TripController {
 
     this._addButton.addEventListener(`click`, () => {
       if (!this._addNewCard) {
-        this._addNewCard = new CardAdd(this._destinationsModel);
+        this._addNewCard = new CardAdd(this._destinationsModel, this._offersModel);
         render(this._sortComponent.getElement(), this._addNewCard, RenderPosition.AFTEREND);
-        this._addNewCard.setActionTypeHandler(actionTypeClickHandler);
+        this._addNewCard.setActionTypeClickHandler(actionTypeClickHandler);
         this._addNewCard.setStartDateChangeHandler(startDateChangeHandler);
         this._addNewCard.setEndDateChangeHandler(endDateChangeHandler);
         this._addNewCard.setCancelButtonClickHandler(cancelButtonClickHandler);
         this._addNewCard.setSubmitHandler(submitFormHandler);
+        this._addNewCard.setCitySelectChangeHandler(cityChangeHandler);
       } else {
         this._addNewCard.showOrHideCard(true);
       }
@@ -183,7 +208,7 @@ export default class TripController {
         'description': this._destinationsModel.getDescriptionByCity(formData.get(`event-destination`)),
         'pictures': this._destinationsModel.getPicturesByCity(formData.get(`event-destination`))
       },
-      'offers': []
+      'offers': this._newPointData.amenities
     });
   }
 
@@ -261,6 +286,7 @@ export default class TripController {
           this._statisticsComponent.setNewData(this._pointsModel.getPoints());
           this._addNewCard.setSaveButtonText(`Save`);
           this._addNewCard.unblockForm();
+          this._addNewCard.hideEventDetailsBlock();
           this._addNewCard.showOrHideCard(false);
           this.enableAddButton();
         })

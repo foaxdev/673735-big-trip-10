@@ -1,7 +1,7 @@
 import Card from "../components/card";
 import CardEdit from "../components/card-edit";
 import {remove, render, replace} from "../utils/render";
-import {actionByType, Keys} from "../const";
+import {Keys} from "../const";
 import Point from "../models/point";
 
 export const SHAKE_ANIMATION_TIMEOUT = 600;
@@ -38,8 +38,8 @@ export default class PointController {
 
     const actionTypeChangeHandler = (evt) => {
       this._newCurrentType = evt.target.value;
-      this._changeEventPlaceholder(this._newCurrentType);
-      this._changeActionTypeIcon(this._newCurrentType);
+      this._editCardComponent.changeEventPlaceholder(this._newCurrentType);
+      this._editCardComponent.changeActionTypeIcon(this._newCurrentType);
       this._editCardComponent.hideTypesList();
       this._editCardComponent.changeAmenities(this._newCurrentType);
       this._pointData.amenities = [];
@@ -55,7 +55,7 @@ export default class PointController {
 
     const submitFormHandler = (evt) => {
       evt.preventDefault();
-      this._editCardComponent.setButtonSaveText(`Saving...`);
+      this._editCardComponent.setSaveButtonText(`Saving...`);
       this._editCardComponent.blockForm();
       removeEventListenersFromEditCard();
       this._updatePointData();
@@ -72,18 +72,16 @@ export default class PointController {
 
     const actionTypeClickHandler = () => {
       this._editCardComponent.showTypesList();
-      this._editCardComponent.setActionInputsHandler(actionTypeChangeHandler);
-      this._editCardComponent.setSelectedActionType(this._editCardComponent.getElement());
+      this._editCardComponent.setActionTypeClickHandler(actionTypeChangeHandler);
+      this._editCardComponent.setSelectedActionType(this._newCurrentType);
     };
 
     const startDateChangeHandler = (evt) => {
       this._newStartDate = evt.target.value;
-      this._editCardComponent.changeMinEndDate(this._newStartDate);
     };
 
     const endDateChangeHandler = (evt) => {
       this._newEndDate = evt.target.value;
-      this._editCardComponent.changeMaxStartDate(this._newEndDate);
     };
 
     const cityChangeHandler = (evt) => {
@@ -117,21 +115,12 @@ export default class PointController {
       document.removeEventListener(`keydown`, escKeyDownHandler);
     };
 
-    const amenitiesClickHandler = (evt) => {
-      let wrapElement = null;
+    const amenitiesChangeHandler = (evt) => {
       evt.preventDefault();
-      if (!evt.target.previousElementSibling) {
-        evt.target.parentElement.previousElementSibling.toggleAttribute(`checked`);
-        wrapElement = evt.target.parentElement.parentElement;
-      } else {
-        evt.target.previousElementSibling.toggleAttribute(`checked`);
-        wrapElement = evt.target.parentElement;
-      }
+      const amenityTitle = evt.target.nextElementSibling.querySelector(`.event__offer-title`).textContent;
+      const amenityPrice = parseInt(evt.target.nextElementSibling.querySelector(`.event__offer-price`).textContent, 10);
 
-      const amenityTitle = wrapElement.querySelector(`.event__offer-title`).textContent;
-      const amenityPrice = parseInt(wrapElement.querySelector(`.event__offer-price`).textContent, 10);
-
-      if (wrapElement.querySelector(`input`).hasAttribute(`checked`)) {
+      if (evt.target.checked) {
         this._pointData.amenities.push({
           title: amenityTitle,
           price: amenityPrice
@@ -144,10 +133,10 @@ export default class PointController {
     const setEventListenersToEditCard = () => {
       document.addEventListener(`keydown`, escKeyDownHandler);
       this._editCardComponent.setSubmitHandler(submitFormHandler);
-      this._editCardComponent.setActionTypeHandler(actionTypeClickHandler);
+      this._editCardComponent.setActionTypeClickHandler(actionTypeClickHandler);
       this._editCardComponent.setStartDateChangeHandler(startDateChangeHandler);
       this._editCardComponent.setEndDateChangeHandler(endDateChangeHandler);
-      this._editCardComponent.setAmenitiesClickHandler(amenitiesClickHandler);
+      this._editCardComponent.setAmenitiesChangeHandler(amenitiesChangeHandler);
     };
 
     this._cardComponent.setEditButtonClickHandler(() => {
@@ -159,7 +148,7 @@ export default class PointController {
         actionType.addEventListener(`click`, actionTypeChangeHandler);
       });
 
-      this._editCardComponent.setCityInputHandler(cityChangeHandler);
+      this._editCardComponent.setCitySelectChangeHandler(cityChangeHandler);
       this._editCardComponent.setDeleteButtonClickHandler(deleteCardHandler);
       this._editCardComponent.setFavButtonHandler(favButtonClickHandler);
     });
@@ -187,16 +176,6 @@ export default class PointController {
     this._newPointData.type = this._newCurrentType !== null ? this._newCurrentType : this._pointData.type;
     this._newPointData.start = this._newStartDate !== null ? new Date(this._newStartDate) : this._pointData.start;
     this._newPointData.end = this._newEndDate !== null ? new Date(this._newEndDate) : this._pointData.end;
-  }
-
-  _changeEventPlaceholder(type) {
-    const eventLabel = this._editCardComponent.getElement().querySelector(`.event__label`);
-    eventLabel.textContent = actionByType.get(type);
-  }
-
-  _changeActionTypeIcon(type) {
-    const eventIcon = this._editCardComponent.getElement().querySelector(`.event__type-icon`);
-    eventIcon.src = `img/icons/${type}.png`;
   }
 
   _replaceCardToEdit() {
