@@ -150,7 +150,7 @@ export default class AbstractCard extends AbstractSmartComponent {
   }
 
   changeDescription() {
-    this._eventDetailsBlock.querySelector(`.event__destination-description`).innerHTML = this._destinationsModel.getDescriptionByCity(this._getCurrentCity());
+    this._eventDetailsBlock.querySelector(`.event__destination-description`).textContent = this._destinationsModel.getDescriptionByCity(this._getCurrentCity());
   }
 
   changePictures() {
@@ -175,5 +175,29 @@ export default class AbstractCard extends AbstractSmartComponent {
   reset() {
     this.getElement().reset();
     this._applyFlatpickr();
+  }
+
+  removeHandlers() {
+    this.getElement().removeEventListener(`submit`, this._onSubmit);
+    this._actionTypeButton.removeEventListener(`click`, this._onActionTypeClick);
+    this._startDate.removeEventListener(`change`, this._onStartDateChange);
+    this._endDate.removeEventListener(`change`, this._onEndDateChange);
+    this._citySelect.removeEventListener(`change`, this._onCityChange);
+    this._actionTypeInputs.forEach((actionTypeInput) => {
+      actionTypeInput.removeEventListener(`click`, this._onActionTypeChange);
+    });
+    this.getElement().querySelectorAll(`.event__offer-checkbox`).forEach((amenityLabel) => {
+      amenityLabel.removeEventListener(`change`, this._onAmenityClickHandler);
+    });
+  }
+
+  recoveryListeners() {
+    this.setSubmitHandler(this._onSubmit);
+    this.setActionTypeClickHandler(this._onActionTypeClick);
+    this.setActionInputsClickHandler(this._onActionTypeChange);
+    this.setStartDateChangeHandler(this._onStartDateChange);
+    this.setEndDateChangeHandler(this._onEndDateChange);
+    this.setCitySelectChangeHandler(this._onCityChange);
+    this.setAmenitiesChangeHandler(this._onAmenityClickHandler);
   }
 }

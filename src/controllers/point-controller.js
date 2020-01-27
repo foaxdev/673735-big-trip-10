@@ -4,8 +4,6 @@ import {remove, render, replace} from "../utils/render";
 import {Keys} from "../const";
 import Point from "../models/point";
 
-export const SHAKE_ANIMATION_TIMEOUT = 600;
-
 export const Mode = {
   ADDING: `adding`,
   DEFAULT: `default`,
@@ -104,9 +102,9 @@ export default class PointController {
       const newPoint = Point.clone(this._pointData);
       newPoint.isFavorite = !this._pointData.isFavorite;
       this._onDataChange(
-        this,
-        newPoint,
-        this._pointData
+          this,
+          newPoint,
+          this._pointData
       );
     };
 
@@ -204,17 +202,5 @@ export default class PointController {
 
   getMode() {
     return this._mode;
-  }
-
-  shake() {
-    this._editCardComponent.getElement().style.animation = `shake ${SHAKE_ANIMATION_TIMEOUT / 1000}s`;
-
-    setTimeout(() => {
-      this._editCardComponent.getElement().style.animation = ``;
-
-      this._editCardComponent.setButtonSaveText(`Save`);
-      this._editCardComponent.setButtonDeleteText(`Delete`);
-      this._editCardComponent.unblockForm();
-    }, SHAKE_ANIMATION_TIMEOUT);
   }
 }

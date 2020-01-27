@@ -1,3 +1,5 @@
+const SHAKE_ANIMATION_TIMEOUT = 600;
+
 export const RenderPosition = {
   AFTERBEGIN: `afterbegin`,
   AFTEREND: `afterend`,
@@ -31,9 +33,9 @@ export const remove = (component) => {
 };
 
 export const replace = (newComponent, oldComponent) => {
-  const parentElement = oldComponent.getElement().parentElement;
-  const newElement = newComponent.getElement();
   const oldElement = oldComponent.getElement();
+  const parentElement = oldElement.parentElement;
+  const newElement = newComponent.getElement();
 
   const isExistElements = Boolean(parentElement && newElement && oldElement);
 
@@ -51,4 +53,18 @@ export const createItems = (elementsData, getHtml) => {
   }
 
   return container.innerHTML;
+};
+
+export const shake = (component, isEditCard) => {
+  component.getElement().style.animation = `shake ${SHAKE_ANIMATION_TIMEOUT / 1000}s`;
+
+  setTimeout(() => {
+    component.getElement().style.animation = ``;
+
+    component.setSaveButtonText(`Save`);
+    if (isEditCard) {
+      component.setButtonDeleteText(`Delete`);
+    }
+    component.unblockForm();
+  }, SHAKE_ANIMATION_TIMEOUT);
 };

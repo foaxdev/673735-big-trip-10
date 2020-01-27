@@ -137,7 +137,7 @@ const createEditCardTemplate = (cardData, destinations, offersModel) => {
 
       <section class="event__details">
       ${offersModel.getOffersByType(type).length > 0 ?
-        `<section class="event__section  event__section--offers">
+      `<section class="event__section  event__section--offers">
           <h3 class="event__section-title  event__section-title--offers">Offers</h3>
           <div class="event__available-offers">
             ${createItems(offersModel.getOffersByType(type), getAmenityHtml)}
@@ -205,19 +205,9 @@ export default class CardEdit extends AbstractCard {
   }
 
   removeHandlers() {
-    this.getElement().removeEventListener(`submit`, this._onSubmit);
-    this._actionTypeButton.removeEventListener(`click`, this._onActionTypeClick);
-    this._startDate.removeEventListener(`change`, this._onStartDateChange);
-    this._endDate.removeEventListener(`change`, this._onEndDateChange);
+    super.removeHandlers();
     this._deleteButton.removeEventListener(`click`, this._onDeleteButtonClick);
-    this._citySelect.removeEventListener(`change`, this._onCityChange);
-    this._actionTypeInputs.forEach((actionTypeInput) => {
-      actionTypeInput.removeEventListener(`click`, this._onActionTypeChange);
-    });
     this._favButton.removeEventListener(`click`, this._onFavButtonClick);
-    this.getElement().querySelectorAll(`.event__offer-label`).forEach((amenityLabel) => {
-      amenityLabel.removeEventListener(`click`, this._onAmenityClickHandler);
-    });
   }
 
   setAddedAmenities(editContainer) {
@@ -233,15 +223,9 @@ export default class CardEdit extends AbstractCard {
   }
 
   recoveryListeners() {
-    this.setSubmitHandler(this._onSubmit);
-    this.setActionTypeClickHandler(this._onActionTypeClick);
-    this.setStartDateChangeHandler(this._onStartDateChange);
-    this.setEndDateChangeHandler(this._onEndDateChange);
+    super.recoveryListeners();
     this.setDeleteButtonClickHandler(this._onDeleteButtonClick);
-    this.setCitySelectChangeHandler(this._onCityChange);
-    this.setActionInputsClickHandler(this._onActionTypeChange);
     this.setFavButtonHandler(this._onFavButtonClick);
-    this.setAmenitiesChangeHandler(this._onAmenityClickHandler);
   }
 
   setNewData(newData) {

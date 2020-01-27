@@ -18,7 +18,10 @@ const labelTitleByType = [
 
 const renderChart = (ctx, chartData, title, formatLabel) => {
   const filteredData = chartData.sort((a, b) => b[1] - a[1]);
-  const filteredTitles = filteredData.map((el) => labelTitleByType.filter((it) => it[0] === el[0])).map((arr) => arr[0][1]);
+  const filteredTitles = filteredData
+                            .map((el) => labelTitleByType
+                            .filter((it) => it[0] === el[0]))
+                            .map((arr) => arr[0][1]);
 
   return new Chart(ctx, {
     plugins: [ChartDataLabels],

@@ -178,26 +178,13 @@ export default class CardAdd extends AbstractCard {
   }
 
   removeHandlers() {
-    this.getElement().removeEventListener(`submit`, this._onSubmit);
-    this._actionTypeButton.removeEventListener(`click`, this._onActionTypeClick);
-    this._startDate.removeEventListener(`change`, this._onStartDateChange);
-    this._endDate.removeEventListener(`change`, this._onEndDateChange);
-    this._actionTypeInputs.forEach((actionTypeInput) => {
-      actionTypeInput.removeEventListener(`click`, this._onActionTypeChange);
-    });
+    super.removeHandlers();
     this._cancelButton.removeEventListener(`click`, this._onCancelButtonClick);
-    this._citySelect.removeEventListener(`change`, this._onCityChange);
   }
 
   recoveryListeners() {
-    this.setSubmitHandler(this._onSubmit);
-    this.setActionTypeClickHandler(this._onActionTypeClick);
-    this.setActionInputsClickHandler(this._onActionTypeChange);
-    this.setStartDateChangeHandler(this._onStartDateChange);
-    this.setEndDateChangeHandler(this._onEndDateChange);
+    super.recoveryListeners();
     this.setCancelButtonClickHandler(this._onCancelButtonClick);
-    this.setCitySelectChangeHandler(this._onCityChange);
-    this.setAmenitiesChangeHandler(this._onAmenityClickHandler);
   }
 
   reset() {

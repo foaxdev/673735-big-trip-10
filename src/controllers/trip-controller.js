@@ -1,14 +1,14 @@
-import {remove, render, RenderPosition} from "../utils/render";
+import {remove, render, RenderPosition, shake} from "../utils/render";
 import Sort, {SortType} from "../components/sort";
 import CardAdd from "../components/card-add";
 import Task from "../components/task";
 import Route from "../components/route";
-import PointController, {Mode, SHAKE_ANIMATION_TIMEOUT} from "./point-controller";
+import PointController, {Mode} from "./point-controller";
 import Tip from "../components/tip";
-import {actionByType, HIDDEN_CLASS, TIP_MESSAGE} from "../const";
+import {HIDDEN_CLASS, TIP_MESSAGE} from "../const";
 import Point from "../models/point";
 
-const sortOptions = [`event`, `time`, `price`];
+const SORT_OPTIONS = [`event`, `time`, `price`];
 
 export default class TripController {
 
@@ -26,7 +26,7 @@ export default class TripController {
     this._pointsModel = pointModel;
     this._statisticsComponent = statisticsComponent;
     this._route = null;
-    this._sortComponent = new Sort(sortOptions);
+    this._sortComponent = new Sort(SORT_OPTIONS);
     this._cards = [];
     this._newPointData = this._setDefaultNewPointData();
     this._pointControllers = [];
@@ -94,21 +94,11 @@ export default class TripController {
     this._addButton.removeAttribute(`disabled`);
   }
 
-  _changeEventPlaceholder(type) {
-    const eventLabel = this._addNewCard.getElement().querySelector(`.event__label`);
-    eventLabel.textContent = actionByType.get(type);
-  }
-
-  _changeActionTypeIcon(type) {
-    const eventIcon = this._addNewCard.getElement().querySelector(`.event__type-icon`);
-    eventIcon.src = `img/icons/${type}.png`;
-  }
-
   _addEventListenerToAddButton() {
     const onActionTypeChange = (evt) => {
       this._newPointData.type = evt.target.value;
-      this._changeEventPlaceholder(evt.target.value);
-      this._changeActionTypeIcon(evt.target.value);
+      this._addNewCard.changeEventPlaceholder(evt.target.value);
+      this._addNewCard.changeActionTypeIcon(evt.target.value);
       this._addNewCard.hideTypesList();
       this._addNewCard.changeAmenities(evt.target.value);
       this._addNewCard.setAmenitiesChangeHandler(amenitiesChangeHandler);
@@ -163,7 +153,7 @@ export default class TripController {
       this._addNewCard.blockForm();
 
       this._onDataChange(
-         null,
+          null,
           this._parseFormData(formData),
           null
       );
@@ -235,9 +225,17 @@ export default class TripController {
   }
 
   _getTotalSum(tripPoints) {
-    return tripPoints
+    let price = tripPoints
       .map((tripPoint) => tripPoint.price)
-      .reduce((a, b) => a + b, 0);
+      .reduce((a, b) => a + b);
+
+    const amenities = tripPoints.map((tripPoint) => tripPoint.amenities);
+    amenities.forEach((amenity) => {
+      amenity.forEach((it) => {
+        price += it.price;
+      });
+    });
+    return price;
   }
 
   _setDefaultNewPointData() {
@@ -254,17 +252,6 @@ export default class TripController {
     };
   }
 
-  _shake() {
-    this._addNewCard.getElement().style.animation = `shake ${SHAKE_ANIMATION_TIMEOUT / 1000}s`;
-
-    setTimeout(() => {
-      this._addNewCard.getElement().style.animation = ``;
-
-      this._addNewCard.setSaveButtonText(`Save`);
-      this._addNewCard.unblockForm();
-    }, SHAKE_ANIMATION_TIMEOUT);
-  }
-
   _onDataChange(pointController, newPointData, oldPointData) {
     if (newPointData === null) {
       this._api.deletePoint(oldPointData.id)
@@ -275,7 +262,7 @@ export default class TripController {
           this._statisticsComponent.setNewData(this._pointsModel.getPoints());
         })
         .catch(() => {
-          pointController.shake();
+          shake(pointController, true);
         });
     } else if (oldPointData === null) {
       this._api.addPoint(newPointData)
@@ -291,7 +278,7 @@ export default class TripController {
           this.enableAddButton();
         })
         .catch(() => {
-          this._shake();
+          shake(this._addNewCard, false);
         });
     } else {
       this._api.updatePoint(oldPointData.id, newPointData)
@@ -305,7 +292,7 @@ export default class TripController {
           }
         })
         .catch(() => {
-          pointController.shake();
+          shake(pointController, true);
         });
     }
   }
