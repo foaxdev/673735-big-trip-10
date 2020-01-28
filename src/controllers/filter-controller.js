@@ -1,8 +1,14 @@
 import Filter from "../components/filter";
 import {render, RenderPosition, replace} from "../utils/render";
-import {filters} from "../mock/filter";
+
+const FILTERS = [
+  `everything`,
+  `future`,
+  `past`
+];
 
 export default class FilterController {
+
   constructor(container, pointsModel) {
     this._container = container;
     this._pointsModel = pointsModel;
@@ -17,7 +23,7 @@ export default class FilterController {
 
   render() {
     const oldComponent = this._filterComponent;
-    this._filterComponent = new Filter(filters);
+    this._filterComponent = new Filter(FILTERS);
     this._filterComponent.setFilterChangeHandler(this._onFilterChange);
 
     if (oldComponent) {

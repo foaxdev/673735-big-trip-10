@@ -9,9 +9,9 @@ export default class Destinations {
   }
 
   getDescriptionByCity(city) {
-    for (let i = 0; i < this._destinations.length; i++) {
-      if (this._destinations[i].city === city) {
-        return this._destinations[i].description;
+    for (let i = 0, destination = this._destinations[i]; i < this._destinations.length; i++) {
+      if (destination.city === city) {
+        return destination.description;
       }
     }
 
@@ -19,9 +19,9 @@ export default class Destinations {
   }
 
   getPicturesByCity(city) {
-    for (let i = 0; i < this._destinations.length; i++) {
-      if (this._destinations[i].city === city) {
-        return this._destinations[i].photos;
+    for (let i = 0, destination = this._destinations[i]; i < this._destinations.length; i++) {
+      if (destination.city === city) {
+        return destination.photos;
       }
     }
 

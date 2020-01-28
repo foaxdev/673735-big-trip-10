@@ -18,13 +18,13 @@ export default class Points {
   getNewId() {
     const ids = [];
 
-    for (let i = 0; i < this._points.length; i++) {
-      ids.push(this._points[i].id);
+    for (let i = 0, point = this._points[i]; i < this._points.length; i++) {
+      ids.push(point.id);
     }
 
     ids.sort((a, b) => b - a);
 
-    return parseInt(ids[0]) + 1;
+    return parseInt(ids[0], 10) + 1;
   }
 
   setPoints(points) {
@@ -42,31 +42,11 @@ export default class Points {
   }
 
   removePoint(id) {
-    const index = this._points.findIndex((point) => point.id === id);
-
-    if (index === -1) {
-      return false;
-    }
-
-    this._points = [].concat(this._points.slice(0, index), this._points.slice(index + 1));
-
-    this._callHandlers(this._dataChangeHandlers);
-
-    return true;
+    return this._remove(this._getIndex(id), null);
   }
 
   updatePoint(id, point) {
-    const index = this._points.findIndex((pointItem) => pointItem.id === id);
-
-    if (index === -1) {
-      return false;
-    }
-
-    this._points = [].concat(this._points.slice(0, index), point, this._points.slice(index + 1));
-
-    this._callHandlers(this._dataChangeHandlers);
-
-    return true;
+    return this._remove(this._getIndex(id), point);
   }
 
   setFilterChangeHandler(handler) {
@@ -75,6 +55,21 @@ export default class Points {
 
   setDataChangeHandler(handler) {
     this._dataChangeHandlers.push(handler);
+  }
+
+  _remove(index, point) {
+    if (index === -1) {
+      return false;
+    }
+
+    this._points = [].concat(this._points.slice(0, index), point, this._points.slice(index + 1));
+    this._callHandlers(this._dataChangeHandlers);
+
+    return true;
+  }
+
+  _getIndex(id) {
+    return this._points.findIndex((pointItem) => pointItem.id === id);
   }
 
   _callHandlers(handlers) {

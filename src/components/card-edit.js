@@ -1,4 +1,4 @@
-import AbstractSmartComponent from "./abstract-smart-component";
+import AbstractCard, {getAmenityHtml, getImageHtml} from "./abstract-card";
 import {createItems} from "../utils/render";
 import {actionByType} from "../const";
 import flatpickr from "flatpickr";
@@ -6,35 +6,15 @@ import flatpickr from "flatpickr";
 import 'flatpickr/dist/flatpickr.min.css';
 import 'flatpickr/dist/themes/light.css';
 
-
-const getImageHtml = (imageData) => {
-  return (`
-    <img class="event__photo" src="${imageData[`src`]}" alt="${imageData[`description`]}">
-  `);
-};
-
-const getAmenityHtml = (offer) => {
-  return (`
-    <div class="event__offer-selector">
-      <input class="event__offer-checkbox  visually-hidden" id="event-offer-${offer}" type="checkbox" name="event-offer-${offer}">
-      <label class="event__offer-label" for="event-offer-${offer}">
-        <span class="event__offer-title">${offer.title}</span>
-        &plus;
-        &euro;&nbsp;<span class="event__offer-price">${offer.price}</span>
-      </label>
-    </div>
-  `);
-};
-
 const getDestinationHtml = (destination) => {
   return (`
-    <option value="${destination.city}"></option>
+    <option value="${destination.city}">${destination.city}</option>
   `);
 };
 
 
 const createEditCardTemplate = (cardData, destinations, offersModel) => {
-  const {type, city, photos, description, price} = cardData;
+  const {type, photos, description, price} = cardData;
 
   const isFavourite = cardData.isFavorite ? `checked` : ``;
   const prefixForActivity = actionByType.get(type);
@@ -114,10 +94,9 @@ const createEditCardTemplate = (cardData, destinations, offersModel) => {
           <label class="event__label  event__type-output" for="event-destination-1">
             ${prefixForActivity}
           </label>
-          <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${city}" list="destination-list-1" required>
-          <datalist id="destination-list-1">
+          <select class="event__input  event__input--destination" id="destination-list-1" name="event-destination" required>
             ${createItems(destinations, getDestinationHtml)}
-          </datalist>
+          </select>
         </div>
 
         <div class="event__field-group  event__field-group--time">
@@ -157,12 +136,13 @@ const createEditCardTemplate = (cardData, destinations, offersModel) => {
       </header>
 
       <section class="event__details">
-        <section class="event__section  event__section--offers">
+      ${offersModel.getOffersByType(type).length > 0 ?
+      `<section class="event__section  event__section--offers">
           <h3 class="event__section-title  event__section-title--offers">Offers</h3>
           <div class="event__available-offers">
             ${createItems(offersModel.getOffersByType(type), getAmenityHtml)}
           </div>
-        </section>
+        </section>` : ``}
         <section class="event__section  event__section--destination">
           <h3 class="event__section-title  event__section-title--destination">Destination</h3>
           <p class="event__destination-description">${description}</p>
@@ -177,74 +157,41 @@ const createEditCardTemplate = (cardData, destinations, offersModel) => {
   `);
 };
 
-export default class CardEdit extends AbstractSmartComponent {
+export default class CardEdit extends AbstractCard {
 
   constructor(cardData, destinationsModel, offersModel) {
-    super();
+    super(destinationsModel, offersModel);
     this._cardData = cardData;
-    this._destinationsModel = destinationsModel;
     this._destinations = destinationsModel.getDestinations();
-    this._offersModel = offersModel;
 
-    this._onSubmit = null;
     this._onDeleteButtonClick = null;
-    this._onActionTypeClick = null;
-    this._onStartDateChange = null;
-    this._onEndDateChange = null;
-    this._onCityChange = null;
-    this._onActionTypeChange = null;
+    this._onFavButtonClick = null;
 
-    this._flatpickrStartDate = null;
-    this._flatpickrEndDate = null;
-
-    this._cityInput = this.getElement().querySelector(`.event__input--destination`);
     this._actionTypesList = this.getElement().querySelector(`.event__type-list`);
     this._actionTypeButton = this.getElement().querySelector(`.event__type`);
+    this._actionTypeInputs = this.getElement().querySelectorAll(`.event__type-input`);
+    this._citySelect = this.getElement().querySelector(`.event__input--destination`);
     this._startDate = this.getElement().querySelector(`#event-start-time-1`);
     this._endDate = this.getElement().querySelector(`#event-end-time-1`);
     this._saveButton = this.getElement().querySelector(`.event__save-btn`);
     this._deleteButton = this.getElement().querySelector(`.event__reset-btn`);
-    this._actionTypeInputs = this.getElement().querySelectorAll(`.event__type-input`);
+    this._favButton = this.getElement().querySelector(`.event__favorite-btn`);
+    this._eventIcon = this.getElement().querySelector(`.event__type-icon`);
+    this._eventLabel = this.getElement().querySelector(`.event__label`);
+    this._eventDetailsBlock = this.getElement().querySelector(`.event__details`);
+    this._offersBlock = this.getElement().querySelector(`.event__available-offers`);
+    this._offersSection = this.getElement().querySelector(`.event__section--offers`);
 
     this._applyFlatpickr();
+    this.setSelectedCity();
   }
 
   getTemplate() {
     return createEditCardTemplate(this._cardData, this._destinations, this._offersModel);
   }
 
-  removeElement() {
-    if (this._flatpickrStartDate) {
-      this._flatpickrStartDate.destroy();
-      this._flatpickrStartDate = null;
-    }
-
-    if (this._flatpickrEndDate) {
-      this._flatpickrEndDate.destroy();
-      this._flatpickrEndDate = null;
-    }
-
-    super.removeElement();
-  }
-
-  setSubmitHandler(handler) {
-    this.getElement().addEventListener(`submit`, handler);
-    this._onSubmit = handler;
-  }
-
-  setActionTypeHandler(handler) {
-    this._actionTypeButton.addEventListener(`click`, handler);
-    this._onActionTypeClick = handler;
-  }
-
-  setStartDateChangeHandler(handler) {
-    this._startDate.addEventListener(`change`, handler);
-    this._onStartDateChange = handler;
-  }
-
-  setEndDateChangeHandler(handler) {
-    this._endDate.addEventListener(`change`, handler);
-    this._onEndDateChange = handler;
+  setSelectedCity() {
+    this._citySelect.selectedIndex = this._destinations.map((it) => it.city).indexOf(this._cardData.city);
   }
 
   setDeleteButtonClickHandler(handler) {
@@ -252,40 +199,15 @@ export default class CardEdit extends AbstractSmartComponent {
     this._onDeleteButtonClick = handler;
   }
 
-  setCityInputHandler(handler) {
-    this._cityInput.addEventListener(`change`, handler);
-    this._onCityChange = handler;
-  }
-
-  setActionInputsHandler(handler) {
-    this._actionTypeInputs.forEach((actionTypeInput) => {
-      actionTypeInput.addEventListener(`click`, handler);
-    });
-    this._onActionTypeChange = handler;
+  setFavButtonHandler(handler) {
+    this._favButton.addEventListener(`click`, handler);
+    this._onFavButtonClick = handler;
   }
 
   removeHandlers() {
-    this.getElement().removeEventListener(`submit`, this._onSubmit);
-    this._actionTypeButton.removeEventListener(`click`, this._onActionTypeClick);
-    this._startDate.removeEventListener(`change`, this._onStartDateChange);
-    this._endDate.removeEventListener(`change`, this._onEndDateChange);
-    this.getElement().querySelector(`.event__reset-btn`).removeEventListener(`click`, this._onDeleteButtonClick);
-    this._cityInput.removeEventListener(`change`, this._onCityChange);
-    this._actionTypeInputs.forEach((actionTypeInput) => {
-      actionTypeInput.removeEventListener(`click`, this._onActionTypeChange);
-    });
-  }
-
-  setSelectedActionType(editContainer) {
-    const actionTypes = editContainer.querySelectorAll(`.event__type-input`);
-    actionTypes.forEach((actionType) => {
-      if (actionType.hasAttribute(`checked`)) {
-        actionType.removeAttribute(`checked`);
-      }
-      if (actionType.getAttribute(`value`) === this._cardData.type) {
-        actionType.setAttribute(`checked`, `checked`);
-      }
-    });
+    super.removeHandlers();
+    this._deleteButton.removeEventListener(`click`, this._onDeleteButtonClick);
+    this._favButton.removeEventListener(`click`, this._onFavButtonClick);
   }
 
   setAddedAmenities(editContainer) {
@@ -300,77 +222,18 @@ export default class CardEdit extends AbstractSmartComponent {
     });
   }
 
-  reset() {
-    this.getElement().reset();
-    this._applyFlatpickr();
-  }
-
   recoveryListeners() {
-    this.setSubmitHandler(this._onSubmit);
-    this.setActionTypeHandler(this._onActionTypeClick);
-    this.setStartDateChangeHandler(this._onStartDateChange);
-    this.setEndDateChangeHandler(this._onEndDateChange);
+    super.recoveryListeners();
     this.setDeleteButtonClickHandler(this._onDeleteButtonClick);
-    this.setCityInputHandler(this._onCityChange);
-    this.setActionInputsHandler(this._onActionTypeChange);
-  }
-
-  rerender() {
-    super.rerender();
-
-    this._applyFlatpickr();
-  }
-
-  showTypesList() {
-    this._actionTypesList.style.display = `block`;
-  }
-
-  hideTypesList() {
-    this._actionTypesList.style.display = `none`;
+    this.setFavButtonHandler(this._onFavButtonClick);
   }
 
   setNewData(newData) {
     this._cardData = newData;
   }
 
-  changeMaxStartDate(newDate) {
-    this._flatpickrStartDate.set(`maxDate`, newDate);
-  }
-
-  changeMinEndDate(newDate) {
-    this._flatpickrEndDate.set(`minDate`, newDate);
-  }
-
-  changeAmenities(type) {
-    this.getElement().querySelector(`.event__available-offers`).innerHTML = createItems(this._offersModel.getOffersByType(type), getAmenityHtml);
-  }
-
-  changeDescription(city) {
-    this.getElement().querySelector(`.event__destination-description`).innerHTML = this._destinationsModel.getDescriptionByCity(city);
-  }
-
-  changePictures(city) {
-    this.getElement().querySelector(`.event__photos-tape`).innerHTML = createItems(this._destinationsModel.getPicturesByCity(city), getImageHtml);
-  }
-
-  getData() {
-    return new FormData(this.getElement());
-  }
-
-  setButtonSaveText(saveButtonText) {
-    this._saveButton.textContent = saveButtonText;
-  }
-
   setButtonDeleteText(deleteButtonText) {
     this._deleteButton.textContent = deleteButtonText;
-  }
-
-  blockForm() {
-    this.getElement().setAttribute(`disabled`, `disabled`);
-  }
-
-  unblockForm() {
-    this.getElement().removeAttribute(`disabled`);
   }
 
   _applyFlatpickr() {
@@ -386,22 +249,17 @@ export default class CardEdit extends AbstractSmartComponent {
 
     this._flatpickrStartDate = flatpickr(this._startDate, {
       altInput: true,
-      allowInput: true,
       defaultDate: this._cardData.start,
       format: `d/m/Y H:i`,
       altFormat: `d/m/Y H:i`,
-      maxDate: this._cardData.end,
-      minDate: Date.now(),
       enableTime: true
     });
 
     this._flatpickrEndDate = flatpickr(this._endDate, {
       altInput: true,
-      allowInput: true,
       defaultDate: this._cardData.end,
       format: `d/m/Y H:i`,
       altFormat: `d/m/Y H:i`,
-      minDate: new Date(this._cardData.start).setDate(this._cardData.start.getDate() + 1),
       enableTime: true
     });
   }

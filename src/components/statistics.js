@@ -18,7 +18,10 @@ const labelTitleByType = [
 
 const renderChart = (ctx, chartData, title, formatLabel) => {
   const filteredData = chartData.sort((a, b) => b[1] - a[1]);
-  const filteredTitles = filteredData.map((el) => labelTitleByType.filter((it) => it[0] === el[0])).map((arr) => arr[0][1]);
+  const filteredTitles = filteredData
+                            .map((el) => labelTitleByType
+                            .filter((it) => it[0] === el[0]))
+                            .map((arr) => arr[0][1]);
 
   return new Chart(ctx, {
     plugins: [ChartDataLabels],
@@ -26,14 +29,16 @@ const renderChart = (ctx, chartData, title, formatLabel) => {
     data: {
       labels: filteredTitles,
       datasets: [{
-        maxBarThickness: 50,
-        barThickness: 50,
+        maxBarThickness: 40,
+        barThickness: 40,
         minBarLength: 50,
         data: filteredData.map((arr) => arr[1]),
         backgroundColor: `#FFFFFF`
       }]
     },
     options: {
+      responsive: true,
+      maintainAspectRatio: false,
       title: {
         display: true,
         text: title,
@@ -96,7 +101,7 @@ const createStatisticsTemplate = () => {
         <canvas class="statistics__chart  statistics__chart--money" width="900"></canvas>
       </div>
 
-      <div class="statistics__item statistics__item--transport" height="300">
+      <div class="statistics__item statistics__item--transport" style="height:200px;">
         <canvas class="statistics__chart  statistics__chart--transport" width="900"></canvas>
       </div>
 

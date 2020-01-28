@@ -1,5 +1,4 @@
 import Menu from "./components/menu";
-import {menuNames} from "./mock/menu";
 import {render, RenderPosition} from "./utils/render";
 import TripController from "./controllers/trip-controller";
 import Points from "./models/points";
@@ -11,6 +10,8 @@ import Destinations from "./models/destinations";
 import Offers from "./models/offers";
 
 const END_POINT = `https://htmlacademy-es-10.appspot.com/big-trip`;
+
+const menuNames = [`Table`, `Stats`];
 
 const tripControl = document.querySelector(`.trip-main`);
 const tripView = document.querySelector(`.trip-main__trip-controls`);
