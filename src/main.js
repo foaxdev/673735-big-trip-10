@@ -26,6 +26,30 @@ const pointsModel = new Points();
 const destinationsModel = new Destinations();
 const offersModel = new Offers();
 
+const renderBase = () => {
+  const statisticsComponent = new Statistics(pointsModel.getPoints());
+  render(pageBodyContainer, statisticsComponent);
+  statisticsComponent.hide();
+
+  const tripController = new TripController(tripEvents, tripControl, pointsModel, statisticsComponent, destinationsModel, offersModel, api);
+  tripController.render();
+
+  menuComponent.setClickListenersToMenuTableItem(() => {
+    statisticsComponent.hide();
+    tripController.show();
+    menuComponent.setMenuItemActive(menuComponent.getElement().querySelector(`[data-name="Table"]`));
+  });
+
+  menuComponent.setClickListenersToMenuStatsItem(() => {
+    statisticsComponent.show();
+    tripController.hide();
+    menuComponent.setMenuItemActive(menuComponent.getElement().querySelector(`[data-name="Stats"]`));
+  });
+
+  const filterController = new FilterController(filterHeader, pointsModel);
+  filterController.render();
+};
+
 api.getPoints()
   .then((points) => {
     pointsModel.setPoints(points);
@@ -35,28 +59,7 @@ api.getPoints()
         api.getOffers()
           .then((offers) => {
             offersModel.setOffers(offers);
-
-            const statisticsComponent = new Statistics(pointsModel.getPoints());
-            render(pageBodyContainer, statisticsComponent);
-            statisticsComponent.hide();
-
-            const tripController = new TripController(tripEvents, tripControl, pointsModel, statisticsComponent, destinationsModel, offersModel, api);
-            tripController.render();
-
-            menuComponent.setClickListenersToMenuTableItem(() => {
-              statisticsComponent.hide();
-              tripController.show();
-              menuComponent.setMenuItemActive(menuComponent.getElement().querySelector(`[data-name="Table"]`));
-            });
-
-            menuComponent.setClickListenersToMenuStatsItem(() => {
-              statisticsComponent.show();
-              tripController.hide();
-              menuComponent.setMenuItemActive(menuComponent.getElement().querySelector(`[data-name="Stats"]`));
-            });
-
-            const filterController = new FilterController(filterHeader, pointsModel);
-            filterController.render();
+            renderBase();
           });
       });
   });
