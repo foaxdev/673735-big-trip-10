@@ -328,6 +328,7 @@ export default class TripController {
     if (this._addNewCard) {
       this._addNewCard.showOrHideCard(false);
     }
+    this.enableAddButton();
   }
 
   _removePoints() {

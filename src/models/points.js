@@ -18,7 +18,7 @@ export default class Points {
   getNewId() {
     const ids = [];
 
-    for (let i = 0, point = this._points[i]; i < this._points.length; i++) {
+    for (let i = 0, point = this._points[0]; i < this._points.length; i++, point = this._points[i]) {
       ids.push(point.id);
     }
 
@@ -62,7 +62,7 @@ export default class Points {
       return false;
     }
 
-    this._points = [].concat(this._points.slice(0, index), point, this._points.slice(index + 1));
+    point ? this._points = [].concat(this._points.slice(0, index), point, this._points.slice(index + 1)) : this._points = [].concat(this._points.slice(0, index), this._points.slice(index + 1));
     this._callHandlers(this._dataChangeHandlers);
 
     return true;

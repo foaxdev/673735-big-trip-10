@@ -55,11 +55,11 @@ export default class PointController {
     const submitFormHandler = (evt) => {
       evt.preventDefault();
       this._editCardComponent.setSaveButtonText(`Saving...`);
-      this._editCardComponent.blockForm();
       removeEventListenersFromEditCard();
       this._updatePointData();
       const formData = this._editCardComponent.getData();
       const data = this._parseFormData(formData);
+      this._editCardComponent.blockForm();
 
       this._onDataChange(
           this._editCardComponent,
@@ -71,7 +71,7 @@ export default class PointController {
 
     const actionTypeClickHandler = () => {
       this._editCardComponent.showTypesList();
-      this._editCardComponent.setActionTypeClickHandler(actionTypeChangeHandler);
+      this._editCardComponent.setActionInputsClickHandler(actionTypeChangeHandler);
       this._editCardComponent.setSelectedActionType(this._newCurrentType);
     };
 

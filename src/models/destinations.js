@@ -9,7 +9,7 @@ export default class Destinations {
   }
 
   getDescriptionByCity(city) {
-    for (let i = 0, destination = this._destinations[i]; i < this._destinations.length; i++) {
+    for (let i = 0, destination = this._destinations[0]; i < this._destinations.length; i++, destination = this._destinations[i]) {
       if (destination.city === city) {
         return destination.description;
       }
@@ -19,7 +19,7 @@ export default class Destinations {
   }
 
   getPicturesByCity(city) {
-    for (let i = 0, destination = this._destinations[i]; i < this._destinations.length; i++) {
+    for (let i = 0, destination = this._destinations[0]; i < this._destinations.length; i++, destination = this._destinations[i]) {
       if (destination.city === city) {
         return destination.photos;
       }
