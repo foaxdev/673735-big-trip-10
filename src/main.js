@@ -29,13 +29,9 @@ const offersModel = new Offers();
 api.getPoints()
   .then((points) => {
     pointsModel.setPoints(points);
-  })
-  .then(() => {
     api.getDestinations()
       .then((destinations) => {
         destinationsModel.setDestinations(destinations);
-      })
-      .then(() => {
         api.getOffers()
           .then((offers) => {
             offersModel.setOffers(offers);
@@ -61,6 +57,6 @@ api.getPoints()
 
             const filterController = new FilterController(filterHeader, pointsModel);
             filterController.render();
-          })
-      })
+          });
+      });
   });
