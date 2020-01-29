@@ -1,7 +1,7 @@
 import {remove, render, RenderPosition, shake} from "../utils/render";
 import Sort, {SortType} from "../components/sort";
 import CardAdd from "../components/card-add";
-import Task from "../components/task";
+import Points from "../components/points";
 import Route from "../components/route";
 import PointController, {Mode} from "./point-controller";
 import Tip from "../components/tip";
@@ -22,11 +22,12 @@ export default class TripController {
     this._totalPrice = this._header.querySelector(`.trip-info__cost-value`);
     this._addButton = this._header.querySelector(`.trip-main__event-add-btn`);
     this._loadingText = this._container.querySelector(`.trip-events__msg`);
-    this._eventsList = null;
     this._pointsModel = pointModel;
     this._statisticsComponent = statisticsComponent;
     this._route = null;
     this._sortComponent = new Sort(SORT_OPTIONS);
+    this._currentSortType = SortType.DEFAULT;
+    this._pointsComponent = null;
     this._cards = [];
     this._newPointData = this._setDefaultNewPointData();
     this._pointControllers = [];
@@ -51,9 +52,9 @@ export default class TripController {
       render(this._container, this._sortComponent);
       this._sortComponent.setEventSortActive();
 
-      render(this._container, new Task());
+      this._pointsComponent = new Points(this._getBlocksData(cardsData));
+      render(this._container, this._pointsComponent);
 
-      this._eventsList = this._container.querySelector(`.trip-events__list`);
       this._pointControllers = this._renderPointControllers();
       this._route = new Route(this._cards);
       render(this._tripRoute, this._route, RenderPosition.AFTERBEGIN);
@@ -61,10 +62,11 @@ export default class TripController {
       this._totalPrice.textContent = this._getTotalSum(this._cards);
 
       this._sortComponent.setSortTypeChangeHandler((sortType) => {
-        this._eventsList.innerHTML = ``;
+        this._pointsComponent.clearPointContainers();
+        sortType !== SortType.DEFAULT ? this._pointsComponent.hideDayInfos() : this._pointsComponent.showDayInfos();
         this._currentSortType = sortType;
         this._getSortedCards(this._currentSortType, this._cards).forEach((card, index) => {
-          this._pointControllers[index].render(card);
+          this._pointControllers[index].render(card, this._currentSortType === SortType.DEFAULT);
         });
       });
     } else {
@@ -84,6 +86,22 @@ export default class TripController {
     if (this._container) {
       this._container.classList.remove(HIDDEN_CLASS);
     }
+  }
+
+  _getBlocksData(points) {
+    const pointDates = new Set(points.map((point) => point.start.setHours(0,0,0,0)));
+    const blocksData = [];
+    let datesCounter = 1;
+
+    pointDates.forEach((date) => {
+      blocksData.push({
+        counter: datesCounter++,
+        date: date,
+        pointsQuantity: this._cards.map((point) => point.start.setHours(0,0,0,0) === date).length
+      });
+    });
+
+    return blocksData;
   }
 
   disableAddButton() {
@@ -207,11 +225,11 @@ export default class TripController {
   }
 
   _getSortedCards(sortType, cards) {
-    let sortedTasks = [];
+    let sortedTasks;
 
     switch (sortType) {
       case SortType.TIME:
-        sortedTasks = cards.slice().sort((a, b) => b.start - a.start);
+        sortedTasks = cards.slice().sort((a, b) => (b.end - b.start) - (a.end - a.start));
         break;
       case SortType.PRICE:
         sortedTasks = cards.slice().sort((a, b) => b.price - a.price);
@@ -316,7 +334,7 @@ export default class TripController {
   _removePoints() {
     this._pointControllers.forEach((pointController) => pointController.destroy());
     this._pointControllers = [];
-    this._container.querySelector(`.trip-events__list`).innerHTML = ``;
+    this._pointsComponent.clearPointContainers();
   }
 
   _renderPoints() {
@@ -335,12 +353,20 @@ export default class TripController {
 
   _renderPointControllers() {
     let pointControllers = [];
+    const generalContainer = this._container.querySelector(`.trip-events__list`);
     this._pointsModel.getPoints().forEach((card) => {
-      const pointController = new PointController(this._container.querySelector(`.trip-events__list`), this._destinationsModel, this._offersModel, this._onDataChange, this._onViewChange);
-      pointController.render(card);
-
+      const pointController = new PointController(
+          this._pointsComponent.getContainerByDate(card.start),
+          generalContainer,
+          this._destinationsModel,
+          this._offersModel,
+          this._onDataChange,
+          this._onViewChange
+      );
+      pointController.render(card, this._currentSortType === SortType.DEFAULT);
       pointControllers.push(pointController);
     });
+    this._pointsComponent.updateDisplay();
 
     return pointControllers;
   }

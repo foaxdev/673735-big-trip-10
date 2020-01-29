@@ -11,8 +11,6 @@ import Offers from "./models/offers";
 
 const END_POINT = `https://htmlacademy-es-10.appspot.com/big-trip`;
 
-const menuNames = [`Table`, `Stats`];
-
 const tripControl = document.querySelector(`.trip-main`);
 const tripView = document.querySelector(`.trip-main__trip-controls`);
 const menuHeader = tripView.querySelectorAll(`h2`)[0];
@@ -21,7 +19,7 @@ const tripEvents = document.querySelector(`.trip-events`);
 const pageBodyContainer = document.querySelector(`.page-main .page-body__container`);
 
 const api = new Api(END_POINT, AUTHORIZATION);
-const menuComponent = new Menu(menuNames);
+const menuComponent = new Menu();
 render(menuHeader, menuComponent, RenderPosition.AFTEREND);
 
 const pointsModel = new Points();

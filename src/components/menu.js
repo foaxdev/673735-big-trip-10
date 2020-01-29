@@ -1,25 +1,26 @@
 import AbstractComponent from "./abstract-component";
 import {createItems} from "../utils/render";
 
+const MENU_NAMES = [`Table`, `Stats`];
+
 const getMenuHtml = (menuName) => {
   return (`
     <a class="trip-tabs__btn" data-name="${menuName}" href="#">${menuName}</a>
   `);
 };
 
-const createMenuTemplate = (menuNames) => {
+const createMenuTemplate = () => {
   return (`
     <nav class="trip-controls__trip-tabs  trip-tabs">
-      ${createItems(menuNames, getMenuHtml)}
+      ${createItems(MENU_NAMES, getMenuHtml)}
     </nav>
   `);
 };
 
 export default class Menu extends AbstractComponent {
 
-  constructor(menuNames) {
+  constructor() {
     super();
-    this._menuNames = menuNames;
 
     this._menuTable = this.getElement().querySelector(`[data-name="Table"]`);
     this._menuStats = this.getElement().querySelector(`[data-name="Stats"]`);
@@ -28,7 +29,7 @@ export default class Menu extends AbstractComponent {
   }
 
   getTemplate() {
-    return createMenuTemplate(this._menuNames);
+    return createMenuTemplate();
   }
 
   setMenuItemActive(menuElement) {
