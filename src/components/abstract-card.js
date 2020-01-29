@@ -119,11 +119,35 @@ export default class AbstractCard extends AbstractSmartComponent {
   }
 
   blockForm() {
-    this.getElement().setAttribute(`disabled`, `disabled`);
+    const inputs = this.getElement().querySelectorAll(`input`);
+    const buttons = this.getElement().querySelectorAll(`button`);
+    const selectElement = this.getElement().querySelector(`select`);
+
+    inputs.forEach((inputElement) => {
+      inputElement.setAttribute(`disabled`, `disabled`);
+    });
+
+    buttons.forEach((buttonElement) => {
+      buttonElement.setAttribute(`disabled`, `disabled`);
+    });
+
+    selectElement.setAttribute(`disabled`, `disabled`);
   }
 
   unblockForm() {
-    this.getElement().removeAttribute(`disabled`);
+    const inputs = this.getElement().querySelectorAll(`input`);
+    const buttons = this.getElement().querySelectorAll(`button`);
+    const selectElement = this.getElement().querySelector(`select`);
+
+    inputs.forEach((inputElement) => {
+      inputElement.removeAttribute(`disabled`);
+    });
+
+    buttons.forEach((buttonElement) => {
+      buttonElement.removeAttribute(`disabled`);
+    });
+
+    selectElement.removeAttribute(`disabled`);
   }
 
   rerender() {

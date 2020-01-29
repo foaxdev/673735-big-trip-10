@@ -62,7 +62,7 @@ export default class PointController {
       const data = this._parseFormData(formData);
 
       this._onDataChange(
-          this,
+          this._editCardComponent,
           data,
           this._pointData
       );
@@ -93,7 +93,7 @@ export default class PointController {
       this._editCardComponent.blockForm();
 
       this._onDataChange(
-          this,
+          this._editCardComponent,
           null,
           this._pointData
       );
@@ -103,7 +103,7 @@ export default class PointController {
       const newPoint = Point.clone(this._pointData);
       newPoint.isFavorite = !this._pointData.isFavorite;
       this._onDataChange(
-          this,
+          this._editCardComponent,
           newPoint,
           this._pointData
       );

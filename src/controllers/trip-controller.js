@@ -269,7 +269,7 @@ export default class TripController {
     };
   }
 
-  _onDataChange(pointController, newPointData, oldPointData) {
+  _onDataChange(editCardComponent, newPointData, oldPointData) {
     if (newPointData === null) {
       this._api.deletePoint(oldPointData.id)
         .then(() => {
@@ -279,7 +279,7 @@ export default class TripController {
           this._statisticsComponent.setNewData(this._pointsModel.getPoints());
         })
         .catch(() => {
-          shake(pointController, true);
+          shake(editCardComponent, true);
         });
     } else if (oldPointData === null) {
       this._api.addPoint(newPointData)
@@ -309,7 +309,7 @@ export default class TripController {
           }
         })
         .catch(() => {
-          shake(pointController, true);
+          shake(editCardComponent, true);
         });
     }
   }
