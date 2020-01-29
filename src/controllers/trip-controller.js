@@ -65,9 +65,8 @@ export default class TripController {
         this._pointsComponent.clearPointContainers();
         sortType !== SortType.DEFAULT ? this._pointsComponent.hideDayInfos() : this._pointsComponent.showDayInfos();
         this._currentSortType = sortType;
-        this._getSortedCards(this._currentSortType, this._cards).forEach((card, index) => {
-          this._pointControllers[index].render(card, this._currentSortType === SortType.DEFAULT);
-        });
+        this._renderPointControllers();
+        this._pointsComponent.updateDisplay();
       });
     } else {
       this._addMessageToEmptyRoute();
@@ -354,7 +353,7 @@ export default class TripController {
   _renderPointControllers() {
     let pointControllers = [];
     const generalContainer = this._container.querySelector(`.trip-events__list`);
-    this._pointsModel.getPoints().forEach((card) => {
+    this._getSortedCards(this._currentSortType, this._pointsModel.getPoints()).forEach((card) => {
       const pointController = new PointController(
           this._pointsComponent.getContainerByDate(card.start),
           generalContainer,
