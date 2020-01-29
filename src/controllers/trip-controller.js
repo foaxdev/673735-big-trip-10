@@ -86,15 +86,15 @@ export default class TripController {
   }
 
   _getBlocksData(points) {
-    const pointDates = new Set(points.map((point) => point.start.setHours(0,0,0,0)));
+    const pointDates = new Set(points.map((point) => point.start.setHours(0, 0, 0, 0)));
     const blocksData = [];
     let datesCounter = 1;
 
-    pointDates.forEach((date) => {
+    pointDates.forEach((pointDate) => {
       blocksData.push({
         counter: datesCounter++,
-        date: date,
-        pointsQuantity: this._cards.map((point) => point.start.setHours(0,0,0,0) === date).length
+        date: pointDate,
+        pointsQuantity: this._cards.map((point) => point.start.setHours(0, 0, 0, 0) === pointDate).length
       });
     });
 
@@ -353,7 +353,11 @@ export default class TripController {
     const sortedCards = this._getSortedCards(this._currentSortType, this._pointsModel.getPoints());
     this._pointsComponent.rerender(this._getBlocksData(sortedCards));
     const generalContainer = this._container.querySelector(`.trip-events__list`);
-    this._currentSortType !== SortType.DEFAULT ? this._pointsComponent.hideDayInfos() : this._pointsComponent.showDayInfos();
+    if (this._currentSortType !== SortType.DEFAULT) {
+      this._pointsComponent.hideDayInfos();
+    } else {
+      this._pointsComponent.showDayInfos();
+    }
 
     sortedCards.forEach((card) => {
       const pointController = new PointController(

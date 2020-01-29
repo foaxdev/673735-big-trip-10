@@ -6,7 +6,7 @@ const getPointsBlockHtml = (blockData) => {
   const datetimeDate = moment(blockData.date).format(`YYYY-MM-DD`);
   const date = moment(blockData.date).format(`MMM DD`);
 
-  return(`
+  return (`
     <li class="trip-days__item day">
      <div class="day__info">
         <span class="day__counter">${blockData.counter}</span>

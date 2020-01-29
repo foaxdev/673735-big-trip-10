@@ -152,7 +152,11 @@ export default class PointController {
       this._editCardComponent.setFavButtonHandler(favButtonClickHandler);
     });
 
-    isDefaultSorting ? render(this._container, this._cardComponent) : render(this._generalContainer, this._cardComponent);
+    if (isDefaultSorting) {
+      render(this._container, this._cardComponent);
+    } else {
+      render(this._generalContainer, this._cardComponent);
+    }
   }
 
   _parseFormData(formData) {
