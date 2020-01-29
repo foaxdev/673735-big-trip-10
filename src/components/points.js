@@ -49,11 +49,10 @@ export default class Points extends AbstractComponent {
     return null;
   }
 
-  clearPointContainers() {
-    const pointContainers = this.getElement().querySelectorAll(`.trip-events__list`);
-    pointContainers.forEach((container) => {
-      container.innerHTML = ``;
-    });
+  rerender(blocksData) {
+    this._blocksData = blocksData;
+    this.getElement().innerHTML = ``;
+    this.getElement().innerHTML = createItems(blocksData, getPointsBlockHtml);
   }
 
   hideDayInfos() {

@@ -62,8 +62,6 @@ export default class TripController {
       this._totalPrice.textContent = this._getTotalSum(this._cards);
 
       this._sortComponent.setSortTypeChangeHandler((sortType) => {
-        this._pointsComponent.clearPointContainers();
-        sortType !== SortType.DEFAULT ? this._pointsComponent.hideDayInfos() : this._pointsComponent.showDayInfos();
         this._currentSortType = sortType;
         this._renderPointControllers();
         this._pointsComponent.updateDisplay();
@@ -334,7 +332,6 @@ export default class TripController {
   _removePoints() {
     this._pointControllers.forEach((pointController) => pointController.destroy());
     this._pointControllers = [];
-    this._pointsComponent.clearPointContainers();
   }
 
   _renderPoints() {
@@ -353,8 +350,12 @@ export default class TripController {
 
   _renderPointControllers() {
     let pointControllers = [];
+    const sortedCards = this._getSortedCards(this._currentSortType, this._pointsModel.getPoints());
+    this._pointsComponent.rerender(this._getBlocksData(sortedCards));
     const generalContainer = this._container.querySelector(`.trip-events__list`);
-    this._getSortedCards(this._currentSortType, this._pointsModel.getPoints()).forEach((card) => {
+    this._currentSortType !== SortType.DEFAULT ? this._pointsComponent.hideDayInfos() : this._pointsComponent.showDayInfos();
+
+    sortedCards.forEach((card) => {
       const pointController = new PointController(
           this._pointsComponent.getContainerByDate(card.start),
           generalContainer,
@@ -366,7 +367,6 @@ export default class TripController {
       pointController.render(card, this._currentSortType === SortType.DEFAULT);
       pointControllers.push(pointController);
     });
-    this._pointsComponent.updateDisplay();
 
     return pointControllers;
   }
