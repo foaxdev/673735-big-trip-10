@@ -1,9 +1,10 @@
 import {MONTHS} from "../const";
 import AbstractComponent from "./abstract-component";
 
+const ROUTE_POINTS_MAX_QUANTITY = 3;
 
 const getRouteHtml = (routeInfo) => {
-  if (routeInfo.length <= 3) {
+  if (routeInfo.length <= ROUTE_POINTS_MAX_QUANTITY) {
     return `${routeInfo[0].city} &mdash; ${routeInfo[1].city} &mdash; ${routeInfo[2].city}`;
   }
 
