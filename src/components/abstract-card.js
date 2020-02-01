@@ -181,10 +181,6 @@ export default class AbstractCard extends AbstractSmartComponent {
     this._eventDetailsBlock.querySelector(`.event__photos-tape`).innerHTML = createItems(this._destinationsModel.getPicturesByCity(this._getCurrentCity()), getImageHtml);
   }
 
-  _getCurrentCity() {
-    return this._citySelect.value;
-  }
-
   setSaveButtonText(buttonText) {
     this._saveButton.textContent = buttonText;
   }
@@ -223,5 +219,9 @@ export default class AbstractCard extends AbstractSmartComponent {
     this.setEndDateChangeHandler(this._onEndDateChange);
     this.setCitySelectChangeHandler(this._onCityChange);
     this.setAmenitiesChangeHandler(this._onAmenityClickHandler);
+  }
+
+  _getCurrentCity() {
+    return this._citySelect.value;
   }
 }

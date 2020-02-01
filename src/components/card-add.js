@@ -164,10 +164,6 @@ export default class CardAdd extends AbstractCard {
     return createAddEventTemplate(this._destinationsModel.getDestinations());
   }
 
-  getDescription() {
-    return this.getElement().querySelector(`.event__destination-description`).textContent;
-  }
-
   showEventDetailsBlock() {
     this._eventDetailsBlock.classList.remove(HIDDEN_CLASS);
   }

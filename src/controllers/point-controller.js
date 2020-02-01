@@ -159,6 +159,27 @@ export default class PointController {
     }
   }
 
+  replaceEditToCard() {
+    replace(this._cardComponent, this._editCardComponent);
+    this._mode = Mode.DEFAULT;
+    this._cardComponent.recoveryListeners();
+  }
+
+  setDefaultView() {
+    if (this._mode !== Mode.DEFAULT) {
+      this.replaceEditToCard();
+    }
+  }
+
+  destroy() {
+    remove(this._editCardComponent);
+    remove(this._cardComponent);
+  }
+
+  getMode() {
+    return this._mode;
+  }
+
   _parseFormData(formData) {
     return new Point({
       'id': this._pointData.id,
@@ -186,26 +207,5 @@ export default class PointController {
     replace(this._editCardComponent, this._cardComponent);
     this._mode = Mode.EDIT;
     this._editCardComponent.recoveryListeners();
-  }
-
-  replaceEditToCard() {
-    replace(this._cardComponent, this._editCardComponent);
-    this._mode = Mode.DEFAULT;
-    this._cardComponent.recoveryListeners();
-  }
-
-  setDefaultView() {
-    if (this._mode !== Mode.DEFAULT) {
-      this.replaceEditToCard();
-    }
-  }
-
-  destroy() {
-    remove(this._editCardComponent);
-    remove(this._cardComponent);
-  }
-
-  getMode() {
-    return this._mode;
   }
 }

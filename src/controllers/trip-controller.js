@@ -85,22 +85,6 @@ export default class TripController {
     }
   }
 
-  _getBlocksData(points) {
-    const pointDates = new Set(points.map((point) => point.start.setHours(0, 0, 0, 0)));
-    const blocksData = [];
-    let datesCounter = 1;
-
-    pointDates.forEach((pointDate) => {
-      blocksData.push({
-        counter: datesCounter++,
-        date: pointDate,
-        pointsQuantity: this._cards.map((point) => point.start.setHours(0, 0, 0, 0) === pointDate).length
-      });
-    });
-
-    return blocksData;
-  }
-
   disableAddButton() {
     this._addButton.setAttribute(`disabled`, `disabled`);
   }
@@ -190,6 +174,22 @@ export default class TripController {
       this.disableAddButton();
       this._closeEditCards();
     });
+  }
+
+  _getBlocksData(points) {
+    const pointDates = new Set(points.map((point) => point.start.setHours(0, 0, 0, 0)));
+    const blocksData = [];
+    let datesCounter = 1;
+
+    pointDates.forEach((pointDate) => {
+      blocksData.push({
+        counter: datesCounter++,
+        date: pointDate,
+        pointsQuantity: this._cards.map((point) => point.start.setHours(0, 0, 0, 0) === pointDate).length
+      });
+    });
+
+    return blocksData;
   }
 
   _closeEditCards() {
