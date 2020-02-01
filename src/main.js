@@ -57,7 +57,7 @@ api.getPoints()
       .then((destinations) => {
         destinationsModel.setDestinations(destinations);
         api.getOffers()
-          .then((offers) => { 
+          .then((offers) => {
             offersModel.setOffers(offers);
             renderBase();
           });
