@@ -8,8 +8,22 @@ import Api from "./api";
 import {AUTHORIZATION} from "./const";
 import Destinations from "./models/destinations";
 import Offers from "./models/offers";
+import Store from "./api/store";
+import Provider from "./api/provider";
 
 const END_POINT = `https://htmlacademy-es-10.appspot.com/big-trip`;
+const STORE_PREFIX = `big-trip-localstorage`;
+const STORE_VER = `v1`;
+const STORE_NAME = `${STORE_PREFIX}-${STORE_VER}`;
+
+window.addEventListener(`load`, () => {
+  navigator.serviceWorker.register(`/sw.js`)
+    .then(() => {
+
+    }).catch(() => {
+
+  });
+});
 
 const tripControl = document.querySelector(`.trip-main`);
 const tripView = document.querySelector(`.trip-main__trip-controls`);
@@ -19,6 +33,8 @@ const tripEvents = document.querySelector(`.trip-events`);
 const pageBodyContainer = document.querySelector(`.page-main .page-body__container`);
 
 const api = new Api(END_POINT, AUTHORIZATION);
+const store = new Store(STORE_NAME, window.localStorage);
+const apiWithProvider = new Provider(api, store);
 const menuComponent = new Menu();
 render(menuHeader, menuComponent, RenderPosition.AFTEREND);
 
@@ -31,7 +47,7 @@ const renderBase = () => {
   render(pageBodyContainer, statisticsComponent);
   statisticsComponent.hide();
 
-  const tripController = new TripController(tripEvents, tripControl, pointsModel, statisticsComponent, destinationsModel, offersModel, api);
+  const tripController = new TripController(tripEvents, tripControl, pointsModel, statisticsComponent, destinationsModel, offersModel, apiWithProvider);
   tripController.render();
 
   menuComponent.setupClickListenersToMenuTableItem(() => {
@@ -50,16 +66,34 @@ const renderBase = () => {
   filterController.render();
 };
 
-api.getPoints()
+apiWithProvider.getPoints()
   .then((points) => {
     pointsModel.points = points;
-    api.getDestinations()
+    apiWithProvider.getDestinations()
       .then((destinations) => {
         destinationsModel.destinations = destinations;
-        api.getOffers()
+        apiWithProvider.getOffers()
           .then((offers) => {
             offersModel.offers = offers;
             renderBase();
           });
       });
   });
+
+window.addEventListener(`online`, () => {
+  document.title = document.title.replace(` [offline]`, ``);
+
+  if (!apiWithProvider.getSynchronize()) {
+    apiWithProvider.sync()
+      .then(() => {
+
+      })
+      .catch(() => {
+
+      });
+  }
+});
+
+window.addEventListener(`offline`, () => {
+  document.title += ` [offline]`;
+});
