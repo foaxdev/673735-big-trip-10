@@ -38,7 +38,7 @@ export default class Points extends AbstractComponent {
   }
 
   getContainerByDate(date) {
-    const timeElements = this.getElement().querySelectorAll(`time`);
+    const timeElements = this.element.querySelectorAll(`time`);
 
     for (let i = 0; i < timeElements.length; i++) {
       if (timeElements[i].textContent === moment(date).format(`MMM DD`)) {
@@ -51,12 +51,12 @@ export default class Points extends AbstractComponent {
 
   rerender(blocksData) {
     this._blocksData = blocksData;
-    this.getElement().innerHTML = ``;
-    this.getElement().innerHTML = createItems(blocksData, getPointsBlockHtml);
+    this.element.innerHTML = ``;
+    this.element.innerHTML = createItems(blocksData, getPointsBlockHtml);
   }
 
   hideDayInfos() {
-    const dayElements = this.getElement().querySelectorAll(`.day__info`);
+    const dayElements = this.element.querySelectorAll(`.day__info`);
     dayElements[0].style.visibility = `hidden`;
     dayElements.forEach((day, index) => {
       if (index !== 0) {
@@ -66,7 +66,7 @@ export default class Points extends AbstractComponent {
   }
 
   showDayInfos() {
-    const dayElements = this.getElement().querySelectorAll(`.day__info`);
+    const dayElements = this.element.querySelectorAll(`.day__info`);
     dayElements[0].style.visibility = `visible`;
     dayElements.forEach((day, index) => {
       if (index !== 0) {
@@ -76,7 +76,7 @@ export default class Points extends AbstractComponent {
   }
 
   updateDisplay() {
-    const pointContainers = this.getElement().querySelectorAll(`.trip-events__list`);
+    const pointContainers = this.element.querySelectorAll(`.trip-events__list`);
     pointContainers.forEach((container) => {
       if (container.innerHTML === ``) {
         container.previousElementSibling.style.display = `none`;

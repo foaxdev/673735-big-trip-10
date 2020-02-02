@@ -46,8 +46,8 @@ export default class Sort extends AbstractComponent {
     return createSortTemplate(this._sortItems);
   }
 
-  setSortTypeChangeHandler(handler) {
-    this.getElement().addEventListener(`click`, (evt) => {
+  setupSortTypeChangeHandler(handler) {
+    this.element.addEventListener(`click`, (evt) => {
       evt.preventDefault();
 
       if (evt.target.tagName.toLowerCase() !== `label`) {
@@ -62,11 +62,16 @@ export default class Sort extends AbstractComponent {
       this._currentSortType = sortType;
 
       handler(this._currentSortType);
-      this.setSortItemChecked(evt.target.previousElementSibling);
+      this._highlightCheckedSortItem(evt.target.previousElementSibling);
     });
   }
 
-  setSortItemChecked(sortItem) {
+  setEventSortActive() {
+    const sortItems = this._element.querySelectorAll(`.trip-sort__input`);
+    this._highlightCheckedSortItem(sortItems[0]);
+  }
+
+  _highlightCheckedSortItem(sortItem) {
     const sortItems = this._element.querySelectorAll(`.trip-sort__input`);
 
     for (const sortElement of sortItems) {
@@ -77,10 +82,5 @@ export default class Sort extends AbstractComponent {
     }
 
     sortItem.setAttribute(`checked`, `checked`);
-  }
-
-  setEventSortActive() {
-    const sortItems = this._element.querySelectorAll(`.trip-sort__input`);
-    this.setSortItemChecked(sortItems[0]);
   }
 }

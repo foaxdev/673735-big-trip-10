@@ -18,13 +18,13 @@ export default class FilterController {
     this._onDataChange = this._onDataChange.bind(this);
     this._onFilterChange = this._onFilterChange.bind(this);
 
-    this._pointsModel.setDataChangeHandler(this._onDataChange);
+    this._pointsModel.addDataChangeHandler(this._onDataChange);
   }
 
   render() {
     const oldComponent = this._filterComponent;
     this._filterComponent = new Filter(FILTERS);
-    this._filterComponent.setFilterChangeHandler(this._onFilterChange);
+    this._filterComponent.setupFilterChangeHandler(this._onFilterChange);
 
     if (oldComponent) {
       replace(this._filterComponent, oldComponent);
@@ -34,7 +34,7 @@ export default class FilterController {
   }
 
   _onFilterChange(filterType) {
-    this._pointsModel.setFilter(filterType);
+    this._pointsModel.activeFilterType = filterType;
   }
 
   _onDataChange() {

@@ -77,13 +77,13 @@ export default class Card extends AbstractSmartComponent {
     return createCardTemplate(this._cardData);
   }
 
-  setEditButtonClickHandler(handler) {
-    this.getElement().querySelector(`.event__rollup-btn`)
+  set onEditButton(handler) {
+    this.element.querySelector(`.event__rollup-btn`)
       .addEventListener(`click`, handler);
     this._onEditButton = handler;
   }
 
   recoveryListeners() {
-    this.setEditButtonClickHandler(this._onEditButton);
+    this.onEditButton = this._onEditButton;
   }
 }

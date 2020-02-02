@@ -136,7 +136,7 @@ export default class Statistics extends AbstractSmartComponent {
     this.rerender();
   }
 
-  setNewData(newPointsData) {
+  set pointsData(newPointsData) {
     this._points = newPointsData;
   }
 
@@ -313,9 +313,9 @@ export default class Statistics extends AbstractSmartComponent {
   }
 
   _renderCharts() {
-    const moneyCtx = this.getElement().querySelector(`.statistics__chart--money`);
-    const transportCtx = this.getElement().querySelector(`.statistics__chart--transport`);
-    const timeCtx = this.getElement().querySelector(`.statistics__chart--time`);
+    const moneyCtx = this.element.querySelector(`.statistics__chart--money`);
+    const transportCtx = this.element.querySelector(`.statistics__chart--transport`);
+    const timeCtx = this.element.querySelector(`.statistics__chart--time`);
 
     this._resetCharts();
 

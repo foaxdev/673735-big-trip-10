@@ -22,18 +22,18 @@ export default class Menu extends AbstractComponent {
   constructor() {
     super();
 
-    this._menuTable = this.getElement().querySelector(`[data-name="Table"]`);
-    this._menuStats = this.getElement().querySelector(`[data-name="Stats"]`);
+    this._menuTable = this.element.querySelector(`[data-name="Table"]`);
+    this._menuStats = this.element.querySelector(`[data-name="Stats"]`);
 
-    this.setMenuItemActive(this._menuTable);
+    this.highlightActiveMenuItem(this._menuTable);
   }
 
   getTemplate() {
     return createMenuTemplate();
   }
 
-  setMenuItemActive(menuElement) {
-    const menuItems = this.getElement().querySelectorAll(`.trip-tabs__btn`);
+  highlightActiveMenuItem(menuElement) {
+    const menuItems = this.element.querySelectorAll(`.trip-tabs__btn`);
 
     for (const menuItem of menuItems) {
       if (menuItem.classList.contains(`trip-tabs__btn--active`)) {
@@ -45,11 +45,11 @@ export default class Menu extends AbstractComponent {
     menuElement.classList.add(`trip-tabs__btn--active`);
   }
 
-  setClickListenersToMenuTableItem(handler) {
+  setupClickListenersToMenuTableItem(handler) {
     this._menuTable.addEventListener(`click`, handler);
   }
 
-  setClickListenersToMenuStatsItem(handler) {
+  setupClickListenersToMenuStatsItem(handler) {
     this._menuStats.addEventListener(`click`, handler);
   }
 }

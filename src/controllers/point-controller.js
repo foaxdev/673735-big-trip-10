@@ -72,7 +72,7 @@ export default class PointController {
 
     const actionTypeClickHandler = () => {
       this._editCardComponent.showTypesList();
-      this._editCardComponent.setActionInputsClickHandler(actionTypeChangeHandler);
+      this._editCardComponent.onActionTypeChange = actionTypeChangeHandler;
       this._editCardComponent.changeSelectedActionType(this._newCurrentType);
     };
 
@@ -90,7 +90,7 @@ export default class PointController {
     };
 
     const deleteCardHandler = () => {
-      this._editCardComponent.setButtonDeleteText(`Deleting...`);
+      this._editCardComponent.changeButtonDeleteTitle(`Deleting...`);
       this._editCardComponent.blockForm();
 
       this._onDataChange(
@@ -132,26 +132,26 @@ export default class PointController {
 
     const setEventListenersToEditCard = () => {
       document.addEventListener(`keydown`, escKeyDownHandler);
-      this._editCardComponent.setSubmitHandler(submitFormHandler);
-      this._editCardComponent.setActionTypeClickHandler(actionTypeClickHandler);
-      this._editCardComponent.setStartDateChangeHandler(startDateChangeHandler);
-      this._editCardComponent.setEndDateChangeHandler(endDateChangeHandler);
-      this._editCardComponent.setAmenitiesChangeHandler(amenitiesChangeHandler);
+      this._editCardComponent.onSubmit = submitFormHandler;
+      this._editCardComponent.onActionTypeClick = actionTypeClickHandler;
+      this._editCardComponent.onStartDateChange = startDateChangeHandler;
+      this._editCardComponent.onEndDateChange = endDateChangeHandler;
+      this._editCardComponent.onAmenityClickHandler = amenitiesChangeHandler;
     };
 
-    this._cardComponent.setEditButtonClickHandler(() => {
+    this._cardComponent.onEditButton = () => {
       this._replaceCardToEdit();
-      this._editCardComponent.setAddedAmenities(this._editCardComponent.getElement());
+      this._editCardComponent.highlightAddedAmenities(this._editCardComponent.element);
       setEventListenersToEditCard();
 
       actionTypes.forEach((actionType) => {
         actionType.addEventListener(`click`, actionTypeChangeHandler);
       });
 
-      this._editCardComponent.setCitySelectChangeHandler(cityChangeHandler);
-      this._editCardComponent.setDeleteButtonClickHandler(deleteCardHandler);
-      this._editCardComponent.setFavButtonHandler(favButtonClickHandler);
-    });
+      this._editCardComponent.onCityChange = cityChangeHandler;
+      this._editCardComponent.onDeleteButtonClick = deleteCardHandler;
+      this._editCardComponent.onFavButtonClick = favButtonClickHandler;
+    };
 
     if (isDefaultSorting) {
       render(this._container, this._cardComponent);
@@ -166,7 +166,7 @@ export default class PointController {
     this._cardComponent.recoveryListeners();
   }
 
-  setDefaultView() {
+  setupDefaultView() {
     if (this._mode !== Mode.DEFAULT) {
       this.replaceEditToCard();
     }
@@ -177,7 +177,7 @@ export default class PointController {
     remove(this._cardComponent);
   }
 
-  getMode() {
+  get mode() {
     return this._mode;
   }
 

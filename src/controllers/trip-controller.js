@@ -29,7 +29,7 @@ export default class TripController {
     this._currentSortType = SortType.DEFAULT;
     this._pointsComponent = null;
     this._cards = [];
-    this._newPointData = this._setDefaultNewPointData();
+    this._newPointData = this._changeDefaultNewPointData();
     this._pointControllers = [];
     this._addNewCard = null;
 
@@ -37,11 +37,11 @@ export default class TripController {
     this._onViewChange = this._onViewChange.bind(this);
     this._onFilterChange = this._onFilterChange.bind(this);
 
-    this._pointsModel.setFilterChangeHandler(this._onFilterChange);
+    this._pointsModel.addFilterChangeHandler(this._onFilterChange);
   }
 
   render() {
-    const cardsData = this._pointsModel.getPoints();
+    const cardsData = this._pointsModel.points;
 
     this._loadingText.classList.add(HIDDEN_CLASS);
     this.enableAddButton();
@@ -61,7 +61,7 @@ export default class TripController {
 
       this._totalPrice.textContent = this._getTotalSum(this._cards);
 
-      this._sortComponent.setSortTypeChangeHandler((sortType) => {
+      this._sortComponent.setupSortTypeChangeHandler((sortType) => {
         this._currentSortType = sortType;
         this._renderPointControllers();
         this._pointsComponent.updateDisplay();
@@ -100,12 +100,12 @@ export default class TripController {
       this._addNewCard.changeActionTypeIcon(evt.target.value);
       this._addNewCard.hideTypesList();
       this._addNewCard.changeAmenities(evt.target.value);
-      this._addNewCard.setAmenitiesChangeHandler(amenitiesChangeHandler);
+      this._addNewCard.onAmenityClickHandler = amenitiesChangeHandler;
     };
 
     const actionTypeClickHandler = () => {
       this._addNewCard.showTypesList();
-      this._addNewCard.setActionInputsClickHandler(onActionTypeChange);
+      this._addNewCard.onActionTypeChange = onActionTypeChange;
     };
 
     const startDateChangeHandler = (evt) => {
@@ -125,7 +125,7 @@ export default class TripController {
     const cityChangeHandler = () => {
       this._addNewCard.showEventDetailsBlock();
       this._addNewCard.changeAmenities(this._newPointData.type);
-      this._addNewCard.setAmenitiesChangeHandler(amenitiesChangeHandler);
+      this._addNewCard.onAmenityClickHandler = amenitiesChangeHandler;
       this._addNewCard.changeDescription();
       this._addNewCard.changePictures();
     };
@@ -161,13 +161,13 @@ export default class TripController {
     this._addButton.addEventListener(`click`, () => {
       if (!this._addNewCard) {
         this._addNewCard = new CardAdd(this._destinationsModel, this._offersModel);
-        render(this._sortComponent.getElement(), this._addNewCard, RenderPosition.AFTEREND);
-        this._addNewCard.setActionTypeClickHandler(actionTypeClickHandler);
-        this._addNewCard.setStartDateChangeHandler(startDateChangeHandler);
-        this._addNewCard.setEndDateChangeHandler(endDateChangeHandler);
-        this._addNewCard.setCancelButtonClickHandler(cancelButtonClickHandler);
-        this._addNewCard.setSubmitHandler(submitFormHandler);
-        this._addNewCard.setCitySelectChangeHandler(cityChangeHandler);
+        render(this._sortComponent.element, this._addNewCard, RenderPosition.AFTEREND);
+        this._addNewCard.onActionTypeClick = actionTypeClickHandler;
+        this._addNewCard.onStartDateChange = startDateChangeHandler;
+        this._addNewCard.onEndDateChange = endDateChangeHandler;
+        this._addNewCard.onCancelButtonClick = cancelButtonClickHandler;
+        this._addNewCard.onSubmit = submitFormHandler;
+        this._addNewCard.onCityChange = cityChangeHandler;
       } else {
         this._addNewCard.showOrHideCard(true);
       }
@@ -194,7 +194,7 @@ export default class TripController {
 
   _closeEditCards() {
     for (let i = 0; i < this._pointControllers.length; i++) {
-      if (this._pointControllers[i].getMode() === Mode.EDIT) {
+      if (this._pointControllers[i].mode === Mode.EDIT) {
         this._pointControllers[i].replaceEditToCard();
       }
     }
@@ -218,7 +218,7 @@ export default class TripController {
   }
 
   _addMessageToEmptyRoute() {
-    render(this._container, new Tip(TIP_MESSAGE).getElement());
+    render(this._container, new Tip(TIP_MESSAGE).element);
   }
 
   _getSortedCards(sortType, cards) {
@@ -253,7 +253,7 @@ export default class TripController {
     return price;
   }
 
-  _setDefaultNewPointData() {
+  _changeDefaultNewPointData() {
     return {
       type: `flight`,
       start: new Date(),
@@ -273,8 +273,8 @@ export default class TripController {
         .then(() => {
           this._pointsModel.removePoint(oldPointData.id);
           this._updatePoints();
-          this._updateHeaderInfo(this._pointsModel.getPoints());
-          this._statisticsComponent.setNewData(this._pointsModel.getPoints());
+          this._updateHeaderInfo(this._pointsModel.points);
+          this._statisticsComponent.pointsData = this._pointsModel.points;
         })
         .catch(() => {
           shake(editCardComponent, true);
@@ -284,8 +284,8 @@ export default class TripController {
         .then(() => {
           this._pointsModel.addPoint(newPointData);
           this._updatePoints();
-          this._updateHeaderInfo(this._pointsModel.getPoints());
-          this._statisticsComponent.setNewData(this._pointsModel.getPoints());
+          this._updateHeaderInfo(this._pointsModel.points);
+          this._statisticsComponent.pointsData = this._pointsModel.points;
           this._addNewCard.changeSaveButtonTitle(`Save`);
           this._addNewCard.unblockForm();
           this._addNewCard.hideEventDetailsBlock();
@@ -302,8 +302,8 @@ export default class TripController {
 
           if (isSuccess) {
             this._updatePoints();
-            this._updateHeaderInfo(this._pointsModel.getPoints());
-            this._statisticsComponent.setNewData(this._pointsModel.getPoints());
+            this._updateHeaderInfo(this._pointsModel.points);
+            this._statisticsComponent.pointsData = this._pointsModel.points;
           }
         })
         .catch(() => {
@@ -321,7 +321,7 @@ export default class TripController {
 
   _onViewChange() {
     this._pointControllers.forEach((pointController) => {
-      pointController.setDefaultView();
+      pointController.setupDefaultView();
     });
     if (this._addNewCard) {
       this._addNewCard.showOrHideCard(false);
@@ -350,7 +350,7 @@ export default class TripController {
 
   _renderPointControllers() {
     let pointControllers = [];
-    const sortedCards = this._getSortedCards(this._currentSortType, this._pointsModel.getPoints());
+    const sortedCards = this._getSortedCards(this._currentSortType, this._pointsModel.points);
     this._pointsComponent.rerender(this._getBlocksData(sortedCards));
     const generalContainer = this._container.querySelector(`.trip-events__list`);
     if (this._currentSortType !== SortType.DEFAULT) {

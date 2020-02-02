@@ -4,8 +4,12 @@ export default class Destinations {
     this._destinations = [];
   }
 
-  getDestinations() {
+  get destinations() {
     return this._destinations;
+  }
+
+  set destinations(destination) {
+    this._destinations = destination;
   }
 
   getDescriptionByCity(city) {
@@ -26,9 +30,5 @@ export default class Destinations {
     }
 
     return [];
-  }
-
-  setDestinations(destination) {
-    this._destinations = destination;
   }
 }

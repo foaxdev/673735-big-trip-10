@@ -13,7 +13,7 @@ export default class Offers {
     return [];
   }
 
-  setOffers(offers) {
+  set offers(offers) {
     this._offers = offers;
   }
 }

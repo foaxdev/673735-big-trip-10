@@ -55,34 +55,34 @@ export default class AbstractCard extends AbstractSmartComponent {
     super.removeElement();
   }
 
-  setSubmitHandler(handler) {
-    this.getElement().addEventListener(`submit`, handler);
+  set onSubmit(handler) {
+    this.element.addEventListener(`submit`, handler);
     this._onSubmit = handler;
   }
 
-  setActionTypeClickHandler(handler) {
+  set onActionTypeClick(handler) {
     this._actionTypeButton.addEventListener(`click`, handler);
     this._onActionTypeClick = handler;
   }
 
-  setActionInputsClickHandler(handler) {
+  set onActionTypeChange(handler) {
     this._actionTypeInputs.forEach((actionTypeInput) => {
       actionTypeInput.addEventListener(`click`, handler);
     });
     this._onActionTypeChange = handler;
   }
 
-  setCitySelectChangeHandler(handler) {
+  set onCityChange(handler) {
     this._citySelect.addEventListener(`change`, handler);
     this._onCityChange = handler;
   }
 
-  setStartDateChangeHandler(handler) {
+  set onStartDateChange(handler) {
     this._startDate.addEventListener(`change`, handler);
     this._onStartDateChange = handler;
   }
 
-  setEndDateChangeHandler(handler) {
+  set onEndDateChange(handler) {
     this._endDate.addEventListener(`change`, handler);
     this._onEndDateChange = handler;
   }
@@ -104,7 +104,7 @@ export default class AbstractCard extends AbstractSmartComponent {
   }
 
   getDataFromForm() {
-    return new FormData(this.getElement());
+    return new FormData(this.element);
   }
 
   changeSelectedActionType(type) {
@@ -119,9 +119,9 @@ export default class AbstractCard extends AbstractSmartComponent {
   }
 
   blockForm() {
-    const inputs = this.getElement().querySelectorAll(`input`);
-    const buttons = this.getElement().querySelectorAll(`button`);
-    const selectElement = this.getElement().querySelector(`select`);
+    const inputs = this.element.querySelectorAll(`input`);
+    const buttons = this.element.querySelectorAll(`button`);
+    const selectElement = this.element.querySelector(`select`);
 
     inputs.forEach((inputElement) => {
       inputElement.setAttribute(`disabled`, `disabled`);
@@ -135,9 +135,9 @@ export default class AbstractCard extends AbstractSmartComponent {
   }
 
   unblockForm() {
-    const inputs = this.getElement().querySelectorAll(`input`);
-    const buttons = this.getElement().querySelectorAll(`button`);
-    const selectElement = this.getElement().querySelector(`select`);
+    const inputs = this.element.querySelectorAll(`input`);
+    const buttons = this.element.querySelectorAll(`button`);
+    const selectElement = this.element.querySelector(`select`);
 
     inputs.forEach((inputElement) => {
       inputElement.removeAttribute(`disabled`);
@@ -185,20 +185,20 @@ export default class AbstractCard extends AbstractSmartComponent {
     this._saveButton.textContent = buttonText;
   }
 
-  setAmenitiesChangeHandler(handler) {
-    this.getElement().querySelectorAll(`.event__offer-checkbox`).forEach((amenity) => {
+  set onAmenityClickHandler(handler) {
+    this.element.querySelectorAll(`.event__offer-checkbox`).forEach((amenity) => {
       amenity.addEventListener(`change`, handler);
     });
     this._onAmenityClickHandler = handler;
   }
 
   reset() {
-    this.getElement().reset();
+    this.element.reset();
     this._applyFlatpickr();
   }
 
   removeHandlers() {
-    this.getElement().removeEventListener(`submit`, this._onSubmit);
+    this.element.removeEventListener(`submit`, this._onSubmit);
     this._actionTypeButton.removeEventListener(`click`, this._onActionTypeClick);
     this._startDate.removeEventListener(`change`, this._onStartDateChange);
     this._endDate.removeEventListener(`change`, this._onEndDateChange);
@@ -206,19 +206,19 @@ export default class AbstractCard extends AbstractSmartComponent {
     this._actionTypeInputs.forEach((actionTypeInput) => {
       actionTypeInput.removeEventListener(`click`, this._onActionTypeChange);
     });
-    this.getElement().querySelectorAll(`.event__offer-checkbox`).forEach((amenityLabel) => {
+    this.element.querySelectorAll(`.event__offer-checkbox`).forEach((amenityLabel) => {
       amenityLabel.removeEventListener(`change`, this._onAmenityClickHandler);
     });
   }
 
   recoveryListeners() {
-    this.setSubmitHandler(this._onSubmit);
-    this.setActionTypeClickHandler(this._onActionTypeClick);
-    this.setActionInputsClickHandler(this._onActionTypeChange);
-    this.setStartDateChangeHandler(this._onStartDateChange);
-    this.setEndDateChangeHandler(this._onEndDateChange);
-    this.setCitySelectChangeHandler(this._onCityChange);
-    this.setAmenitiesChangeHandler(this._onAmenityClickHandler);
+    this.onSubmit = this._onSubmit;
+    this.onActionTypeClick = this._onActionTypeClick;
+    this.onActionTypeChange = this._onActionTypeChange;
+    this.onStartDateChange = this._onStartDateChange;
+    this.onEndDateChange = this._onEndDateChange;
+    this.onCityChange = this._onCityChange;
+    this.onAmenityClickHandler = this._onAmenityClickHandler;
   }
 
   _getCurrentCityValue() {

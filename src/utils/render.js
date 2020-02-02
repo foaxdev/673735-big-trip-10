@@ -16,26 +16,26 @@ export const createElement = (template) => {
 export const render = (container, component, place) => {
   switch (place) {
     case RenderPosition.AFTERBEGIN:
-      container.prepend(component.getElement());
+      container.prepend(component.element);
       break;
     case RenderPosition.AFTEREND:
-      container.parentNode.insertBefore(component.getElement(), container.nextSibling);
+      container.parentNode.insertBefore(component.element, container.nextSibling);
       break;
     default:
-      container.append(component.getElement());
+      container.append(component.element);
       break;
   }
 };
 
 export const remove = (component) => {
-  component.getElement().remove();
+  component.element.remove();
   component.removeElement();
 };
 
 export const replace = (newComponent, oldComponent) => {
-  const oldElement = oldComponent.getElement();
+  const oldElement = oldComponent.element;
   const parentElement = oldElement.parentElement;
-  const newElement = newComponent.getElement();
+  const newElement = newComponent.element;
 
   const isExistElements = Boolean(parentElement && newElement && oldElement);
 
@@ -56,14 +56,14 @@ export const createItems = (elementsData, getHtml) => {
 };
 
 export const shake = (component, isEditCard) => {
-  component.getElement().style.animation = `shake ${SHAKE_ANIMATION_TIMEOUT / 1000}s`;
+  component.element.style.animation = `shake ${SHAKE_ANIMATION_TIMEOUT / 1000}s`;
 
   setTimeout(() => {
-    component.getElement().style.animation = ``;
+    component.element.style.animation = ``;
 
-    component.setSaveButtonText(`Save`);
+    component.changeSaveButtonTitle(`Save`);
     if (isEditCard) {
-      component.setButtonDeleteText(`Delete`);
+      component.changeButtonDeleteTitle(`Delete`);
     }
     component.unblockForm();
   }, SHAKE_ANIMATION_TIMEOUT);

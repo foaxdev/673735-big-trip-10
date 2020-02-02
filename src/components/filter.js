@@ -31,15 +31,15 @@ export default class Filter extends AbstractComponent {
     super();
     this._filters = filters;
 
-    this.setFilterActive(this.getElement().querySelectorAll(`.trip-filters__filter-input`)[0]);
+    this.highlightActiveFilter(this.element.querySelectorAll(`.trip-filters__filter-input`)[0]);
   }
 
   getTemplate() {
     return createFilterTemplate(this._filters);
   }
 
-  setFilterActive(filterElement) {
-    const filterItems = this.getElement().querySelectorAll(`.trip-filters__filter-input`);
+  highlightActiveFilter(filterElement) {
+    const filterItems = this.element.querySelectorAll(`.trip-filters__filter-input`);
 
     for (let i = 0; i < filterItems.length; i++) {
       if (filterItems[i].hasAttribute(`checked`)) {
@@ -51,8 +51,8 @@ export default class Filter extends AbstractComponent {
     filterElement.setAttribute(`checked`, `checked`);
   }
 
-  setFilterChangeHandler(handler) {
-    this.getElement().addEventListener(`change`, (evt) => {
+  setupFilterChangeHandler(handler) {
+    this.element.addEventListener(`change`, (evt) => {
       const filterName = getFilterNameById(evt.target.id);
       handler(filterName);
     });

@@ -159,47 +159,47 @@ const createEditCardTemplate = (cardData, destinations, offersModel) => {
 
 export default class CardEdit extends AbstractCard {
 
-  constructor(cardData, destinationsModel, offersModel) {
+  constructor(pointData, destinationsModel, offersModel) {
     super(destinationsModel, offersModel);
-    this._cardData = cardData;
-    this._destinations = destinationsModel.getDestinations();
+    this._pointData = pointData;
+    this._destinations = destinationsModel.destinations;
 
     this._onDeleteButtonClick = null;
     this._onFavButtonClick = null;
 
-    this._actionTypesList = this.getElement().querySelector(`.event__type-list`);
-    this._actionTypeButton = this.getElement().querySelector(`.event__type`);
-    this._actionTypeInputs = this.getElement().querySelectorAll(`.event__type-input`);
-    this._citySelect = this.getElement().querySelector(`.event__input--destination`);
-    this._startDate = this.getElement().querySelector(`#event-start-time-1`);
-    this._endDate = this.getElement().querySelector(`#event-end-time-1`);
-    this._saveButton = this.getElement().querySelector(`.event__save-btn`);
-    this._deleteButton = this.getElement().querySelector(`.event__reset-btn`);
-    this._favButton = this.getElement().querySelector(`.event__favorite-btn`);
-    this._eventIcon = this.getElement().querySelector(`.event__type-icon`);
-    this._eventLabel = this.getElement().querySelector(`.event__label`);
-    this._eventDetailsBlock = this.getElement().querySelector(`.event__details`);
-    this._offersBlock = this.getElement().querySelector(`.event__available-offers`);
-    this._offersSection = this.getElement().querySelector(`.event__section--offers`);
+    this._actionTypesList = this.element.querySelector(`.event__type-list`);
+    this._actionTypeButton = this.element.querySelector(`.event__type`);
+    this._actionTypeInputs = this.element.querySelectorAll(`.event__type-input`);
+    this._citySelect = this.element.querySelector(`.event__input--destination`);
+    this._startDate = this.element.querySelector(`#event-start-time-1`);
+    this._endDate = this.element.querySelector(`#event-end-time-1`);
+    this._saveButton = this.element.querySelector(`.event__save-btn`);
+    this._deleteButton = this.element.querySelector(`.event__reset-btn`);
+    this._favButton = this.element.querySelector(`.event__favorite-btn`);
+    this._eventIcon = this.element.querySelector(`.event__type-icon`);
+    this._eventLabel = this.element.querySelector(`.event__label`);
+    this._eventDetailsBlock = this.element.querySelector(`.event__details`);
+    this._offersBlock = this.element.querySelector(`.event__available-offers`);
+    this._offersSection = this.element.querySelector(`.event__section--offers`);
 
     this._applyFlatpickr();
     this.changeSelectedCity();
   }
 
   getTemplate() {
-    return createEditCardTemplate(this._cardData, this._destinations, this._offersModel);
+    return createEditCardTemplate(this._pointData, this._destinations, this._offersModel);
   }
 
   changeSelectedCity() {
-    this._citySelect.selectedIndex = this._destinations.map((it) => it.city).indexOf(this._cardData.city);
+    this._citySelect.selectedIndex = this._destinations.map((it) => it.city).indexOf(this._pointData.city);
   }
 
-  setDeleteButtonClickHandler(handler) {
-    this.getElement().querySelector(`.event__reset-btn`).addEventListener(`click`, handler);
+  set onDeleteButtonClick(handler) {
+    this.element.querySelector(`.event__reset-btn`).addEventListener(`click`, handler);
     this._onDeleteButtonClick = handler;
   }
 
-  setFavButtonHandler(handler) {
+  set onFavButtonClick(handler) {
     this._favButton.addEventListener(`click`, handler);
     this._onFavButtonClick = handler;
   }
@@ -210,11 +210,11 @@ export default class CardEdit extends AbstractCard {
     this._favButton.removeEventListener(`click`, this._onFavButtonClick);
   }
 
-  setAddedAmenities(editContainer) {
+  highlightAddedAmenities(editContainer) {
     const amenitiesCheckboxes = editContainer.querySelectorAll(`.event__offer-checkbox`);
     amenitiesCheckboxes.forEach((amenityCheckbox) => {
-      for (let i = 0; i < this._cardData.amenities.length; i++) {
-        if (amenityCheckbox.nextElementSibling.querySelector(`.event__offer-title`).textContent === this._cardData.amenities[i].title) {
+      for (let i = 0; i < this._pointData.amenities.length; i++) {
+        if (amenityCheckbox.nextElementSibling.querySelector(`.event__offer-title`).textContent === this._pointData.amenities[i].title) {
           amenityCheckbox.setAttribute(`checked`, `checked`);
           break;
         }
@@ -224,15 +224,15 @@ export default class CardEdit extends AbstractCard {
 
   recoveryListeners() {
     super.recoveryListeners();
-    this.setDeleteButtonClickHandler(this._onDeleteButtonClick);
-    this.setFavButtonHandler(this._onFavButtonClick);
+    this.onDeleteButtonClick = this._onDeleteButtonClick;
+    this.onFavButtonClick = this._onFavButtonClick;
   }
 
-  setNewData(newData) {
-    this._cardData = newData;
+  set pointData(newPointData) {
+    this._pointData = newPointData;
   }
 
-  setButtonDeleteText(deleteButtonText) {
+  changeButtonDeleteTitle(deleteButtonText) {
     this._deleteButton.textContent = deleteButtonText;
   }
 
@@ -249,7 +249,7 @@ export default class CardEdit extends AbstractCard {
 
     this._flatpickrStartDate = flatpickr(this._startDate, {
       altInput: true,
-      defaultDate: this._cardData.start,
+      defaultDate: this._pointData.start,
       format: `d/m/Y H:i`,
       altFormat: `d/m/Y H:i`,
       enableTime: true
@@ -257,7 +257,7 @@ export default class CardEdit extends AbstractCard {
 
     this._flatpickrEndDate = flatpickr(this._endDate, {
       altInput: true,
-      defaultDate: this._cardData.end,
+      defaultDate: this._pointData.end,
       format: `d/m/Y H:i`,
       altFormat: `d/m/Y H:i`,
       enableTime: true

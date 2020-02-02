@@ -143,25 +143,25 @@ export default class CardAdd extends AbstractCard {
 
     this._onCancelButtonClick = null;
 
-    this._actionTypesList = this.getElement().querySelector(`.event__type-list`);
-    this._actionTypeButton = this.getElement().querySelector(`.event__type`);
-    this._actionTypeInputs = this.getElement().querySelectorAll(`.event__type-input`);
-    this._citySelect = this.getElement().querySelector(`.event__input--destination`);
-    this._startDate = this.getElement().querySelector(`#event-start-time-1`);
-    this._endDate = this.getElement().querySelector(`#event-end-time-1`);
-    this._saveButton = this.getElement().querySelector(`.event__save-btn`);
-    this._cancelButton = this.getElement().querySelector(`.event__reset-btn`);
-    this._eventDetailsBlock = this.getElement().querySelector(`.event__details`);
-    this._offersBlock = this.getElement().querySelector(`.event__available-offers`);
-    this._offersSection = this.getElement().querySelector(`.event__section--offers`);
-    this._eventIcon = this.getElement().querySelector(`.event__type-icon`);
-    this._eventLabel = this.getElement().querySelector(`.event__label`);
+    this._actionTypesList = this.element.querySelector(`.event__type-list`);
+    this._actionTypeButton = this.element.querySelector(`.event__type`);
+    this._actionTypeInputs = this.element.querySelectorAll(`.event__type-input`);
+    this._citySelect = this.element.querySelector(`.event__input--destination`);
+    this._startDate = this.element.querySelector(`#event-start-time-1`);
+    this._endDate = this.element.querySelector(`#event-end-time-1`);
+    this._saveButton = this.element.querySelector(`.event__save-btn`);
+    this._cancelButton = this.element.querySelector(`.event__reset-btn`);
+    this._eventDetailsBlock = this.element.querySelector(`.event__details`);
+    this._offersBlock = this.element.querySelector(`.event__available-offers`);
+    this._offersSection = this.element.querySelector(`.event__section--offers`);
+    this._eventIcon = this.element.querySelector(`.event__type-icon`);
+    this._eventLabel = this.element.querySelector(`.event__label`);
 
     this._applyFlatpickr();
   }
 
   getTemplate() {
-    return createAddEventTemplate(this._destinationsModel.getDestinations());
+    return createAddEventTemplate(this._destinationsModel.destinations);
   }
 
   showEventDetailsBlock() {
@@ -172,7 +172,7 @@ export default class CardAdd extends AbstractCard {
     this._eventDetailsBlock.classList.add(HIDDEN_CLASS);
   }
 
-  setCancelButtonClickHandler(handler) {
+  set onCancelButtonClick(handler) {
     this._cancelButton.addEventListener(`click`, handler);
     this._onCancelButtonClick = handler;
   }
@@ -184,7 +184,7 @@ export default class CardAdd extends AbstractCard {
 
   recoveryListeners() {
     super.recoveryListeners();
-    this.setCancelButtonClickHandler(this._onCancelButtonClick);
+    this.onCancelButtonClick = this._onCancelButtonClick;
   }
 
   reset() {
@@ -197,13 +197,13 @@ export default class CardAdd extends AbstractCard {
     if (toShow) {
       if (!this._isOpened) {
         this.recoveryListeners();
-        this.getElement().querySelector(`.event__header`).classList.remove(`visually-hidden`);
+        this.element.querySelector(`.event__header`).classList.remove(`visually-hidden`);
         this._isOpened = true;
       }
     } else {
       this.removeHandlers();
       this.reset();
-      this.getElement().querySelector(`.event__header`).classList.add(`visually-hidden`);
+      this.element.querySelector(`.event__header`).classList.add(`visually-hidden`);
       this._isOpened = false;
     }
   }

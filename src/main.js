@@ -27,23 +27,23 @@ const destinationsModel = new Destinations();
 const offersModel = new Offers();
 
 const renderBase = () => {
-  const statisticsComponent = new Statistics(pointsModel.getPoints());
+  const statisticsComponent = new Statistics(pointsModel.points);
   render(pageBodyContainer, statisticsComponent);
   statisticsComponent.hide();
 
   const tripController = new TripController(tripEvents, tripControl, pointsModel, statisticsComponent, destinationsModel, offersModel, api);
   tripController.render();
 
-  menuComponent.setClickListenersToMenuTableItem(() => {
+  menuComponent.setupClickListenersToMenuTableItem(() => {
     statisticsComponent.hide();
     tripController.show();
-    menuComponent.setMenuItemActive(menuComponent.getElement().querySelector(`[data-name="Table"]`));
+    menuComponent.highlightActiveMenuItem(menuComponent.element.querySelector(`[data-name="Table"]`));
   });
 
-  menuComponent.setClickListenersToMenuStatsItem(() => {
+  menuComponent.setupClickListenersToMenuStatsItem(() => {
     statisticsComponent.show();
     tripController.hide();
-    menuComponent.setMenuItemActive(menuComponent.getElement().querySelector(`[data-name="Stats"]`));
+    menuComponent.highlightActiveMenuItem(menuComponent.element.querySelector(`[data-name="Stats"]`));
   });
 
   const filterController = new FilterController(filterHeader, pointsModel);
@@ -52,13 +52,13 @@ const renderBase = () => {
 
 api.getPoints()
   .then((points) => {
-    pointsModel.setPoints(points);
+    pointsModel.points = points;
     api.getDestinations()
       .then((destinations) => {
-        destinationsModel.setDestinations(destinations);
+        destinationsModel.destinations = destinations;
         api.getOffers()
           .then((offers) => {
-            offersModel.setOffers(offers);
+            offersModel.offers = offers;
             renderBase();
           });
       });
