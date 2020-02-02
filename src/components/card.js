@@ -69,12 +69,12 @@ export default class Card extends AbstractSmartComponent {
     this._onEditButton = null;
   }
 
-  getTemplate() {
-    return createCardTemplate(this._cardData);
+  set data(newData) {
+    this._cardData = newData;
   }
 
-  setNewData(newData) {
-    this._cardData = newData;
+  getTemplate() {
+    return createCardTemplate(this._cardData);
   }
 
   setEditButtonClickHandler(handler) {

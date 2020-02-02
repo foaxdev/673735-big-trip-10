@@ -103,11 +103,11 @@ export default class AbstractCard extends AbstractSmartComponent {
     this._actionTypesList.style.display = `none`;
   }
 
-  getData() {
+  getDataFromForm() {
     return new FormData(this.getElement());
   }
 
-  setSelectedActionType(type) {
+  changeSelectedActionType(type) {
     this._actionTypeInputs.forEach((actionType) => {
       if (actionType.hasAttribute(`checked`)) {
         actionType.removeAttribute(`checked`);
@@ -174,14 +174,14 @@ export default class AbstractCard extends AbstractSmartComponent {
   }
 
   changeDescription() {
-    this._eventDetailsBlock.querySelector(`.event__destination-description`).textContent = this._destinationsModel.getDescriptionByCity(this._getCurrentCity());
+    this._eventDetailsBlock.querySelector(`.event__destination-description`).textContent = this._destinationsModel.getDescriptionByCity(this._getCurrentCityValue());
   }
 
   changePictures() {
-    this._eventDetailsBlock.querySelector(`.event__photos-tape`).innerHTML = createItems(this._destinationsModel.getPicturesByCity(this._getCurrentCity()), getImageHtml);
+    this._eventDetailsBlock.querySelector(`.event__photos-tape`).innerHTML = createItems(this._destinationsModel.getPicturesByCity(this._getCurrentCityValue()), getImageHtml);
   }
 
-  setSaveButtonText(buttonText) {
+  changeSaveButtonTitle(buttonText) {
     this._saveButton.textContent = buttonText;
   }
 
@@ -221,7 +221,7 @@ export default class AbstractCard extends AbstractSmartComponent {
     this.setAmenitiesChangeHandler(this._onAmenityClickHandler);
   }
 
-  _getCurrentCity() {
+  _getCurrentCityValue() {
     return this._citySelect.value;
   }
 }

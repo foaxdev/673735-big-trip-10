@@ -147,8 +147,8 @@ export default class TripController {
 
     const submitFormHandler = (evt) => {
       evt.preventDefault();
-      const formData = this._addNewCard.getData();
-      this._addNewCard.setSaveButtonText(`Saving...`);
+      const formData = this._addNewCard.getDataFromForm();
+      this._addNewCard.changeSaveButtonTitle(`Saving...`);
       this._addNewCard.blockForm();
 
       this._onDataChange(
@@ -286,7 +286,7 @@ export default class TripController {
           this._updatePoints();
           this._updateHeaderInfo(this._pointsModel.getPoints());
           this._statisticsComponent.setNewData(this._pointsModel.getPoints());
-          this._addNewCard.setSaveButtonText(`Save`);
+          this._addNewCard.changeSaveButtonTitle(`Save`);
           this._addNewCard.unblockForm();
           this._addNewCard.hideEventDetailsBlock();
           this._addNewCard.showOrHideCard(false);

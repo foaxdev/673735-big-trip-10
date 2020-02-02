@@ -183,14 +183,14 @@ export default class CardEdit extends AbstractCard {
     this._offersSection = this.getElement().querySelector(`.event__section--offers`);
 
     this._applyFlatpickr();
-    this.setSelectedCity();
+    this.changeSelectedCity();
   }
 
   getTemplate() {
     return createEditCardTemplate(this._cardData, this._destinations, this._offersModel);
   }
 
-  setSelectedCity() {
+  changeSelectedCity() {
     this._citySelect.selectedIndex = this._destinations.map((it) => it.city).indexOf(this._cardData.city);
   }
 

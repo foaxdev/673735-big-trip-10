@@ -32,6 +32,7 @@ export default class PointController {
     this._pointData = pointData;
     this._newPointData = this._pointData;
     this._cardComponent = new Card(this._pointData);
+    this._newCurrentType = pointData.type;
     this._editCardComponent = new CardEdit(this._pointData, this._destinationsModel, this._offersModel);
     const actionTypes = document.querySelectorAll(`.event__type-input`);
 
@@ -54,10 +55,10 @@ export default class PointController {
 
     const submitFormHandler = (evt) => {
       evt.preventDefault();
-      this._editCardComponent.setSaveButtonText(`Saving...`);
+      this._editCardComponent.changeSaveButtonTitle(`Saving...`);
       removeEventListenersFromEditCard();
       this._updatePointData();
-      const formData = this._editCardComponent.getData();
+      const formData = this._editCardComponent.getDataFromForm();
       const data = this._parseFormData(formData);
       this._editCardComponent.blockForm();
 
@@ -66,13 +67,13 @@ export default class PointController {
           data,
           this._pointData
       );
-      this._editCardComponent.setNewData(data);
+      this._editCardComponent.data = data;
     };
 
     const actionTypeClickHandler = () => {
       this._editCardComponent.showTypesList();
       this._editCardComponent.setActionInputsClickHandler(actionTypeChangeHandler);
-      this._editCardComponent.setSelectedActionType(this._newCurrentType);
+      this._editCardComponent.changeSelectedActionType(this._newCurrentType);
     };
 
     const startDateChangeHandler = (evt) => {
