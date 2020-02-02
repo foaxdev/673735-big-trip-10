@@ -27,6 +27,7 @@
     "moment": "2.24.0",
     "chart.js": "2.9.3",
     "chartjs-plugin-datalabels": "0.7.0",
-    "nanoid": "2.1.8"
+    "nanoid": "2.1.8",
+    "lodash": "4.17.15"
   }
 }

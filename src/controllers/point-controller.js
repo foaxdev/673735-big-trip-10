@@ -3,7 +3,9 @@ import CardEdit from "../components/card-edit";
 import {remove, render, replace} from "../utils/render";
 import {Keys} from "../const";
 import Point from "../models/point";
+import debounce from 'lodash/debounce';
 
+const DEBOUNCE_TIMEOUT = 1000;
 export const Mode = {
   ADDING: `adding`,
   DEFAULT: `default`,
@@ -100,7 +102,7 @@ export default class PointController {
       );
     };
 
-    const favButtonClickHandler = () => {
+    const favButtonClickHandler = debounce(() => {
       const newPoint = Point.clone(this._pointData);
       newPoint.isFavorite = !this._pointData.isFavorite;
       this._onDataChange(
@@ -108,7 +110,7 @@ export default class PointController {
           newPoint,
           this._pointData
       );
-    };
+    }, DEBOUNCE_TIMEOUT);
 
     const removeEventListenersFromEditCard = () => {
       this._editCardComponent.removeHandlers();
