@@ -21,6 +21,12 @@ export const getAmenityHtml = (offer) => {
   `);
 };
 
+const getSectionOffersHtml = () => {
+  return (`
+    <h3 class="event__section-title  event__section-title--offers">Offers</h3>
+  `);
+};
+
 export default class AbstractCard extends AbstractSmartComponent {
 
   constructor(destinationsModel, offersModel) {
@@ -161,6 +167,19 @@ export default class AbstractCard extends AbstractSmartComponent {
   }
 
   showOffersSection() {
+    if (!this._offersSection) {
+      this._offersSection = document.createElement(`section`);
+      this._offersSection.classList.add(`event__section`);
+      this._offersSection.classList.add(`event__section--offers`);
+      this._offersSection.innerHTML = getSectionOffersHtml();
+      this._eventDetailsBlock.prepend(this._offersSection);
+
+      this._offersBlock = document.createElement(`div`);
+      this._offersBlock.classList.add(`event__available-offers`);
+      this._offersBlock.innerHTML = createItems(this._offersModel.getOffersByType(this._pointData.type), getAmenityHtml);
+      this._offersSection.append(this._offersBlock);
+    }
+
     this._offersSection.classList.remove(HIDDEN_CLASS);
   }
 
