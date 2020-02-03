@@ -15,6 +15,10 @@ export default class Points {
     return getPointsByFilter(this._points, this._activeFilterType);
   }
 
+  getPointsQuantityByFilterType(filterType) {
+    return getPointsByFilter(this._points, filterType).length;
+  }
+
   set points(points) {
     this._points = points;
   }

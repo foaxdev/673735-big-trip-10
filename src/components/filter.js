@@ -57,4 +57,14 @@ export default class Filter extends AbstractComponent {
       handler(filterName);
     });
   }
+
+  unableAllFilters() {
+    this.element.querySelectorAll(`input`).forEach((filter) => {
+      filter.removeAttribute(`disabled`);
+    });
+  }
+
+  makeFilterUnable(filterType) {
+    this.element.querySelector(`#filter-${filterType}`).setAttribute(`disabled`, `disabled`);
+  }
 }

@@ -5,7 +5,7 @@ import Points from "../components/points";
 import Route from "../components/route";
 import PointController, {Mode} from "./point-controller";
 import Tip from "../components/tip";
-import {HIDDEN_CLASS, TIP_MESSAGE} from "../const";
+import {FilterType, HIDDEN_CLASS, TIP_MESSAGE} from "../const";
 import Point from "../models/point";
 
 const SORT_OPTIONS = [`event`, `time`, `price`];
@@ -310,6 +310,8 @@ export default class TripController {
           shake(editCardComponent, true);
         });
     }
+
+
   }
 
   _updateHeaderInfo(pointsData) {

@@ -1,5 +1,6 @@
 import Filter from "../components/filter";
 import {render, RenderPosition, replace} from "../utils/render";
+import {FilterType} from "../const";
 
 const FILTERS = [
   `everything`,
@@ -31,6 +32,8 @@ export default class FilterController {
     } else {
       render(this._container, this._filterComponent, RenderPosition.AFTEREND);
     }
+
+    this._disableFilters();
   }
 
   _onFilterChange(filterType) {
@@ -39,5 +42,18 @@ export default class FilterController {
 
   _onDataChange() {
     this.render();
+    this._disableFilters();
+  }
+
+  _disableFilters() {
+    this._filterComponent.unableAllFilters();
+
+    if (this._pointsModel.getPointsQuantityByFilterType(FilterType.FUTURE) === 0) {
+      this._filterComponent.makeFilterUnable(FilterType.FUTURE);
+    }
+
+    if (this._pointsModel.getPointsQuantityByFilterType(FilterType.PAST) === 0) {
+      this._filterComponent.makeFilterUnable(FilterType.PAST);
+    }
   }
 }
