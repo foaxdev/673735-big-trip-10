@@ -22,7 +22,7 @@ window.addEventListener(`load`, () => {
 
     }).catch(() => {
 
-  });
+    });
 });
 
 const tripControl = document.querySelector(`.trip-main`);
