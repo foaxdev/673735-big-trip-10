@@ -232,7 +232,7 @@ export default class TripController {
         sortedTasks = cards.slice().sort((a, b) => b.price - a.price);
         break;
       default:
-        sortedTasks = cards.slice(0);
+        sortedTasks = cards.slice().sort((a, b) => a.start - b.start);
         break;
     }
 
@@ -310,8 +310,6 @@ export default class TripController {
           shake(editCardComponent, true);
         });
     }
-
-
   }
 
   _updateHeaderInfo(pointsData) {
