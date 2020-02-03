@@ -14,10 +14,10 @@ export default class Provider {
   getPoints() {
     if (this._isOnLine()) {
       return this._api.getPoints().then(
-        (points) => {
-          points.forEach((point) => this._store.setItem(point.id, point.toRAW()));
-          return points;
-        }
+          (points) => {
+            points.forEach((point) => this._store.setItem(point.id, point.toRAW()));
+            return points;
+          }
       );
     }
 
@@ -31,10 +31,10 @@ export default class Provider {
   getDestinations() {
     if (this._isOnLine()) {
       return this._api.getDestinations().then(
-        (destinations) => {
-          window.localStorage.setItem(`destinations`, JSON.stringify(destinations));
-          return destinations;
-        }
+          (destinations) => {
+            window.localStorage.setItem(`destinations`, JSON.stringify(destinations));
+            return destinations;
+          }
       );
     }
     return Promise.resolve(JSON.parse(window.localStorage.getItem(`destinations`)));
@@ -43,10 +43,10 @@ export default class Provider {
   getOffers() {
     if (this._isOnLine()) {
       return this._api.getOffers().then(
-        (offers) => {
-          window.localStorage.setItem(`offers`, JSON.stringify(offers));
-          return offers;
-        }
+          (offers) => {
+            window.localStorage.setItem(`offers`, JSON.stringify(offers));
+            return offers;
+          }
       );
     }
     return Promise.resolve(JSON.parse(window.localStorage.getItem(`offers`)));
@@ -55,10 +55,10 @@ export default class Provider {
   addPoint(point) {
     if (this._isOnLine()) {
       return this._api.addPoint(point).then(
-        (newPoint) => {
-          this._store.setItem(newPoint.id, newPoint.toRAW());
-          return newPoint;
-        }
+          (newPoint) => {
+            this._store.setItem(newPoint.id, newPoint.toRAW());
+            return newPoint;
+          }
       );
     }
 
@@ -73,10 +73,10 @@ export default class Provider {
   updatePoint(id, point) {
     if (this._isOnLine()) {
       return this._api.updatePoint(id, point).then(
-        (newPoint) => {
-          this._store.setItem(newPoint.id, newPoint.toRAW());
-          return newPoint;
-        }
+          (newPoint) => {
+            this._store.setItem(newPoint.id, newPoint.toRAW());
+            return newPoint;
+          }
       );
     }
 
@@ -91,9 +91,9 @@ export default class Provider {
   deletePoint(id) {
     if (this._isOnLine()) {
       return this._api.deletePoint(id).then(
-        () => {
-          this._store.removeItem(id);
-        }
+          () => {
+            this._store.removeItem(id);
+          }
       );
     }
 
