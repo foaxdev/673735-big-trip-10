@@ -2,15 +2,17 @@ import {MONTHS} from "../const";
 import AbstractComponent from "./abstract-component";
 
 const ROUTE_POINTS_MAX_QUANTITY = 3;
-const IndexesOfFullRoute = {
-  FIRST: 0,
-  SECOND: 1,
-  THIRD: 2
-};
 
 const getRouteHtml = (routeInfo) => {
   if (routeInfo.length <= ROUTE_POINTS_MAX_QUANTITY) {
-    return `${routeInfo[IndexesOfFullRoute.FIRST].city} &mdash; ${routeInfo[IndexesOfFullRoute.SECOND].city} &mdash; ${routeInfo[IndexesOfFullRoute.THIRD].city}`;
+    let resultRoute = typeof routeInfo[0].city !== `undefined` || routeInfo[0].city ? routeInfo[0].city : ``;
+    for (let i = 0; i < routeInfo.length; i++) {
+      if (i === 0) {
+        continue;
+      }
+      resultRoute += ` &mdash; ${routeInfo[i].city}`;
+    }
+    return resultRoute;
   }
 
   return `${routeInfo[0].city} &mdash; ... &mdash; ${routeInfo[routeInfo.length - 1].city}`;

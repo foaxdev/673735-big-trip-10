@@ -32,6 +32,7 @@ export default class TripController {
     this._newPointData = this._changeDefaultNewPointData();
     this._pointControllers = [];
     this._addNewCard = null;
+    this._tip = new Tip(TIP_MESSAGE);
 
     this._onDataChange = this._onDataChange.bind(this);
     this._onViewChange = this._onViewChange.bind(this);
@@ -45,12 +46,15 @@ export default class TripController {
 
     this._loadingText.classList.add(HIDDEN_CLASS);
     this.enableAddButton();
+    render(this._container, this._tip);
+    render(this._container, this._sortComponent);
+    this._sortComponent.setEventSortActive();
+    this._sortComponent.hide();
 
     if (cardsData.length > 0) {
+      this._tip.hide();
       this._cards = this._getSortedCards(null, cardsData);
-
-      render(this._container, this._sortComponent);
-      this._sortComponent.setEventSortActive();
+      this._sortComponent.show();
 
       this._pointsComponent = new Points(this._getBlocksData(cardsData));
       render(this._container, this._pointsComponent);
@@ -67,7 +71,7 @@ export default class TripController {
         this._pointsComponent.updateDisplay();
       });
     } else {
-      this._addMessageToEmptyRoute();
+      this._tip.show();
     }
 
     this._addEventListenerToAddButton();
@@ -120,6 +124,10 @@ export default class TripController {
       this._addNewCard.hideEventDetailsBlock();
       this._addNewCard.showOrHideCard(false);
       this.enableAddButton();
+      if (this._pointsModel.points.length <= 0) {
+        this._tip.show();
+        this._sortComponent.hide();
+      }
     };
 
     const cityChangeHandler = () => {
@@ -171,6 +179,7 @@ export default class TripController {
       } else {
         this._addNewCard.showOrHideCard(true);
       }
+      this._tip.hide();
       this.disableAddButton();
       this._closeEditCards();
     });
@@ -215,10 +224,6 @@ export default class TripController {
       },
       'offers': this._newPointData.amenities
     });
-  }
-
-  _addMessageToEmptyRoute() {
-    render(this._container, new Tip(TIP_MESSAGE).element);
   }
 
   _getSortedCards(sortType, cards) {
@@ -341,7 +346,15 @@ export default class TripController {
 
   _updatePoints() {
     this._removePoints();
-    this._renderPoints();
+    if (this._pointsModel.points.length > 0) {
+      this._tip.hide();
+      this._sortComponent.show();
+      this._renderPoints();
+    } else {
+      this._pointsComponent.hideDayInfos();
+      this._tip.show();
+      this._sortComponent.hide();
+    }
   }
 
   _onFilterChange() {
